@@ -1085,26 +1085,9 @@ struct GeneralTranslationLanguageRow: View {
     }
 
     private func presentLanguageAvailabilityAlert(for pair: LookupLanguagePair) {
-        guard let status = getLanguagePackStatus(for: pair) else { return }
-
-        unavailableAlertTitle = L("Language Pack Required")
-        if status != .installed {
-            unavailablePair = pair
-            let sourceName = languageName(for: pair.sourceIdentifier)
-            let targetName = languageName(for: pair.targetIdentifier)
-
-            switch status {
-            case .installed:
-                return
-            case .supported:
-                missingLanguagesMessage = L("The language pack for \(sourceName) → \(targetName) translation is not installed. Please download the required language packs in System Settings > General > Language & Region > Translation Languages.")
-            case .unsupported:
-                missingLanguagesMessage = L("Translation not supported for this language pair.")
-            @unknown default:
-                missingLanguagesMessage = L("Translation not supported for this language pair.")
-            }
-            showingUnavailableAlert = true
-        }
+        // In KakuTra, immersion dictionary lookup is powered by Yomitan.
+        // Apple Translation language packs are not required.
+        return
     }
 }
 

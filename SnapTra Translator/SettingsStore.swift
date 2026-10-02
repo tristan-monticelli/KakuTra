@@ -517,7 +517,7 @@ final class SettingsStore: ObservableObject {
         menuBarIconStyle = MenuBarIconStyle(rawValue: menuBarIconStyleValue ?? "auto") ?? .auto
         showDockIcon = showDockIconValue ?? true
         singleKey = SingleKey(rawValue: singleKeyValue ?? "leftControl") ?? .leftControl
-        sourceLanguage = defaults.string(forKey: AppSettingKey.sourceLanguage) ?? "en"
+        sourceLanguage = defaults.string(forKey: AppSettingKey.sourceLanguage) ?? "ja"
         let defaultTarget = Self.defaultTargetLanguage()
         targetLanguage = defaults.string(forKey: AppSettingKey.targetLanguage) ?? defaultTarget
         bidirectionalTranslationEnabled = Self.loadBidirectionalTranslationEnabled(defaults: defaults)

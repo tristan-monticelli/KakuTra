@@ -1651,7 +1651,7 @@ final class AppModel: ObservableObject {
     ) async {
         let lookupID = request.lookupID
         let mouseLocation = request.mouseLocation
-        let performance = lookupPerformanceContext(for: lookupID)
+        _ = lookupPerformanceContext(for: lookupID)
 
         guard !Task.isCancelled, activeLookupID == lookupID else { return }
 
@@ -1665,120 +1665,12 @@ final class AppModel: ObservableObject {
             return
         }
 
-        guard shouldPerformLookup(for: word) else {
-            hideOverlay()
-            return
-        }
-
-        let languagePair = resolveLookupLanguagePair(for: word)
-        let sourceLanguage = languagePair.sourceLanguage
-        let targetLanguage = languagePair.targetLanguage
-        let supportedDictionarySources = dictionarySources(for: languagePair)
-
-        if settings.playWordPronunciation {
-            let languageCode = sourceLanguage.languageCode?.identifier
-            speechService.speak(
-                word,
-                language: languageCode,
-                provider: settings.wordTTSProvider,
-                useAmericanAccent: settings.englishAccent.isAmerican,
-                performance: performance
-            )
-        }
-
-        guard !Task.isCancelled, activeLookupID == lookupID else { return }
-
-        let initialContent = makeInitialOverlayContent(
-            word: word,
-            sources: supportedDictionarySources,
-            primaryTranslationState: languagePair.isSameLanguage
-                ? .ready(word, isFallback: false)
-                : .loading,
-            sourceLanguageIdentifier: languagePair.sourceIdentifier
-        )
-        updateOverlay(state: .result(initialContent), anchor: mouseLocation)
-
-        await LearningLookupPersistenceCoordinator.run(
-            recordLookup: { [learningService] in
-                performance?.begin(.learningRecord)
-                await learningService.recordLookup(
-                    word: word,
-                    sourceLanguageIdentifier: languagePair.sourceIdentifier
-                )
-                performance?.end(.learningRecord, outcome: .succeeded)
-            },
-            awaitResults: { [weak self, dictionaryService, translationBridge] in
-                guard let self else { return }
-                await withTaskGroup(of: Void.self) { group in
-                    if !languagePair.isSameLanguage {
-                        if #available(macOS 15.0, *) {
-                            group.addTask { [weak self, translationBridge] in
-                                guard let self else { return }
-                                let translationState = await self.loadPrimaryTranslationState(
-                                    word: word,
-                                    languagePair: languagePair,
-                                    sourceLanguage: sourceLanguage,
-                                    targetLanguage: targetLanguage,
-                                    translationBridge: translationBridge
-                                )
-                                await self.applyPrimaryTranslationState(
-                                    translationState,
-                                    lookupID: lookupID,
-                                    anchor: mouseLocation
-                                )
-                            }
-                            await Task.yield()
-                        }
-                    }
-
-                    for source in supportedDictionarySources {
-                        group.addTask { [weak self, dictionaryService, translationBridge] in
-                            guard let self else { return }
-                            let result = await Self.lookupDictionarySection(
-                                word: word,
-                                source: source,
-                                dictionaryService: dictionaryService,
-                                sourceIdentifier: languagePair.sourceIdentifier,
-                                targetIdentifier: languagePair.targetIdentifier,
-                                preferEnglish: languagePair.targetIsEnglish,
-                                sourceLanguage: sourceLanguage,
-                                targetLanguage: targetLanguage,
-                                translationBridge: translationBridge
-                            )
-                            await self.applyDictionarySectionResult(
-                                result,
-                                lookupID: lookupID,
-                                anchor: mouseLocation
-                            )
-                        }
-                    }
-                }
-            },
-            isCurrent: { [weak self] in
-                guard let self else { return false }
-                return self.activeLookupID == lookupID
-            },
-            makeFinalCommit: { [weak self] in
-                guard let self,
-                      case .result(let finalContent) = self.overlayState,
-                      let definitionText = Self.learningDefinitionText(from: finalContent) else {
-                    return nil
-                }
-                return LearningDefinitionCommit(
-                    word: finalContent.word,
-                    definitionText: definitionText
-                )
-            },
-            updateDefinition: { [learningService] commit in
-                performance?.begin(.learningDefinition)
-                _ = await learningService.updateDefinition(
-                    word: commit.word,
-                    definitionText: commit.definitionText
-                )
-                performance?.end(.learningDefinition, outcome: .succeeded)
-            }
-        )
+        // KakuTra is dedicated exclusively to Japanese immersion via Yomitan.
+        // Ignore non-Japanese text completely without invoking legacy translation services.
+        hideOverlay()
+        return
     }
+
 
     private func performYomitanWordLookup(
         _ word: String,
@@ -3416,36 +3308,9 @@ final class AppModel: ObservableObject {
     }
 
     private func checkLanguageAvailability(notifyUser: Bool = true) async {
-        guard #available(macOS 15.0, *) else { return }
-        let pairs = requiredLanguagePairsForCurrentSettings()
-        let statusesByKey = await refreshedLanguageAvailabilityStatuses(
-            for: pairs,
-            retrySupportedStatuses: true
-        )
-
-        let key = pairs
-            .map { pair in
-                let status = statusesByKey[pair.key] ?? .unsupported
-                return "\(pair.key)=\(status.rawValue)"
-            }
-            .joined(separator: "|")
-
-        guard key != lastAvailabilityKey else { return }
-        lastAvailabilityKey = key
-
-        guard notifyUser else { return }
-
-        guard let firstUnavailable = pairs.lazy.compactMap({ pair in
-            let status = statusesByKey[pair.key] ?? .unsupported
-            return status == .installed ? nil : status
-        }).first else {
-            return
-        }
-
-        sendNotification(
-            title: L("KakuTra"),
-            body: message(for: firstUnavailable)
-        )
+        // In KakuTra, immersion dictionary queries are handled strictly by Yomitan loopback.
+        // Apple Translation language packs are not needed or requested.
+        return
     }
 
     private func configuredLanguagePair() -> LookupLanguagePair {
