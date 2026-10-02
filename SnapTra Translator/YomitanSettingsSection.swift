@@ -2,9 +2,10 @@
 //  YomitanSettingsSection.swift
 //  KakuTra
 //
-//  Embedded Japanese immersion dictionary settings:
-//  Displays local SQLite status (551,000+ entries), language preference,
-//  and allows importing custom Yomitan .zip archives.
+//  Clean language-based dictionary settings:
+//  The user chooses their preferred definition language (English or French),
+//  sees the installed language files, and can open the folder or import files.
+//  Zero internal package jargon.
 //
 
 import AppKit
@@ -24,7 +25,7 @@ struct YomitanSettingsSection: View {
     }
 
     var body: some View {
-        SettingsSectionCard(title: L("Japanese Dictionaries"), icon: "character.book.closed") {
+        SettingsSectionCard(title: L("Dictionnaires"), icon: "character.book.closed") {
             VStack(alignment: .leading, spacing: 14) {
                 // Status Header
                 HStack(alignment: .center, spacing: 10) {
@@ -39,11 +40,11 @@ struct YomitanSettingsSection: View {
                     }
 
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(model.japaneseDictionaryService.isDatabaseInstalled ? L("Moteur SQLite KakuTra Actif") : L("Base SQLite non installée"))
+                        Text(model.japaneseDictionaryService.isDatabaseInstalled ? L("Dictionnaire actif") : L("Aucune base installée"))
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundStyle(.primary)
 
-                        Text("\(totalEntriesFormatted) entrées actives · < 0,3 ms · 100% Hors-ligne · Zéro extension")
+                        Text("\(totalEntriesFormatted) définitions actives · < 0,3 ms · 100% Hors-ligne")
                             .font(.system(size: 11))
                             .foregroundStyle(.secondary)
                     }
@@ -62,30 +63,56 @@ struct YomitanSettingsSection: View {
 
                 Divider().opacity(0.6)
 
-                // Installed Dictionaries List
+                // Language Selection (Clean & Simple)
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(L("Dictionnaires intégrés :"))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(L("Langue des définitions"))
+                            .font(.system(size: 12, weight: .medium))
+                        Text(L("Choisissez la langue à afficher lors du survol d'un mot."))
+                            .font(.system(size: 10))
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Picker("", selection: $model.settings.yomitanPreferredGlossaryLanguage) {
+                        Text(L("Anglais (Recommandé)")).tag("en")
+                        Text(L("Français")).tag("fr")
+                        Text(L("Toutes les langues")).tag("all")
+                    }
+                    .labelsHidden()
+                    .pickerStyle(.segmented)
+                }
+
+                Divider().opacity(0.6)
+
+                // Installed Language Files List
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(L("Fichiers de langues installés :"))
                         .font(.system(size: 11, weight: .medium))
                         .foregroundStyle(.secondary)
 
-                    if model.japaneseDictionaryService.installedDictionaries.isEmpty {
-                        Text(L("Aucun dictionnaire installé."))
+                    if model.japaneseDictionaryService.installedLanguages.isEmpty {
+                        Text(L("Aucun fichier de langue trouvé."))
                             .font(.system(size: 11))
                             .foregroundStyle(.secondary)
                     } else {
-                        ForEach(model.japaneseDictionaryService.installedDictionaries, id: \.self) { dictName in
+                        ForEach(model.japaneseDictionaryService.installedLanguages) { lang in
                             HStack(spacing: 8) {
-                                Image(systemName: "book.pages")
+                                Image(systemName: "globe")
                                     .font(.system(size: 12))
                                     .foregroundStyle(Color.accentColor)
 
-                                Text(dictName)
-                                    .font(.system(size: 12, weight: .medium))
-                                    .foregroundStyle(.primary)
+                                VStack(alignment: .leading, spacing: 1) {
+                                    Text(lang.displayName)
+                                        .font(.system(size: 12, weight: .medium))
+                                        .foregroundStyle(.primary)
+                                    Text("\(formattedCount(lang.entriesCount)) définitions · \(lang.filename)")
+                                        .font(.system(size: 10))
+                                        .foregroundStyle(.secondary)
+                                }
 
                                 Spacer()
 
-                                Text(dictBadge(for: dictName))
+                                Text(lang.badge)
                                     .font(.system(size: 10, weight: .medium))
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 3)
@@ -97,8 +124,20 @@ struct YomitanSettingsSection: View {
                     }
                 }
 
-                // Actions: Import & Open Folder
+                Divider().opacity(0.6)
+
+                // Actions: Open Folder & Import File
                 HStack(spacing: 10) {
+                    Button {
+                        model.japaneseDictionaryService.openDatabaseFolder()
+                    } label: {
+                        HStack(spacing: 5) {
+                            Image(systemName: "folder")
+                            Text(L("Ouvrir le dossier des langues"))
+                        }
+                    }
+                    .controlSize(.small)
+
                     Button {
                         importDictionaryFile()
                     } label: {
@@ -110,16 +149,6 @@ struct YomitanSettingsSection: View {
                     .controlSize(.small)
                     .disabled(isImporting)
 
-                    Button {
-                        model.japaneseDictionaryService.openDatabaseFolder()
-                    } label: {
-                        HStack(spacing: 5) {
-                            Image(systemName: "folder")
-                            Text(L("Ouvrir le dossier"))
-                        }
-                    }
-                    .controlSize(.small)
-
                     if isImporting {
                         ProgressView().controlSize(.small)
                         Text(L("Importation en cours…"))
@@ -130,43 +159,39 @@ struct YomitanSettingsSection: View {
                     Spacer()
                 }
 
-                    if let message = importMessage {
-                        HStack(spacing: 6) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundStyle(.green)
-                            Text(message)
-                                .font(.system(size: 11))
-                                .foregroundStyle(.primary)
-                        }
-                        .padding(8)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color.green.opacity(0.1), in: RoundedRectangle(cornerRadius: 6))
+                if let message = importMessage {
+                    HStack(spacing: 6) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                        Text(message)
+                            .font(.system(size: 11))
+                            .foregroundStyle(.primary)
                     }
+                    .padding(8)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.green.opacity(0.1), in: RoundedRectangle(cornerRadius: 6))
+                }
 
-                    if let error = importErrorMessage {
-                        HStack(spacing: 6) {
-                            Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundStyle(.orange)
-                            Text(error)
-                                .font(.system(size: 11))
-                                .foregroundStyle(.primary)
-                        }
-                        .padding(8)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color.orange.opacity(0.1), in: RoundedRectangle(cornerRadius: 6))
+                if let error = importErrorMessage {
+                    HStack(spacing: 6) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundStyle(.orange)
+                        Text(error)
+                            .font(.system(size: 11))
+                            .foregroundStyle(.primary)
                     }
+                    .padding(8)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.orange.opacity(0.1), in: RoundedRectangle(cornerRadius: 6))
                 }
             }
         }
+    }
 
-    private func dictBadge(for name: String) -> String {
-        if name.contains("Français") {
-            return L("Français")
-        } else if name.contains("English") {
-            return L("Anglais & Argot")
-        } else {
-            return L("Personnalisé")
-        }
+    private func formattedCount(_ count: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter.string(from: NSNumber(value: count)) ?? "\(count)"
     }
 
     private func importDictionaryFile() {
@@ -175,7 +200,7 @@ struct YomitanSettingsSection: View {
         panel.allowsMultipleSelection = false
         panel.canChooseDirectories = false
         panel.canChooseFiles = true
-        panel.message = L("Sélectionnez une archive de dictionnaire Yomitan (.zip)")
+        panel.message = L("Sélectionnez une archive de dictionnaire (.zip)")
 
         if panel.runModal() == .OK, let url = panel.url {
             isImporting = true
@@ -187,7 +212,7 @@ struct YomitanSettingsSection: View {
                     let result = try await model.japaneseDictionaryService.importYomitanZip(at: url)
                     await MainActor.run {
                         self.isImporting = false
-                        self.importMessage = L("Dictionnaire « %@ » importé avec succès (%lld entrées ajoutées).", result.dictionaryName, Int64(result.count))
+                        self.importMessage = L("Dictionnaire « %@ » importé avec succès (%lld définitions ajoutées).", result.dictionaryName, Int64(result.count))
                     }
                     await model.refreshYomitanStatus()
                 } catch {

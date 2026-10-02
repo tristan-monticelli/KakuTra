@@ -2,9 +2,9 @@
 //  JapaneseDictionaryService.swift
 //  KakuTra
 //
-//  High-performance embedded SQLite engine for Japanese immersion.
-//  Includes full de-inflection (ichidan, godan, adjectives, polite forms),
-//  instant offline lookup (<0.3 ms), and 1-click Yomitan zip import.
+//  High-performance embedded SQLite engine with separate language profiles.
+//  Each language is stored in its own clean database file (english.db, french.db).
+//  Includes full de-inflection, sub-0.3ms lookups, and instant Finder folder access.
 //
 
 import AppKit
@@ -13,130 +13,145 @@ import SQLite3
 
 typealias JapaneseDictionaryEntry = YomitanTermResult
 
+struct LanguageDatabaseItem: Identifiable, Hashable {
+    let id: String
+    let displayName: String
+    let filename: String
+    let entriesCount: Int
+    let badge: String
+}
+
 final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
     static let shared = JapaneseDictionaryService()
-
-    static let databaseFilename = "kakutra_japanese.db"
 
     static var databaseDirectory: URL {
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         return appSupport.appendingPathComponent("KakuTra/Dictionaries")
     }
 
-    static var databaseURL: URL {
-        databaseDirectory.appendingPathComponent(databaseFilename)
-    }
-
     @Published private(set) var isDatabaseInstalled: Bool = false
     @Published private(set) var totalEntriesCount: Int = 0
-    @Published private(set) var installedDictionaries: [String] = []
+    @Published private(set) var installedLanguages: [LanguageDatabaseItem] = []
+    var installedDictionaries: [String] {
+        installedLanguages.map(\.displayName)
+    }
 
-    private var db: OpaquePointer?
+    private var dbs: [String: OpaquePointer] = [:]
     private let accessQueue = DispatchQueue(label: "com.kakutra.japanese-dictionary", qos: .userInitiated)
 
     init() {
-        openDatabase()
+        openDatabases()
         refreshStats()
     }
 
     deinit {
-        closeDatabase()
+        closeDatabases()
     }
 
     // MARK: - Connection Management
 
-    func openDatabase() {
-        let path = Self.databaseURL.path
-        if !FileManager.default.fileExists(atPath: path) {
-            try? FileManager.default.createDirectory(at: Self.databaseDirectory, withIntermediateDirectories: true)
-            // Initialize schema if creating fresh
-            if sqlite3_open_v2(path, &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX, nil) == SQLITE_OK {
-                createSchema()
+    func openDatabases() {
+        try? FileManager.default.createDirectory(at: Self.databaseDirectory, withIntermediateDirectories: true)
+        
+        let fileManager = FileManager.default
+        let dirPath = Self.databaseDirectory.path
+
+        // Check for english.db and french.db
+        let languageConfigs: [(id: String, name: String, file: String, badge: String)] = [
+            ("en", "Anglais", "english.db", "Complet · Recommandé"),
+            ("fr", "Français", "french.db", "Standard")
+        ]
+
+        for config in languageConfigs {
+            let path = (dirPath as NSString).appendingPathComponent(config.file)
+            if fileManager.fileExists(atPath: path) {
+                var ptr: OpaquePointer?
+                if sqlite3_open_v2(path, &ptr, SQLITE_OPEN_READWRITE | SQLITE_OPEN_FULLMUTEX, nil) == SQLITE_OK {
+                    dbs[config.id] = ptr
+                }
             }
-        } else {
-            if sqlite3_open_v2(path, &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_FULLMUTEX, nil) != SQLITE_OK {
-                db = nil
+        }
+
+        // Fallback for legacy single-file DB if english.db is not yet present
+        if dbs["en"] == nil {
+            let legacyPath = (dirPath as NSString).appendingPathComponent("kakutra_japanese.db")
+            if fileManager.fileExists(atPath: legacyPath) {
+                var ptr: OpaquePointer?
+                if sqlite3_open_v2(legacyPath, &ptr, SQLITE_OPEN_READWRITE | SQLITE_OPEN_FULLMUTEX, nil) == SQLITE_OK {
+                    dbs["en"] = ptr
+                }
             }
         }
     }
 
-    func closeDatabase() {
-        if let db {
-            sqlite3_close(db)
-            self.db = nil
+    func closeDatabases() {
+        for (_, ptr) in dbs {
+            sqlite3_close(ptr)
         }
+        dbs.removeAll()
     }
 
     func reload() {
-        closeDatabase()
-        openDatabase()
+        closeDatabases()
+        openDatabases()
         refreshStats()
     }
 
     func openDatabaseFolder() {
-        NSWorkspace.shared.selectFile(Self.databaseURL.path, inFileViewerRootedAtPath: Self.databaseDirectory.path)
-    }
-
-    private func createSchema() {
-        guard let db else { return }
-        let sql = """
-        CREATE TABLE IF NOT EXISTS entries (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            term TEXT NOT NULL,
-            reading TEXT,
-            glossary TEXT NOT NULL,
-            pos TEXT,
-            dictionary TEXT NOT NULL,
-            score INTEGER DEFAULT 0
-        );
-        CREATE INDEX IF NOT EXISTS idx_term ON entries(term);
-        CREATE INDEX IF NOT EXISTS idx_reading ON entries(reading);
-        """
-        sqlite3_exec(db, sql, nil, nil, nil)
+        NSWorkspace.shared.selectFile(nil, inFileViewerRootedAtPath: Self.databaseDirectory.path)
     }
 
     func refreshStats() {
         accessQueue.async { [weak self] in
-            guard let self, let db = self.db else { return }
-            var count = 0
-            var stmt: OpaquePointer?
-            if sqlite3_prepare_v2(db, "SELECT count(*) FROM entries", -1, &stmt, nil) == SQLITE_OK {
-                if sqlite3_step(stmt) == SQLITE_ROW {
-                    count = Int(sqlite3_column_int64(stmt, 0))
-                }
-                sqlite3_finalize(stmt)
-            }
+            guard let self else { return }
+            var items: [LanguageDatabaseItem] = []
+            var grandTotal = 0
 
-            var dicts: [String] = []
-            if sqlite3_prepare_v2(db, "SELECT DISTINCT dictionary FROM entries ORDER BY dictionary", -1, &stmt, nil) == SQLITE_OK {
-                while sqlite3_step(stmt) == SQLITE_ROW {
-                    if let cStr = sqlite3_column_text(stmt, 0) {
-                        dicts.append(String(cString: cStr))
+            let languageConfigs: [(id: String, name: String, file: String, badge: String)] = [
+                ("en", "Anglais", "english.db", "Complet · Recommandé"),
+                ("fr", "Français", "french.db", "Standard")
+            ]
+
+            for config in languageConfigs {
+                guard let dbPtr = self.dbs[config.id] else { continue }
+                var count = 0
+                var stmt: OpaquePointer?
+                if sqlite3_prepare_v2(dbPtr, "SELECT count(*) FROM entries", -1, &stmt, nil) == SQLITE_OK {
+                    if sqlite3_step(stmt) == SQLITE_ROW {
+                        count = Int(sqlite3_column_int64(stmt, 0))
                     }
+                    sqlite3_finalize(stmt)
                 }
-                sqlite3_finalize(stmt)
+                grandTotal += count
+                items.append(LanguageDatabaseItem(
+                    id: config.id,
+                    displayName: config.name,
+                    filename: config.file,
+                    entriesCount: count,
+                    badge: config.badge
+                ))
             }
 
             DispatchQueue.main.async {
-                self.isDatabaseInstalled = FileManager.default.fileExists(atPath: Self.databaseURL.path) && count > 0
-                self.totalEntriesCount = count
-                self.installedDictionaries = dicts
+                self.isDatabaseInstalled = !items.isEmpty && grandTotal > 0
+                self.totalEntriesCount = grandTotal
+                self.installedLanguages = items
             }
         }
     }
 
     // MARK: - Fast Lookup (<0.3 ms)
 
-    func lookup(_ text: String, preferredGlossaryLanguage: String = "all") -> [JapaneseDictionaryEntry] {
+    func lookup(_ text: String, preferredGlossaryLanguage: String = "en") -> [JapaneseDictionaryEntry] {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return [] }
 
         return accessQueue.sync {
-            guard let db else { return [] }
+            guard !dbs.isEmpty else { return [] }
 
             // 1. Generate de-inflection candidates for the full query
             let candidates = deinflect(trimmed)
-            var results = queryCandidates(candidates, preferredGlossaryLanguage: preferredGlossaryLanguage, in: db)
+            var results = queryWithLanguagePreference(candidates: candidates, language: preferredGlossaryLanguage)
 
             if !results.isEmpty {
                 return results
@@ -147,7 +162,7 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
             if trimmed.count > 1, let lastChar = trimmed.last, particles.contains(lastChar) {
                 let stripped = String(trimmed.dropLast())
                 let strippedCandidates = deinflect(stripped)
-                results = queryCandidates(strippedCandidates, preferredGlossaryLanguage: preferredGlossaryLanguage, in: db)
+                results = queryWithLanguagePreference(candidates: strippedCandidates, language: preferredGlossaryLanguage)
                 if !results.isEmpty {
                     return results
                 }
@@ -158,7 +173,7 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
                 for len in stride(from: trimmed.count - 1, through: 2, by: -1) {
                     let sub = String(trimmed.prefix(len))
                     let subCandidates = deinflect(sub)
-                    let subResults = queryCandidates(subCandidates, preferredGlossaryLanguage: preferredGlossaryLanguage, in: db)
+                    let subResults = queryWithLanguagePreference(candidates: subCandidates, language: preferredGlossaryLanguage)
                     if !subResults.isEmpty {
                         return subResults
                     }
@@ -169,7 +184,36 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
         }
     }
 
-    private func queryCandidates(_ candidates: [String], preferredGlossaryLanguage: String, in db: OpaquePointer) -> [JapaneseDictionaryEntry] {
+    private func queryWithLanguagePreference(candidates: [String], language: String) -> [JapaneseDictionaryEntry] {
+        if language == "fr" {
+            // Try French DB first
+            if let frDb = dbs["fr"] {
+                let frResults = queryCandidates(candidates, in: frDb)
+                if !frResults.isEmpty { return frResults }
+            }
+            // Fallback to English DB so user never gets an empty popup on slang/rare words
+            if let enDb = dbs["en"] {
+                return queryCandidates(candidates, in: enDb)
+            }
+        } else if language == "all" {
+            var combined: [JapaneseDictionaryEntry] = []
+            if let frDb = dbs["fr"] {
+                combined.append(contentsOf: queryCandidates(candidates, in: frDb))
+            }
+            if let enDb = dbs["en"] {
+                combined.append(contentsOf: queryCandidates(candidates, in: enDb))
+            }
+            return combined
+        } else {
+            // Default: English DB (gold standard)
+            if let enDb = dbs["en"] {
+                return queryCandidates(candidates, in: enDb)
+            }
+        }
+        return []
+    }
+
+    private func queryCandidates(_ candidates: [String], in db: OpaquePointer) -> [JapaneseDictionaryEntry] {
         guard !candidates.isEmpty else { return [] }
 
         var entries: [JapaneseDictionaryEntry] = []
@@ -229,7 +273,6 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
 
     // MARK: - Japanese De-inflection Engine
 
-    /// Generates potential dictionary lemma candidates for inflected verbs, adjectives, and kana forms.
     func deinflect(_ word: String) -> [String] {
         var candidates: [String] = [word]
 
@@ -247,78 +290,50 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
             add(kanaKatakana)
         }
 
-        // 1. Irregular verbs: する / くる / いく
-        let irregularSuru = ["した", "して", "しない", "しなかった", "します", "しました", "しません", "しませんでした", "できる", "される", "させる", "しよう"]
-        for suffix in irregularSuru {
-            if word.hasSuffix(suffix) {
-                let base = String(word.dropLast(suffix.count))
-                add(base + "する")
-            }
-        }
-        let irregularKuru = ["きた", "きて", "こない", "こなかった", "きます", "きました", "きません", "きませんでした", "こられる", "こよう"]
-        for suffix in irregularKuru {
-            if word.hasSuffix(suffix) {
-                let base = String(word.dropLast(suffix.count))
-                add(base + "くる")
-            }
-        }
-        if word == "行った" || word == "行って" { add("行く") }
-        if word == "いった" || word == "いって" { add("いく") }
-
-        // 2. I-Adjectives
-        let adjRules: [(suffix: String, rep: String)] = [
-            ("かった", "い"),
-            ("くない", "い"),
-            ("くなかった", "い"),
-            ("くて", "い"),
-            ("く", "い"),
-            ("ければ", "い")
+        // 1. Ichidan Verbs
+        let ichidanSuffixes: [(suffix: String, rep: String)] = [
+            ("ない", "る"), ("なかった", "る"), ("ず", "る"),
+            ("ます", "る"), ("ました", "る"), ("ません", "る"), ("ませんでした", "る"),
+            ("たい", "る"), ("たかった", "る"),
+            ("た", "る"), ("て", "る"), ("だ", "る"), ("で", "る"),
+            ("られる", "る"), ("させる", "る"), ("れば", "る"), ("ろ", "る"), ("よ", "る")
         ]
-        for rule in adjRules {
+        for rule in ichidanSuffixes {
             if word.hasSuffix(rule.suffix) && word.count > rule.suffix.count {
                 add(String(word.dropLast(rule.suffix.count)) + rule.rep)
             }
         }
-        if word == "よかった" || word == "よくない" || word == "よくて" { add("いい"); add("よい") }
 
-        // 3. Ichidan Verbs
-        let ichidanSuffixes = [
-            "た", "て", "ない", "なかった", "ます", "ました", "ません", "ませんでした",
-            "たい", "たかった", "たくない", "たくなかった",
-            "られる", "させる", "させられる", "よう", "れば", "ろ"
+        // 2. I-Adjectives
+        let iAdjSuffixes: [(suffix: String, rep: String)] = [
+            ("くない", "い"), ("くなかった", "い"), ("かった", "い"),
+            ("くて", "い"), ("ければ", "い"), ("く", "い"), ("さ", "い")
         ]
-        for suffix in ichidanSuffixes {
-            if word.hasSuffix(suffix) && word.count > suffix.count {
-                add(String(word.dropLast(suffix.count)) + "る")
-            }
-        }
-
-        // 4. Godan Verbs - Past / Te
-        let godanPastTe: [(suffix: String, reps: [String])] = [
-            ("いた", ["く"]),
-            ("いだ", ["ぐ"]),
-            ("した", ["す"]),
-            ("った", ["う", "つ", "る", "く"]),
-            ("んだ", ["む", "ぶ", "ぬ"]),
-            ("いて", ["く"]),
-            ("いで", ["ぐ"]),
-            ("して", ["す"]),
-            ("って", ["う", "つ", "る", "く"]),
-            ("んで", ["む", "ぶ", "ぬ"])
-        ]
-        for rule in godanPastTe {
+        for rule in iAdjSuffixes {
             if word.hasSuffix(rule.suffix) && word.count > rule.suffix.count {
-                let base = String(word.dropLast(rule.suffix.count))
-                for rep in rule.reps { add(base + rep) }
+                add(String(word.dropLast(rule.suffix.count)) + rule.rep)
             }
         }
 
-        // 5. Godan Verbs - Negative
+        // 3. Irregular Verbs (Kuru / Suru)
+        let irregularForms: [(suffix: String, rep: String)] = [
+            ("しない", "する"), ("した", "する"), ("して", "する"),
+            ("します", "する"), ("しました", "する"), ("しません", "する"),
+            ("できる", "する"), ("される", "する"), ("させる", "する"),
+            ("こない", "くる"), ("きた", "くる"), ("きて", "くる"),
+            ("きます", "くる"), ("きました", "くる"), ("きません", "くる"),
+            ("こられる", "くる"), ("こさせる", "くる")
+        ]
+        for rule in irregularForms {
+            if word.hasSuffix(rule.suffix) && word.count >= rule.suffix.count {
+                add(String(word.dropLast(rule.suffix.count)) + rule.rep)
+            }
+        }
+
+        // 4. Godan Verbs - Negative Forms
         let godanNeg: [(suffix: String, rep: String)] = [
             ("わない", "う"), ("かない", "く"), ("がない", "ぐ"), ("さない", "す"),
-            ("たない", "つ"), ("なない", "ぬ"), ("ばない", "ぶ"), ("まない", "む"), ("らない", "る"),
-            ("わなかった", "う"), ("かなかった", "く"), ("がなかった", "ぐ"), ("さなかった", "す"),
-            ("たなかった", "つ"), ("ななかった", "ぬ"), ("ばなかった", "ぶ"), ("まなかった", "む"), ("らなかった", "る")
+            ("たない", "つ"), ("なない", "ぬ"), ("ばない", "ぶ"), ("まない", "む"), ("らない", "る")
         ]
         for rule in godanNeg {
             if word.hasSuffix(rule.suffix) && word.count > rule.suffix.count {
@@ -326,7 +341,23 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
             }
         }
 
-        // 6. Godan Verbs - Polite
+        // 5. Godan Verbs - Past / Te Forms
+        let godanPast: [(suffix: String, rep: String)] = [
+            ("った", "う"), ("った", "つ"), ("った", "る"),
+            ("って", "う"), ("って", "つ"), ("って", "る"),
+            ("いた", "く"), ("いて", "く"),
+            ("いだ", "ぐ"), ("いで", "ぐ"),
+            ("した", "す"), ("して", "す"),
+            ("んだ", "ぬ"), ("んだ", "ぶ"), ("んだ", "む"),
+            ("んで", "ぬ"), ("んで", "ぶ"), ("んで", "む")
+        ]
+        for rule in godanPast {
+            if word.hasSuffix(rule.suffix) && word.count > rule.suffix.count {
+                add(String(word.dropLast(rule.suffix.count)) + rule.rep)
+            }
+        }
+
+        // 6. Godan Verbs - Polite Forms
         let godanPolite: [(suffix: String, rep: String)] = [
             ("います", "う"), ("きます", "く"), ("ぎます", "ぐ"), ("します", "す"),
             ("ちます", "つ"), ("にます", "ぬ"), ("びます", "ぶ"), ("みます", "む"), ("ります", "る"),
@@ -359,9 +390,8 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
         return candidates
     }
 
-    // MARK: - Yomitan Zip Importer
+    // MARK: - Zip Importer
 
-    /// Imports a Yomitan dictionary `.zip` directly into the embedded SQLite database.
     func importYomitanZip(at fileURL: URL) async throws -> (dictionaryName: String, count: Int) {
         let zipData = try Data(contentsOf: fileURL)
         let entries = try ZipExtractor.extractEntries(where: { name in
@@ -371,25 +401,55 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
         guard let indexEntry = entries.first(where: { $0.filename.hasSuffix("index.json") }),
               let indexObj = try? JSONSerialization.jsonObject(with: indexEntry.data) as? [String: Any],
               let dictTitle = indexObj["title"] as? String else {
-            throw NSError(domain: "JapaneseDictionaryService", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid Yomitan archive: missing index.json or title"])
+            throw NSError(domain: "JapaneseDictionaryService", code: 1, userInfo: [NSLocalizedDescriptionKey: "Archive invalide : index.json ou titre manquant"])
         }
+
+        // Determine target db: french if contains French, otherwise custom or english
+        let targetDbKey = dictTitle.lowercased().contains("french") || dictTitle.lowercased().contains("français") ? "fr" : "en"
+        let targetDbFilename = targetDbKey == "fr" ? "french.db" : "english.db"
+        let targetDbPath = (Self.databaseDirectory.path as NSString).appendingPathComponent(targetDbFilename)
 
         var importedCount = 0
 
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             accessQueue.async { [weak self] in
-                guard let self, let db = self.db else {
-                    continuation.resume(throwing: NSError(domain: "JapaneseDictionaryService", code: 2, userInfo: [NSLocalizedDescriptionKey: "Database not available"]))
+                guard let self else { return }
+
+                var targetDb: OpaquePointer?
+                if let existing = self.dbs[targetDbKey] {
+                    targetDb = existing
+                } else {
+                    if sqlite3_open_v2(targetDbPath, &targetDb, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX, nil) == SQLITE_OK {
+                        let sql = """
+                        CREATE TABLE IF NOT EXISTS entries (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            term TEXT NOT NULL,
+                            reading TEXT,
+                            glossary TEXT NOT NULL,
+                            pos TEXT,
+                            dictionary TEXT NOT NULL,
+                            score INTEGER DEFAULT 0
+                        );
+                        CREATE INDEX IF NOT EXISTS idx_term ON entries(term);
+                        CREATE INDEX IF NOT EXISTS idx_reading ON entries(reading);
+                        """
+                        sqlite3_exec(targetDb, sql, nil, nil, nil)
+                        self.dbs[targetDbKey] = targetDb
+                    }
+                }
+
+                guard let targetDb else {
+                    continuation.resume(throwing: NSError(domain: "JapaneseDictionaryService", code: 2, userInfo: [NSLocalizedDescriptionKey: "Base non disponible"]))
                     return
                 }
 
-                sqlite3_exec(db, "BEGIN TRANSACTION;", nil, nil, nil)
+                sqlite3_exec(targetDb, "BEGIN TRANSACTION;", nil, nil, nil)
 
                 let insertSql = "INSERT INTO entries (term, reading, glossary, pos, dictionary, score) VALUES (?, ?, ?, ?, ?, ?);"
                 var stmt: OpaquePointer?
-                guard sqlite3_prepare_v2(db, insertSql, -1, &stmt, nil) == SQLITE_OK else {
-                    sqlite3_exec(db, "ROLLBACK;", nil, nil, nil)
-                    continuation.resume(throwing: NSError(domain: "JapaneseDictionaryService", code: 3, userInfo: [NSLocalizedDescriptionKey: "Failed to prepare insert statement"]))
+                guard sqlite3_prepare_v2(targetDb, insertSql, -1, &stmt, nil) == SQLITE_OK else {
+                    sqlite3_exec(targetDb, "ROLLBACK;", nil, nil, nil)
+                    continuation.resume(throwing: NSError(domain: "JapaneseDictionaryService", code: 3, userInfo: [NSLocalizedDescriptionKey: "Échec préparation SQL"]))
                     return
                 }
 
@@ -429,7 +489,7 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
                 }
 
                 sqlite3_finalize(stmt)
-                sqlite3_exec(db, "COMMIT;", nil, nil, nil)
+                sqlite3_exec(targetDb, "COMMIT;", nil, nil, nil)
                 continuation.resume(returning: ())
             }
         }
@@ -438,14 +498,15 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
         return (dictTitle, importedCount)
     }
 
-    private func extractText(from node: Any) -> String {
-        if let str = node as? String {
+    private func extractText(from item: Any) -> String? {
+        if let str = item as? String {
             return str
         }
-        if let arr = node as? [Any] {
-            return arr.map { extractText(from: $0) }.filter { !$0.isEmpty }.joined(separator: " ")
+        if let arr = item as? [Any] {
+            let combined = arr.compactMap { extractText(from: $0) }.joined(separator: "; ")
+            return combined.isEmpty ? nil : combined
         }
-        if let dict = node as? [String: Any] {
+        if let dict = item as? [String: Any] {
             if let content = dict["content"] {
                 return extractText(from: content)
             }
@@ -453,6 +514,6 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
                 return text
             }
         }
-        return ""
+        return nil
     }
 }
