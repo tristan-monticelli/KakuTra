@@ -6,6 +6,7 @@
 //
 
 import AppKit
+import CommonCrypto
 import CryptoKit
 import Foundation
 import os.log

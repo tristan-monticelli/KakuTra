@@ -208,7 +208,7 @@
                 <ul>
                     <li><strong>Personal Information:</strong> No names, email addresses, phone numbers, or other personally identifiable information</li>
                     <li><strong>Screen Content:</strong> Text captured via OCR is processed locally and never sent to our servers or any third parties</li>
-                    <li><strong>Translation History:</strong> The App does not store or track your translation history</li>
+                    <li><strong>Learning History:</strong> Looked-up words and available definitions are stored locally in the App's learning history. Nothing is synced by KakuTra.</li>
                     <li><strong>Usage Analytics:</strong> We do not collect analytics, crash reports, or usage statistics</li>
                     <li><strong>Location Data:</strong> The App does not access or collect your location</li>
                     <li><strong>Device Information:</strong> No device identifiers, system information, or hardware details are collected</li>
@@ -223,7 +223,7 @@
                 <ul>
                     <li><strong>Hotkey Settings:</strong> Your chosen keyboard shortcut for activating translation</li>
                     <li><strong>Language Preferences:</strong> Selected source and target languages</li>
-                    <li><strong>Feature Settings:</strong> Preferences such as "Play Pronunciation," "Continuous Translation," and "Launch at Login"</li>
+                    <li><strong>Feature Settings:</strong> Preferences such as pronunciation, listening, dictionary glossary language assignments, and launch at login</li>
                 </ul>
             </div>
 
@@ -280,21 +280,19 @@
 
             <div class="section">
                 <h2>How Translation Works</h2>
-                <p>All translation processing happens <strong>locally on your device</strong>:</p>
-                <ol>
-                    <li>When you press the hotkey and hover over text, the App captures a small region around your cursor</li>
-                    <li>Apple's Vision framework (built into macOS) performs OCR to extract text from the image</li>
-                    <li>Apple's Translation framework (built into macOS 15+) translates the text</li>
-                    <li>The translated text is displayed in a floating bubble</li>
-                    <li>All captured images and text are immediately discarded after display</li>
-                </ol>
-
-                <p><strong>No data is sent to external servers.</strong> All processing uses Apple's built-in, on-device frameworks.</p>
+                <p>Data handling depends on the feature and providers you enable:</p>
+                <ul>
+                    <li>OCR uses Apple Vision on this Mac. Captured images are processed in memory and discarded.</li>
+                    <li>Japanese word lookup sends only the recognized Japanese term to the Yomitan API at <code>127.0.0.1:19633</code>, a local service on your Mac. It does not send the image, page title, or URL.</li>
+                    <li>Apple Translation runs on-device when the required language assets are available.</li>
+                    <li>If you enable an online translation, dictionary, or speech provider, the text needed for that feature is sent to that provider. KakuTra does not operate those provider servers.</li>
+                    <li>Lookup history and any saved definitions remain in local App storage.</li>
+                </ul>
             </div>
 
             <div class="section">
                 <h2>Third-Party Services</h2>
-                <p>The App does not use any third-party services, analytics tools, or advertising networks.</p>
+                <p>KakuTra does not use analytics or advertising networks. Yomitan is contacted only through its local loopback API. Some optional dictionary, translation, and speech providers use their own network services when enabled in Settings.</p>
             </div>
 
             <div class="section">
@@ -302,7 +300,7 @@
                 <ul>
                     <li>All data stored by the App is kept locally on your device</li>
                     <li>The App uses macOS sandboxing for additional security</li>
-                    <li>No network connections are made for translation or data collection purposes</li>
+                    <li>Yomitan requests are restricted to the local loopback service; optional online providers make network requests only for their enabled feature</li>
                     <li>Your data is protected by your Mac's built-in security features</li>
                 </ul>
             </div>

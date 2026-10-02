@@ -211,6 +211,7 @@ private final class ManualRegionSelectionView: NSView {
     }
 }
 
+@MainActor
 final class ManualRegionSelectionWindowController {
     private var panels: [NSPanel] = []
     private var didFinish = false

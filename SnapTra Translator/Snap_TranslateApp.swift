@@ -251,7 +251,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         return true
     }
 
-    func windowWillClose(_ notification: Notification) {
+    @MainActor func windowWillClose(_ notification: Notification) {
         hideDockIcon()
     }
 
@@ -515,7 +515,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         }
     }
 
-    private func makeStatusBarImage() -> NSImage? {
+    @MainActor private func makeStatusBarImage() -> NSImage? {
         guard let sourceImage = NSImage(named: "StatusBarIcon") ?? NSApp.applicationIconImage else {
             return nil
         }
@@ -608,7 +608,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         NSApp.activate(ignoringOtherApps: true)
     }
 
-    private func hideDockIcon() {
+    @MainActor private func hideDockIcon() {
         isManualWindowOpen = false
         settingsWindow?.orderOut(nil)
         if !model.settings.showDockIcon {

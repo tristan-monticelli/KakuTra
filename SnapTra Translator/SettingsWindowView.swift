@@ -43,7 +43,7 @@ enum SettingsWindowLayout {
         }
     }
 
-    static func contentHeight(for tab: SettingsTab) -> CGFloat {
+    @MainActor static func contentHeight(for tab: SettingsTab) -> CGFloat {
         switch tab {
         case .general:
             return generalContentHeight
@@ -64,7 +64,7 @@ enum SettingsWindowLayout {
         }
     }
 
-    static func windowContentSize(for tab: SettingsTab) -> CGSize {
+    @MainActor static func windowContentSize(for tab: SettingsTab) -> CGSize {
         CGSize(
             width: contentWidth(for: tab) + (outerPadding * 2),
             height: contentHeight(for: tab) + (outerPadding * 2)
@@ -376,6 +376,8 @@ struct GeneralSettingsView: View {
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
                         .strokeBorder(.quaternary, lineWidth: 0.5)
                 )
+
+                YomitanSettingsSection()
 
                 // Settings Section
                 VStack(spacing: 0) {

@@ -13,6 +13,7 @@ struct OverlayContent: Equatable {
     var usesCompactPrimaryTranslationStyle: Bool
     var dictionarySections: [OverlayDictionarySection]
     var sourceLanguageIdentifier: String?
+    var yomitanLookupState: YomitanLookupState
 
     init(
         word: String,
@@ -20,7 +21,8 @@ struct OverlayContent: Equatable {
         primaryTranslationState: OverlayPrimaryTranslationState,
         usesCompactPrimaryTranslationStyle: Bool,
         dictionarySections: [OverlayDictionarySection] = [],
-        sourceLanguageIdentifier: String? = nil
+        sourceLanguageIdentifier: String? = nil,
+        yomitanLookupState: YomitanLookupState = .notRequested
     ) {
         self.word = word
         self.phonetic = phonetic
@@ -28,6 +30,7 @@ struct OverlayContent: Equatable {
         self.usesCompactPrimaryTranslationStyle = usesCompactPrimaryTranslationStyle
         self.dictionarySections = dictionarySections
         self.sourceLanguageIdentifier = sourceLanguageIdentifier
+        self.yomitanLookupState = yomitanLookupState
     }
 
     nonisolated var translation: String {
@@ -70,6 +73,15 @@ struct OverlayContent: Equatable {
     nonisolated private static func isChineseLanguageIdentifier(_ identifier: String) -> Bool {
         Locale.Language(identifier: identifier).minimalIdentifier == "zh"
     }
+}
+
+enum YomitanLookupState: Equatable {
+    case notRequested
+    case loading
+    case notConnected
+    case noResults
+    case results([YomitanTermResult])
+    case failed(String)
 }
 
 enum OverlayPronunciationKind: Equatable {
@@ -475,6 +487,8 @@ final class AppModel: ObservableObject {
     @Published var isTapKeptOverlayPresented: Bool = false
     @Published private(set) var isListening = false
     @Published private(set) var speechPlaybackState: SpeechPlaybackState = .idle
+    @Published private(set) var yomitanConnectionState: YomitanConnectionState = .checking
+    @Published private(set) var detectedYomitanDictionaries: [String] = []
     @Published private(set) var activePronunciationRequest: OverlayPronunciationRequest?
 
     @Published var settings: SettingsStore
@@ -495,6 +509,7 @@ final class AppModel: ObservableObject {
     private let ocrService = OCRService()
     private let selectedTextService = SelectedTextService()
     private let dictionaryService = DictionaryService()
+    private let yomitanClient = YomitanClient()
     private let speechService = SpeechService()
     private let sentenceTranslationService = SentenceTranslationService()
     private let imageTranslationService = ImageTranslationService()
@@ -629,9 +644,39 @@ final class AppModel: ObservableObject {
             }
         }
         resolvedPermissions.refreshStatus()
+        Task { await refreshYomitanStatus() }
         Task {
             await checkLanguageAvailability(notifyUser: false)
         }
+    }
+
+    func refreshYomitanStatus() async {
+        yomitanConnectionState = .checking
+        do {
+            let status = try await yomitanClient.status()
+            yomitanConnectionState = .connected(status)
+        } catch is CancellationError {
+            return
+        } catch {
+            yomitanConnectionState = .notConnected
+        }
+    }
+
+    func setYomitanGlossaryLanguage(_ language: String, for dictionary: String) {
+        var mappings = settings.yomitanDictionaryLanguages
+        if language.isEmpty {
+            mappings.removeValue(forKey: dictionary)
+        } else {
+            mappings[dictionary] = language
+        }
+        settings.yomitanDictionaryLanguages = mappings
+    }
+
+    func retryYomitanLookup() async {
+        guard case .result(let content) = overlayState,
+              case .notConnected = content.yomitanLookupState,
+              let lookupID = activeLookupID else { return }
+        await performYomitanWordLookup(content.word, lookupID: lookupID, mouseLocation: overlayAnchor, recordsLookup: false)
     }
 
     func handleHotkeyTrigger() {
@@ -1355,6 +1400,11 @@ final class AppModel: ObservableObject {
 
         guard !Task.isCancelled, activeLookupID == lookupID else { return }
 
+        if Self.containsJapaneseText(word) {
+            await performYomitanWordLookup(word, lookupID: lookupID, mouseLocation: mouseLocation)
+            return
+        }
+
         guard shouldPerformLookup(for: word) else {
             hideOverlay()
             return
@@ -1468,6 +1518,65 @@ final class AppModel: ObservableObject {
                 performance?.end(.learningDefinition, outcome: .succeeded)
             }
         )
+    }
+
+    private func performYomitanWordLookup(
+        _ word: String,
+        lookupID: UUID,
+        mouseLocation: CGPoint,
+        recordsLookup: Bool = true
+    ) async {
+        guard !Task.isCancelled, activeLookupID == lookupID else { return }
+        let initialContent = OverlayContent(
+            word: word,
+            phonetic: nil,
+            primaryTranslationState: .empty,
+            usesCompactPrimaryTranslationStyle: false,
+            sourceLanguageIdentifier: "ja",
+            yomitanLookupState: .loading
+        )
+        updateOverlay(state: .result(initialContent), anchor: mouseLocation)
+        if recordsLookup {
+            await learningService.recordLookup(word: word, sourceLanguageIdentifier: "ja")
+        }
+        guard !Task.isCancelled, activeLookupID == lookupID else { return }
+
+        do {
+            let entries = try await yomitanClient.lookup(term: word)
+            guard !Task.isCancelled, activeLookupID == lookupID else { return }
+            let dictionaries = Array(Set(entries.map(\.dictionary))).sorted()
+            detectedYomitanDictionaries = Array(Set(detectedYomitanDictionaries).union(dictionaries)).sorted()
+            yomitanConnectionState = .connected(YomitanStatus(serverVersion: 1, extensionVersion: nil))
+            updateOverlayContent(for: lookupID, anchor: mouseLocation) { content in
+                content.yomitanLookupState = entries.isEmpty ? .noResults : .results(entries)
+            }
+            let definition = entries.flatMap(\.glosses).joined(separator: "; ")
+            if !definition.isEmpty {
+                _ = await learningService.updateDefinition(word: word, definitionText: definition)
+            }
+        } catch is CancellationError {
+            return
+        } catch {
+            guard !Task.isCancelled, activeLookupID == lookupID else { return }
+            if let yomitanError = error as? YomitanClientError,
+               case .unavailable = yomitanError {
+                yomitanConnectionState = .notConnected
+                updateOverlayContent(for: lookupID, anchor: mouseLocation) { $0.yomitanLookupState = .notConnected }
+            } else {
+                updateOverlayContent(for: lookupID, anchor: mouseLocation) { $0.yomitanLookupState = .failed(error.localizedDescription) }
+            }
+        }
+    }
+
+    private nonisolated static func containsJapaneseText(_ text: String) -> Bool {
+        text.unicodeScalars.contains { scalar in
+            let value = scalar.value
+            return (0x3040...0x30FF).contains(value)
+                || (0x3400...0x4DBF).contains(value)
+                || (0x4E00...0x9FFF).contains(value)
+                || (0x20000...0x323AF).contains(value)
+                || (0xF900...0xFAFF).contains(value)
+        }
     }
 
     private func resolveSinglePressLookupIntent(

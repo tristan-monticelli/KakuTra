@@ -57,6 +57,8 @@ final class SettingsStoreMigrationTests: XCTestCase {
         "sentenceTranslationSources",
         "llmProviderConfigurations",
         "imageTranslationProviderConfigurations",
+        AppSettingKey.yomitanDictionaryLanguages,
+        AppSettingKey.yomitanPreferredGlossaryLanguage,
     ]
 
     private func makeDefaults(testName: String = #function) -> UserDefaults {
@@ -462,6 +464,39 @@ final class SettingsStoreMigrationTests: XCTestCase {
         let settings = SettingsStore(defaults: defaults, loginItemStatus: false)
 
         XCTAssertTrue(settings.keepWordOverlayAfterTap)
+    }
+
+    func testYomitanGlossaryPreferencesLoadAndPersist() {
+        let defaults = makeDefaults()
+        defaults.set(["Jitendex": "fr", "JMdict": "en"], forKey: AppSettingKey.yomitanDictionaryLanguages)
+        defaults.set("fr", forKey: AppSettingKey.yomitanPreferredGlossaryLanguage)
+
+        let store = SettingsStore(defaults: defaults, loginItemStatus: false)
+
+        XCTAssertEqual(store.yomitanDictionaryLanguages, ["Jitendex": "fr", "JMdict": "en"])
+        XCTAssertEqual(store.yomitanPreferredGlossaryLanguage, "fr")
+        store.yomitanPreferredGlossaryLanguage = "all"
+        XCTAssertEqual(defaults.string(forKey: AppSettingKey.yomitanPreferredGlossaryLanguage), "all")
+    }
+}
+
+final class YomitanClientDecodingTests: XCTestCase {
+    func testStructuredGlossaryPreservesHeadwordReadingAndDictionary() throws {
+        let json = #"{"index":0,"dictionaryEntries":[{"headwords":[{"term":"猫","reading":"ねこ"}],"definitions":[{"dictionaryAlias":"Jitendex","dictionary":"Jitendex","entries":[{"type":"structured-content","content":[{"tag":"ul","lang":"en","data":{"content":"glossary"},"content":[{"tag":"li","content":"cat"},{"tag":"li","content":"feline"}]}]}]}]}]}"#
+
+        let entries = try YomitanClient.decodeTermEntries(Data(json.utf8))
+
+        XCTAssertEqual(entries.count, 1)
+        XCTAssertEqual(entries.first?.term, "猫")
+        XCTAssertEqual(entries.first?.reading, "ねこ")
+        XCTAssertEqual(entries.first?.dictionary, "Jitendex")
+        XCTAssertEqual(entries.first?.glosses, ["cat", "feline"])
+    }
+
+    func testMalformedResponseIsRejected() {
+        XCTAssertThrowsError(try YomitanClient.decodeTermEntries(Data("not json".utf8))) { error in
+            XCTAssertEqual(error as? YomitanClientError, .invalidResponse)
+        }
     }
 }
 

@@ -361,6 +361,12 @@ final class SettingsStore: ObservableObject {
             saveDictionarySources()
         }
     }
+    @Published var yomitanDictionaryLanguages: [String: String] {
+        didSet { defaults.set(yomitanDictionaryLanguages, forKey: AppSettingKey.yomitanDictionaryLanguages) }
+    }
+    @Published var yomitanPreferredGlossaryLanguage: String {
+        didSet { defaults.set(yomitanPreferredGlossaryLanguage, forKey: AppSettingKey.yomitanPreferredGlossaryLanguage) }
+    }
     @Published var sentenceTranslationSources: [SentenceTranslationSource] {
         didSet {
             saveSentenceTranslationSources()
@@ -487,6 +493,8 @@ final class SettingsStore: ObservableObject {
         let debugShowOcrRegionValue = defaults.object(forKey: AppSettingKey.debugShowOcrRegion) as? Bool
         let continuousTranslationValue = defaults.object(forKey: AppSettingKey.continuousTranslation) as? Bool
         let keepWordOverlayAfterTapValue = defaults.object(forKey: AppSettingKey.keepWordOverlayAfterTap) as? Bool
+        let savedYomitanDictionaryLanguages = defaults.dictionary(forKey: AppSettingKey.yomitanDictionaryLanguages) as? [String: String] ?? [:]
+        let savedYomitanPreferredGlossaryLanguage = defaults.string(forKey: AppSettingKey.yomitanPreferredGlossaryLanguage)
 
         launchAtLogin = launchAtLoginValue ?? loginStatus
         showMenuBarIcon = showMenuBarIconValue ?? true
@@ -500,6 +508,8 @@ final class SettingsStore: ObservableObject {
         debugShowOcrRegion = debugShowOcrRegionValue ?? false
         continuousTranslation = continuousTranslationValue ?? true
         keepWordOverlayAfterTap = keepWordOverlayAfterTapValue ?? true
+        yomitanDictionaryLanguages = savedYomitanDictionaryLanguages
+        yomitanPreferredGlossaryLanguage = savedYomitanPreferredGlossaryLanguage ?? "all"
 
         // Load or migrate dictionary sources
         dictionarySources = Self.loadOrMigrateDictionarySources(defaults: defaults)
@@ -595,6 +605,8 @@ final class SettingsStore: ObservableObject {
         defaults.set(debugShowOcrRegion, forKey: AppSettingKey.debugShowOcrRegion)
         defaults.set(continuousTranslation, forKey: AppSettingKey.continuousTranslation)
         defaults.set(keepWordOverlayAfterTap, forKey: AppSettingKey.keepWordOverlayAfterTap)
+        defaults.set(yomitanDictionaryLanguages, forKey: AppSettingKey.yomitanDictionaryLanguages)
+        defaults.set(yomitanPreferredGlossaryLanguage, forKey: AppSettingKey.yomitanPreferredGlossaryLanguage)
         defaults.set(wordTTSProvider.rawValue, forKey: AppSettingKey.wordTTSProvider)
         defaults.set(sentenceTTSProvider.rawValue, forKey: AppSettingKey.sentenceTTSProvider)
         defaults.set(appLanguage.rawValue, forKey: AppSettingKey.appLanguage)

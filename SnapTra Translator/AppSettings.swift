@@ -213,6 +213,8 @@ enum AppSettingKey {
     static let bidirectionalTranslationEnabled = "bidirectionalTranslationEnabled"
     static let debugShowOcrRegion = "debugShowOcrRegion"
     static let continuousTranslation = "continuousTranslation"
+    static let yomitanDictionaryLanguages = "yomitanDictionaryLanguages"
+    static let yomitanPreferredGlossaryLanguage = "yomitanPreferredGlossaryLanguage"
     static let keepWordOverlayAfterTap = "keepWordOverlayAfterTap"
     static let doubleTapSentenceTranslationMode = "doubleTapSentenceTranslationMode"
     static let lastScreenRecordingStatus = "lastScreenRecordingStatus"

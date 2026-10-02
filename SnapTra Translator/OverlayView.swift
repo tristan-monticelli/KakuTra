@@ -234,14 +234,162 @@ struct OverlayView: View {
             // Header: Word + Phonetic
             headerSection(content: content)
 
-            // Primary Translation
-            primaryTranslationSection(content: content)
-
-            // Dictionary sections (one per dictionary source)
-            if !content.visibleDictionarySections.isEmpty {
-                dictionarySectionsView(sections: content.visibleDictionarySections)
+            if content.yomitanLookupState != .notRequested {
+                yomitanResultsSection(state: content.yomitanLookupState)
+            } else {
+                primaryTranslationSection(content: content)
+                if !content.visibleDictionarySections.isEmpty {
+                    dictionarySectionsView(sections: content.visibleDictionarySections)
+                }
             }
         }
+    }
+
+    @ViewBuilder
+    private func yomitanResultsSection(state: YomitanLookupState) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Divider().padding(.horizontal, 18).opacity(0.6)
+            HStack(spacing: 7) {
+                Image(systemName: "character.book.closed.fill")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(Color.accentColor)
+                Text(L("Yomitan"))
+                    .font(.system(size: 12, weight: .semibold))
+                Spacer()
+                if case .results(let results) = state, !results.isEmpty {
+                    glossaryFilterMenu
+                }
+            }
+            .padding(.horizontal, 18)
+            .padding(.top, 12)
+            .padding(.bottom, 8)
+
+            switch state {
+            case .notRequested:
+                EmptyView()
+            case .loading:
+                HStack(spacing: 8) {
+                    ProgressView().controlSize(.small)
+                    Text(L("Searching local dictionaries…"))
+                        .font(.system(size: 12))
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.horizontal, 18)
+                .padding(.bottom, 14)
+            case .notConnected:
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(L("Yomitan not connected"))
+                        .font(.system(size: 12, weight: .medium))
+                    Text(L("Open Yomitan in your browser and enable its local API."))
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Button(L("Try again")) {
+                        Task { await model.retryYomitanLookup() }
+                    }
+                    .controlSize(.small)
+                    .padding(.top, 3)
+                }
+                .padding(.horizontal, 18)
+                .padding(.bottom, 14)
+            case .noResults:
+                dictionaryStatusRow(text: L("No Japanese dictionary results."))
+            case .failed(let message):
+                dictionaryStatusRow(text: message.isEmpty ? L("Yomitan returned an invalid response.") : message)
+            case .results(let results):
+                let language = model.settings.yomitanPreferredGlossaryLanguage
+                let visible = results.filter { result in
+                    language == "all" || model.settings.yomitanDictionaryLanguages[result.dictionary] == language
+                }
+                if visible.isEmpty {
+                    dictionaryStatusRow(text: language == "all"
+                        ? L("No Japanese dictionary results.")
+                        : L("No results for this glossary language."))
+                } else {
+                    VStack(alignment: .leading, spacing: 10) {
+                        ForEach(Array(visible.prefix(12))) { result in
+                            yomitanEntryRow(result)
+                        }
+                    }
+                    .padding(.horizontal, 18)
+                    .padding(.bottom, 14)
+                }
+            }
+        }
+    }
+
+    private var glossaryFilterMenu: some View {
+        Menu {
+            Button(L("All glossaries")) {
+                model.settings.yomitanPreferredGlossaryLanguage = "all"
+            }
+            ForEach(YomitanGlossaryLanguage.allCases.filter {
+                model.settings.yomitanDictionaryLanguages.values.contains($0.rawValue)
+            }) { language in
+                Button(language.title) {
+                    model.settings.yomitanPreferredGlossaryLanguage = language.rawValue
+                }
+            }
+        } label: {
+            HStack(spacing: 4) {
+                Text(glossaryLanguageTitle(model.settings.yomitanPreferredGlossaryLanguage))
+                    .lineLimit(1)
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 8, weight: .bold))
+            }
+            .font(.system(size: 10, weight: .medium))
+            .foregroundStyle(.secondary)
+        }
+        .menuStyle(.borderlessButton)
+        .fixedSize()
+    }
+
+    private func glossaryLanguageTitle(_ identifier: String) -> String {
+        guard identifier != "all",
+              let language = YomitanGlossaryLanguage(rawValue: identifier) else {
+            return L("All glossaries")
+        }
+        return language.title
+    }
+
+    private func yomitanEntryRow(_ result: YomitanTermResult) -> some View {
+        VStack(alignment: .leading, spacing: 5) {
+            HStack(alignment: .firstTextBaseline, spacing: 7) {
+                Text(result.term)
+                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.primary)
+                if let reading = result.reading, !reading.isEmpty, reading != result.term {
+                    Text(reading)
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(.secondary)
+                }
+                Spacer(minLength: 0)
+            }
+            HStack(spacing: 5) {
+                Text(result.dictionary)
+                    .foregroundStyle(Color.accentColor)
+                    .lineLimit(1)
+                Text("·")
+                    .foregroundStyle(.tertiary)
+                Text(model.settings.yomitanDictionaryLanguages[result.dictionary].map(glossaryLanguageTitle) ?? L("Not assigned"))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
+            .font(.system(size: 10, weight: .medium))
+            ForEach(Array(result.glosses.prefix(6).enumerated()), id: \.offset) { item in
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Circle().fill(Color.secondary.opacity(0.6)).frame(width: 3, height: 3)
+                    Text(item.element)
+                        .font(.system(size: 12))
+                        .foregroundStyle(.primary.opacity(0.9))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal, 10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.primary.opacity(colorScheme == .dark ? 0.045 : 0.035), in: RoundedRectangle(cornerRadius: 9))
     }
 
     private var paragraphLoadingView: some View {
@@ -821,7 +969,7 @@ struct OverlayView: View {
 
             pronunciationControl(
                 kind: .sentence,
-                hasText: !content.originalText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                hasText: !(content.originalText ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             )
 
             if originalVisibility.showsOriginalEditorToggle {

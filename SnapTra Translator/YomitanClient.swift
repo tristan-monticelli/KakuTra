@@ -20,6 +20,47 @@ struct YomitanStatus: Equatable, Sendable {
     let extensionVersion: String?
 }
 
+enum YomitanConnectionState: Equatable {
+    case checking
+    case connected(YomitanStatus)
+    case notConnected
+}
+
+enum YomitanGlossaryLanguage: String, CaseIterable, Identifiable {
+    case unassigned = ""
+    case english = "en"
+    case french = "fr"
+    case german = "de"
+    case spanish = "es"
+    case italian = "it"
+    case portuguese = "pt"
+    case russian = "ru"
+    case simplifiedChinese = "zh-Hans"
+    case traditionalChinese = "zh-Hant"
+    case korean = "ko"
+    case japanese = "ja"
+    case other = "und"
+
+    var id: String { rawValue }
+    var title: String {
+        switch self {
+        case .unassigned: return L("Not assigned")
+        case .english: return L("English")
+        case .french: return L("French")
+        case .german: return L("German")
+        case .spanish: return L("Spanish")
+        case .italian: return L("Italian")
+        case .portuguese: return L("Portuguese")
+        case .russian: return L("Russian")
+        case .simplifiedChinese: return L("Chinese (Simplified)")
+        case .traditionalChinese: return L("Chinese (Traditional)")
+        case .korean: return L("Korean")
+        case .japanese: return L("Japanese")
+        case .other: return L("Other")
+        }
+    }
+}
+
 enum YomitanClientError: Error, LocalizedError, Equatable {
     case invalidJapaneseText
     case requestTooLarge

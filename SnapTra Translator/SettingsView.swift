@@ -30,6 +30,8 @@ struct SettingsView: View {
                     }
                 }
 
+                YomitanSettingsSection()
+
                 // MARK: - Shortcuts
                 SettingsSectionCard(
                     title: L("Shortcuts"),
