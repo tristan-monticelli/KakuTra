@@ -489,6 +489,10 @@ final class AppModel: ObservableObject {
     @Published private(set) var speechPlaybackState: SpeechPlaybackState = .idle
     @Published private(set) var yomitanConnectionState: YomitanConnectionState = .checking
     @Published private(set) var detectedYomitanDictionaries: [String] = []
+    @Published private(set) var ankiConnectionState: AnkiConnectionState = .checking
+    @Published private(set) var ankiDeckNames: [String] = []
+    @Published private(set) var ankiModelNames: [String] = []
+    @Published private(set) var ankiModelFieldNames: [String] = []
     @Published private(set) var activePronunciationRequest: OverlayPronunciationRequest?
 
     @Published var settings: SettingsStore
@@ -510,6 +514,7 @@ final class AppModel: ObservableObject {
     private let selectedTextService = SelectedTextService()
     private let dictionaryService = DictionaryService()
     private let yomitanClient = YomitanClient()
+    private let ankiConnectClient = AnkiConnectClient()
     private let speechService = SpeechService()
     private let sentenceTranslationService = SentenceTranslationService()
     private let imageTranslationService = ImageTranslationService()
@@ -645,6 +650,7 @@ final class AppModel: ObservableObject {
         }
         resolvedPermissions.refreshStatus()
         Task { await refreshYomitanStatus() }
+        Task { await refreshAnkiConfiguration() }
         Task {
             await checkLanguageAvailability(notifyUser: false)
         }
@@ -670,6 +676,61 @@ final class AppModel: ObservableObject {
             mappings[dictionary] = language
         }
         settings.yomitanDictionaryLanguages = mappings
+    }
+
+    func refreshAnkiConfiguration() async {
+        ankiConnectionState = .checking
+        do {
+            let configuration = try await ankiConnectClient.configuration()
+            let fields: [String]
+            if configuration.modelNames.contains(settings.ankiModelName), !settings.ankiModelName.isEmpty {
+                fields = try await ankiConnectClient.modelFieldNames(modelName: settings.ankiModelName)
+            } else {
+                fields = []
+            }
+            guard !Task.isCancelled else { return }
+            ankiDeckNames = configuration.deckNames
+            ankiModelNames = configuration.modelNames
+            ankiModelFieldNames = fields
+            ankiConnectionState = .connected(version: configuration.version)
+        } catch is CancellationError {
+            return
+        } catch {
+            if let ankiError = error as? AnkiConnectError,
+               case .unavailable = ankiError {
+                ankiConnectionState = .notConnected
+            } else {
+                ankiConnectionState = .failed(error.localizedDescription)
+            }
+            ankiDeckNames = []
+            ankiModelNames = []
+            ankiModelFieldNames = []
+        }
+    }
+
+    func setAnkiModelName(_ name: String) {
+        settings.ankiModelName = name
+        ankiModelFieldNames = []
+        guard !name.isEmpty else { return }
+        Task {
+            do {
+                let fields = try await ankiConnectClient.modelFieldNames(modelName: name)
+                guard settings.ankiModelName == name else { return }
+                ankiModelFieldNames = fields
+            } catch {
+                ankiModelFieldNames = []
+            }
+        }
+    }
+
+    func setAnkiFieldMapping(_ fieldName: String, for role: AnkiFieldRole) {
+        var mappings = settings.ankiFieldMappings
+        if fieldName.isEmpty {
+            mappings.removeValue(forKey: role.rawValue)
+        } else {
+            mappings[role.rawValue] = fieldName
+        }
+        settings.ankiFieldMappings = mappings
     }
 
     func retryYomitanLookup() async {

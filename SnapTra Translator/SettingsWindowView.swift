@@ -12,6 +12,7 @@ import Translation
 enum SettingsTab: String, CaseIterable {
     case general = "General"
     case service = "Service"
+    case anki = "Anki"
     case system = "System"
     case about = "About"
 }
@@ -24,6 +25,7 @@ enum SettingsWindowLayout {
     static let defaultContentWidth: CGFloat = 400
     static let aboutContentWidth: CGFloat = 370
     static let dictionaryContentWidth: CGFloat = 650
+    static let ankiContentWidth: CGFloat = 500
     static let generalContentHeight: CGFloat = 650
     static let dictionaryContentHeight: CGFloat = 550
     static let systemContentHeight: CGFloat = 360
@@ -36,6 +38,8 @@ enum SettingsWindowLayout {
         switch tab {
         case .service:
             return dictionaryContentWidth
+        case .anki:
+            return ankiContentWidth
         case .about:
             return aboutContentWidth
         default:
@@ -49,6 +53,8 @@ enum SettingsWindowLayout {
             return generalContentHeight
         case .service:
             return dictionaryContentHeight
+        case .anki:
+            return 620
         case .system:
             return systemContentHeight
         case .about:
@@ -98,6 +104,8 @@ struct SettingsWindowView: View {
             return SettingsWindowLayout.generalContentHeight
         case .service:
             return SettingsWindowLayout.dictionaryContentHeight
+        case .anki:
+            return 620
         case .system:
             return SettingsWindowLayout.systemContentHeight
         case .about:
@@ -131,6 +139,12 @@ struct SettingsWindowView: View {
                     Label(L("Service"), systemImage: "square.grid.2x2")
                 }
                 .tag(SettingsTab.service)
+
+            AnkiSettingsView()
+                .tabItem {
+                    Label(L("Anki"), systemImage: "rectangle.stack.badge.plus")
+                }
+                .tag(SettingsTab.anki)
 
             SystemSettingsView(
                 hidesScrollIndicator: hidesTabScrollIndicator

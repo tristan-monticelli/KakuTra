@@ -367,6 +367,18 @@ final class SettingsStore: ObservableObject {
     @Published var yomitanPreferredGlossaryLanguage: String {
         didSet { defaults.set(yomitanPreferredGlossaryLanguage, forKey: AppSettingKey.yomitanPreferredGlossaryLanguage) }
     }
+    @Published var ankiDeckName: String {
+        didSet { defaults.set(ankiDeckName, forKey: AppSettingKey.ankiDeckName) }
+    }
+    @Published var ankiModelName: String {
+        didSet { defaults.set(ankiModelName, forKey: AppSettingKey.ankiModelName) }
+    }
+    @Published var ankiFieldMappings: [String: String] {
+        didSet { defaults.set(ankiFieldMappings, forKey: AppSettingKey.ankiFieldMappings) }
+    }
+    @Published var ankiTags: String {
+        didSet { defaults.set(ankiTags, forKey: AppSettingKey.ankiTags) }
+    }
     @Published var sentenceTranslationSources: [SentenceTranslationSource] {
         didSet {
             saveSentenceTranslationSources()
@@ -495,6 +507,10 @@ final class SettingsStore: ObservableObject {
         let keepWordOverlayAfterTapValue = defaults.object(forKey: AppSettingKey.keepWordOverlayAfterTap) as? Bool
         let savedYomitanDictionaryLanguages = defaults.dictionary(forKey: AppSettingKey.yomitanDictionaryLanguages) as? [String: String] ?? [:]
         let savedYomitanPreferredGlossaryLanguage = defaults.string(forKey: AppSettingKey.yomitanPreferredGlossaryLanguage)
+        let savedAnkiDeckName = defaults.string(forKey: AppSettingKey.ankiDeckName)
+        let savedAnkiModelName = defaults.string(forKey: AppSettingKey.ankiModelName)
+        let savedAnkiFieldMappings = defaults.dictionary(forKey: AppSettingKey.ankiFieldMappings) as? [String: String] ?? [:]
+        let savedAnkiTags = defaults.string(forKey: AppSettingKey.ankiTags)
 
         launchAtLogin = launchAtLoginValue ?? loginStatus
         showMenuBarIcon = showMenuBarIconValue ?? true
@@ -510,6 +526,10 @@ final class SettingsStore: ObservableObject {
         keepWordOverlayAfterTap = keepWordOverlayAfterTapValue ?? true
         yomitanDictionaryLanguages = savedYomitanDictionaryLanguages
         yomitanPreferredGlossaryLanguage = savedYomitanPreferredGlossaryLanguage ?? "all"
+        ankiDeckName = savedAnkiDeckName ?? ""
+        ankiModelName = savedAnkiModelName ?? ""
+        ankiFieldMappings = savedAnkiFieldMappings
+        ankiTags = savedAnkiTags ?? "kakutra"
 
         // Load or migrate dictionary sources
         dictionarySources = Self.loadOrMigrateDictionarySources(defaults: defaults)
@@ -607,6 +627,10 @@ final class SettingsStore: ObservableObject {
         defaults.set(keepWordOverlayAfterTap, forKey: AppSettingKey.keepWordOverlayAfterTap)
         defaults.set(yomitanDictionaryLanguages, forKey: AppSettingKey.yomitanDictionaryLanguages)
         defaults.set(yomitanPreferredGlossaryLanguage, forKey: AppSettingKey.yomitanPreferredGlossaryLanguage)
+        defaults.set(ankiDeckName, forKey: AppSettingKey.ankiDeckName)
+        defaults.set(ankiModelName, forKey: AppSettingKey.ankiModelName)
+        defaults.set(ankiFieldMappings, forKey: AppSettingKey.ankiFieldMappings)
+        defaults.set(ankiTags, forKey: AppSettingKey.ankiTags)
         defaults.set(wordTTSProvider.rawValue, forKey: AppSettingKey.wordTTSProvider)
         defaults.set(sentenceTTSProvider.rawValue, forKey: AppSettingKey.sentenceTTSProvider)
         defaults.set(appLanguage.rawValue, forKey: AppSettingKey.appLanguage)

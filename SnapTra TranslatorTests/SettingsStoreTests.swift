@@ -59,6 +59,10 @@ final class SettingsStoreMigrationTests: XCTestCase {
         "imageTranslationProviderConfigurations",
         AppSettingKey.yomitanDictionaryLanguages,
         AppSettingKey.yomitanPreferredGlossaryLanguage,
+        AppSettingKey.ankiDeckName,
+        AppSettingKey.ankiModelName,
+        AppSettingKey.ankiFieldMappings,
+        AppSettingKey.ankiTags,
     ]
 
     private func makeDefaults(testName: String = #function) -> UserDefaults {
@@ -477,6 +481,23 @@ final class SettingsStoreMigrationTests: XCTestCase {
         XCTAssertEqual(store.yomitanPreferredGlossaryLanguage, "fr")
         store.yomitanPreferredGlossaryLanguage = "all"
         XCTAssertEqual(defaults.string(forKey: AppSettingKey.yomitanPreferredGlossaryLanguage), "all")
+    }
+
+    func testAnkiConfigurationPreferencesLoadAndPersist() {
+        let defaults = makeDefaults()
+        defaults.set("Japanese", forKey: AppSettingKey.ankiDeckName)
+        defaults.set("Basic", forKey: AppSettingKey.ankiModelName)
+        defaults.set(["term": "Front", "definition": "Back"], forKey: AppSettingKey.ankiFieldMappings)
+        defaults.set("kakutra study", forKey: AppSettingKey.ankiTags)
+
+        let store = SettingsStore(defaults: defaults, loginItemStatus: false)
+
+        XCTAssertEqual(store.ankiDeckName, "Japanese")
+        XCTAssertEqual(store.ankiModelName, "Basic")
+        XCTAssertEqual(store.ankiFieldMappings, ["term": "Front", "definition": "Back"])
+        XCTAssertEqual(store.ankiTags, "kakutra study")
+        store.ankiDeckName = "Japanese::N4"
+        XCTAssertEqual(defaults.string(forKey: AppSettingKey.ankiDeckName), "Japanese::N4")
     }
 }
 
