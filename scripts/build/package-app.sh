@@ -4,9 +4,9 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 DIST_DIR="$REPO_ROOT/dist"
-APP_NAME="SnapTra Translator"
-BUNDLE_ID="com.yelog.snaptra-translator"
-SCHEME="${SCHEME:-SnapTra Translator Direct}"
+APP_NAME="KakuTra"
+BUNDLE_ID="com.tristanmonticelli.KakuTra"
+SCHEME="${SCHEME:-KakuTra Direct}"
 PROJECT="$REPO_ROOT/SnapTra Translator.xcodeproj"
 
 source "$SCRIPT_DIR/sparkle-release-utils.sh"
@@ -55,19 +55,10 @@ SPARKLE_PUBLIC_KEY=$(/usr/libexec/PlistBuddy -c "Print :SUPublicEDKey" "$APP_PAT
 INSTALLER_LAUNCHER_ENABLED=$(/usr/libexec/PlistBuddy -c "Print :SUEnableInstallerLauncherService" "$APP_PATH/Contents/Info.plist" 2>/dev/null || true)
 DISTRIBUTION_CHANNEL_VALUE=$(/usr/libexec/PlistBuddy -c "Print :DISTRIBUTION_CHANNEL" "$APP_PATH/Contents/Info.plist" 2>/dev/null || true)
 
-if [ -z "$SPARKLE_PUBLIC_KEY" ]; then
-    echo "ERROR: SUPublicEDKey is missing from $APP_PATH/Contents/Info.plist"
-    exit 1
-fi
-
-if [ "$INSTALLER_LAUNCHER_ENABLED" != "true" ]; then
-    echo "ERROR: SUEnableInstallerLauncherService must be true for sandboxed direct builds"
-    exit 1
-fi
-
-if [ "$DISTRIBUTION_CHANNEL_VALUE" != "github" ]; then
-    echo "ERROR: DISTRIBUTION_CHANNEL must be 'github' for direct builds"
-    exit 1
+if [ -n "$SPARKLE_PUBLIC_KEY" ]; then
+    echo "==> Sparkle public key present: $SPARKLE_PUBLIC_KEY"
+else
+    echo "==> Sparkle auto-update disabled for local KakuTra distribution (no public key set)"
 fi
 
 # Step 5: Code sign the .app bundle (CI only, must happen BEFORE creating DMG)
@@ -79,7 +70,7 @@ else
 fi
 
 # Step 6: Package as .dmg (from the signed .app)
-DMG_NAME="SnapTra-Translator-${VERSION}.dmg"
+DMG_NAME="KakuTra-${VERSION}.dmg"
 DMG_PATH="$DIST_DIR/$DMG_NAME"
 DMG_STAGING="$DIST_DIR/.dmg-staging"
 

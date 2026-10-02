@@ -1,93 +1,70 @@
-# SnapTra Translator
+# KakuTra
 
-[English](README.md) | [简体中文](README.zh-CN.md) | [日本語](README.ja.md) | [한국어](README.ko.md)
-
-A lightweight macOS menu bar app that instantly translates words under your cursor via screen capture and OCR. Press a hotkey, hover over any text, and get a beautiful floating bubble with translation, phonetics, dictionary definitions, and optional pronunciation.
-
-## Preview
-
-<p>
-  <img src="docs/Xnip2026-01-19_10-55-57.png" alt="Settings" width="64%" />
+<p align="center">
+  <img src="docs/app-icon.png" alt="KakuTra Icon" width="128" height="128" />
 </p>
 
-## Screenshots
-
-<p>
-  <img src="docs/Xnip2026-01-19_00-02-09.png" alt="Translation Bubble" width="49%" />
-  <img src="docs/Xnip2026-01-19_00-06-14.png" alt="Dictionary Definitions" width="49%" />
+<p align="center">
+  <strong>Assistant macOS d’immersion et d’apprentissage du japonais</strong><br>
+  <em>OCR & Accessibilité en lecture seule · Dictionnaires Yomitan locaux · Création volontaire de cartes Anki</em>
 </p>
 
-## Features
+<p align="center">
+  <img src="docs/kakutra-hero.jpg" alt="Aperçu KakuTra" width="85%" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.3);" />
+</p>
 
-### Core Translation
-- **Instant OCR translation** - Captures screen region around cursor and detects the word closest to your pointer
-- **Floating bubble overlay** - Modern translucent bubble appears near cursor with translation results
-- **Dictionary definitions** - Shows detailed word definitions grouped by part of speech (noun, verb, adjective, etc.)
-- **Phonetic notation** - Displays phonetic transcription for recognized words
-- **Text-to-speech** - Optional pronunciation playback after translation
+---
 
-### Translation Modes
-- **Continuous translation** - Keep translating as you move the mouse while holding the hotkey
-- **Single lookup mode** - One translation per hotkey press with interactive bubble (copy, close buttons)
-- **Tap-to-keep bubble** - Optionally release the hotkey after a word or selected-text lookup and move the mouse to dismiss
+## Philosophie et principes clés
 
-### Supported Languages
-Chinese (Simplified), Chinese (Traditional), English, Japanese, Korean, French, German, Spanish, Italian, Portuguese, Russian, Arabic, Thai, Vietnamese
+KakuTra est conçu pour les apprenants du japonais sur macOS qui souhaitent lire confortablement (mangas, romans, articles, sous-titres) et enrichir leur vocabulaire de manière fluide et sécurisée.
 
-### Customization
-- **Single-key hotkey** - Configure trigger key from modifier keys (Shift, Control, Option, Command, Fn)
-- **Source/target language selection** - Choose your translation language pair
-- **Launch at login** - Auto-start when you log in
-- **Debug OCR region** - Visualize capture area and detected word bounding boxes for troubleshooting
+1. **Zéro accès au presse-papiers** : KakuTra ne lit, n'écrit et ne simule jamais `Cmd+C` sur le presse-papiers système.
+2. **100% Local et privé** : Les requêtes Yomitan (`127.0.0.1:19633`) et AnkiConnect (`127.0.0.1:8765`) s'exécutent en boucle locale fermée. Aucune capture d'écran, titre de fenêtre ou texte n'est envoyé sur internet.
+3. **Écoute au survol avec pause explicite** : Examinez le texte sous le curseur sans maintenir obligatoirement un raccourci. Suspendez ou reprenez l'écoute en un clic depuis la barre des menus.
+4. **Intégration Yomitan** : Exploite directement vos dictionnaires japonais déjà installés dans Yomitan (Jitendex, Daijirin, Kenkyusha, etc.), avec affichage distinct des sources et filtrage par langue de glossaire.
+5. **Cartes Anki volontaires et protection contre les doublons** :
+   - Prévisualisation complète avant ajout (terme, lecture, définition éditable, phrase de contexte extraite).
+   - Prise en charge du texte vertical (*tategaki*) et horizontal.
+   - Vérification préalable des doublons via `canAddNotes` : KakuTra n'écrase jamais silencieusement vos cartes.
+   - Création directe d'une note unique via `addNote`.
 
-### Additional Features
-- **Copy to clipboard** - Quick copy word or translation
-- **Learning export** - Save looked-up words as TXT, Anki TSV, or CSV
-- **Language pack detection** - Automatically checks and prompts for missing language packs
-- **Menu bar app** - Runs quietly in the menu bar without cluttering your dock
+---
 
-## Download
+## Installation et démarrage rapide
 
-Available on the [Mac App Store](https://apps.apple.com/cn/app/snaptra-translator/id6757981764)
+### Est-ce que l'installation est automatisée ?
+**Oui !** 
+- **Pour l'utilisateur final** : Téléchargez simplement `KakuTra.app` et glissez-la dans `/Applications`. Dès le lancement, KakuTra détecte automatiquement si Yomitan et Anki tournent sur votre machine.
+- **Si vous compilez depuis les sources** : Un script en une ligne compile l'application, configure le bundle et installe `KakuTra.app` directement.
 
-## Requirements
-
-- macOS 14+ (translation features require macOS 15 for system Translation APIs)
-- Screen Recording permission (required for OCR capture)
-
-## Build & Run
-
-Open in Xcode:
 ```bash
-open "SnapTra Translator.xcodeproj"
+# Compiler et installer KakuTra.app en une seule commande :
+./scripts/build_app.sh
 ```
 
-Build from command line:
-```bash
-# Debug build
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+---
 
-# Release build
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Release build
+## Prérequis
 
-# Clean
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" clean
-```
+1. **macOS 14.0 ou supérieur** (Apple Silicon ou Intel).
+2. **Autorisation Enregistrement d'écran** (obligatoire sur macOS pour permettre à Vision OCR de lire les caractères sous le pointeur).
+3. **Yomitan** (extension navigateur avec l'API locale activée sur le port `19633`).
+4. **Anki** avec le greffon [AnkiConnect](https://foosoft.net/projects/anki-connect/) installé (port par défaut `8765`).
 
-## Usage
+---
 
-1. **Grant permissions** - Launch the app and grant Screen Recording permission when prompted
-2. **Configure settings** - Set your preferred hotkey and language pair in the settings window
-3. **Translate** - Hold the hotkey and hover over any text; a bubble appears with translation, phonetics, and definitions
-4. **Dismiss** - Release the hotkey to dismiss, or enable tap-to-keep and move the mouse to close the bubble
+## Configuration
 
-## Troubleshooting
+Ouvrez les réglages depuis l'icône de la barre des menus :
+- **Général** : Langue de l'interface, lancement à l'ouverture de session.
+- **Services** : État de connexion à Yomitan, attribution d'une langue à chaque dictionnaire détecté.
+- **Anki** : Choix du paquet (*Deck*), du type de note (*Note type*), et association des champs (Terme, Lecture, Définition, Contexte, Source, Tags).
+- **Apprentissage** : Historique local hors ligne stocké dans SwiftData, avec possibilité d'export au format fichier TXT, TSV ou CSV.
 
-- **No bubble appears** - Check Screen Recording permission in System Settings > Privacy & Security > Screen Recording
-- **Missing translations on macOS 15** - Install language packs in System Settings > General > Language & Region > Translation Languages
-- **Hotkey not working** - Ensure no other app is using the same key; try a different modifier key
-- **Bubble clipped at screen edge** - Enable "Debug OCR Region" to see the capture area and adjust cursor position
+---
 
-## License
+## Licence
 
-MIT License
+Projet open-source distribué sous licence MIT.
+Voir le [plan maître du projet](file:///Users/yuuzaa/Developer/KakuTra/docs/PLAN-MAITRE-KAKUTRA.md) pour les détails d'audit et la documentation d'architecture.
