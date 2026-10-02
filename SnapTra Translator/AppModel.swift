@@ -1671,7 +1671,9 @@ final class AppModel: ObservableObject {
         let trimmedWord = word.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedWord.isEmpty else { return }
 
-        if Self.containsJapaneseText(trimmedWord) {
+        let classification = LanguageClassificationService.classify(trimmedWord, context: contextSentence)
+
+        if classification.isJapanese {
             await performYomitanWordLookup(
                 trimmedWord,
                 lookupID: lookupID,
@@ -1805,14 +1807,7 @@ final class AppModel: ObservableObject {
     }
 
     private nonisolated static func containsJapaneseText(_ text: String) -> Bool {
-        text.unicodeScalars.contains { scalar in
-            let value = scalar.value
-            return (0x3040...0x30FF).contains(value)
-                || (0x3400...0x4DBF).contains(value)
-                || (0x4E00...0x9FFF).contains(value)
-                || (0x20000...0x323AF).contains(value)
-                || (0xF900...0xFAFF).contains(value)
-        }
+        LanguageClassificationService.classify(text).isJapanese
     }
 
     private func resolveSinglePressLookupIntent(
