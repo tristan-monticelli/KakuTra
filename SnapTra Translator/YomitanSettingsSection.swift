@@ -37,8 +37,25 @@ struct YomitanSettingsSection: View {
                     .disabled(isChecking)
                 }
 
-                Link(L("Yomitan API setup guide"), destination: URL(string: "https://github.com/yomidevs/yomitan-api")!)
-                    .font(.system(size: 11, weight: .medium))
+                if case .notConnected = model.yomitanConnectionState {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(L("Comment activer la connexion locale Yomitan :"))
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(.primary)
+                        Text(L("1. Ouvrez votre navigateur (Chrome / Brave / Firefox) où Yomitan est installé."))
+                            .font(.system(size: 11))
+                            .foregroundStyle(.secondary)
+                        Text(L("2. Ouvrez les Paramètres de Yomitan et activez « Options avancées »."))
+                            .font(.system(size: 11))
+                            .foregroundStyle(.secondary)
+                        Text(L("3. Dans Général, activez « Activer l'API Yomitan » (Port local 19633)."))
+                            .font(.system(size: 11))
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(10)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.orange.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
+                }
 
                 if dictionaryNames.isEmpty {
                     Text(L("No dictionary detected yet. Look up a Japanese word to discover your sources."))

@@ -730,49 +730,21 @@ final class SettingsStore: ObservableObject {
     }
 
     static func defaultDictionarySources(ecdictInstalled: Bool) -> [DictionarySource] {
-        defaultDictionarySourceDefinitions(ecdictInstalled: ecdictInstalled).map { definition in
-            makeDictionarySource(type: definition.type, isEnabled: definition.isEnabled)
-        }
+        [makeDictionarySource(type: .system, isEnabled: true)]
     }
 
     static func migrateDictionarySources(_ sources: [DictionarySource]) -> [DictionarySource] {
-        // Closed circuit: filter out external web dictionary APIs (youdao, google, freeDictionaryAPI)
-        var migrated = sources
-            .filter { $0.type == .system || $0.type == .ecdict }
-            .map {
-                DictionarySource(
-                    id: $0.id,
-                    name: $0.type.displayName,
-                    type: $0.type,
-                    isEnabled: $0.isEnabled
-                )
-            }
-
-        let existingTypes = Set(migrated.map(\.type))
-        for definition in defaultDictionarySourceDefinitions(ecdictInstalled: isECDICTInstalled)
-            where !existingTypes.contains(definition.type) {
-            migrated.append(
-                makeDictionarySource(
-                    type: definition.type,
-                    isEnabled: definition.isEnabled
-                )
-            )
-        }
-
-        return migrated
+        [makeDictionarySource(type: .system, isEnabled: true)]
     }
 
     private static func defaultDictionarySources() -> [DictionarySource] {
-        defaultDictionarySources(ecdictInstalled: isECDICTInstalled)
+        [makeDictionarySource(type: .system, isEnabled: true)]
     }
 
     private static func defaultDictionarySourceDefinitions(
         ecdictInstalled: Bool
     ) -> [(type: DictionarySource.SourceType, isEnabled: Bool)] {
-        [
-            (.system, true),
-            (.ecdict, ecdictInstalled),
-        ]
+        [(.system, true)]
     }
 
     static func loadSentenceTranslationSettings(

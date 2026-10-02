@@ -422,32 +422,28 @@ struct DictionarySettingsView: View {
             Divider()
                 .padding(.horizontal)
 
-            VStack(alignment: .leading, spacing: 4) {
-                Text(L("General Dictionaries (Non-Japanese)"))
-                    .font(.headline)
-                Text(L("Drag the handle to reorder lookup priority. The first enabled dictionary will be queried first."))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            .padding(.horizontal)
+            SettingsSectionCard(title: L("Dictionnaire Système macOS"), icon: "book.closed") {
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(alignment: .center, spacing: 8) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                            .font(.system(size: 15))
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(L("Dictionnaire natif actif"))
+                                .font(.system(size: 13, weight: .medium))
+                            Text(L("Utilisé pour le français, l'anglais, et en secours instantané si Yomitan est hors ligne."))
+                                .font(.system(size: 11))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
 
-            ReorderableVStack(items: $sources, content: { source, index in
-                IntegratedDictionaryRow(
-                    source: source,
-                    downloadState: downloadState(for: source.wrappedValue.type),
-                    sourceLanguage: model.settings.sourceLanguage,
-                    targetLanguage: model.settings.targetLanguage,
-                    onToggle: { updateSources() },
-                    onDownloadComplete: { handleDownloadComplete(for: source.wrappedValue.type) },
-                    onDelete: {
-                        performDelete(for: source.wrappedValue.type)
-                        handleDelete(for: source.wrappedValue.type)
-                    },
-                    onDownload: { performDownload(for: source.wrappedValue.type) },
-                    onCancel: { performCancel(for: source.wrappedValue.type) },
-                    onRetry: { performRetry(for: source.wrappedValue.type) }
-                )
-            }, onMove: moveSource)
+                    Text(L("Les dictionnaires installés se configurent directement dans l'application Dictionnaire de macOS (Dictionnaire > Réglages)."))
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                        .padding(.top, 4)
+                }
+                .padding(14)
+            }
             .padding(.horizontal)
             .padding(.bottom)
         }
