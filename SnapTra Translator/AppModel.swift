@@ -473,6 +473,7 @@ final class AppModel: ObservableObject {
     @Published var overlayPreferredWidth: CGFloat? = nil
     @Published var isParagraphOverlayPinned: Bool = false
     @Published var isTapKeptOverlayPresented: Bool = false
+    @Published private(set) var isListening = false
     @Published private(set) var speechPlaybackState: SpeechPlaybackState = .idle
     @Published private(set) var activePronunciationRequest: OverlayPronunciationRequest?
 
@@ -655,6 +656,35 @@ final class AppModel: ObservableObject {
         startLookup(at: mouseLocation)
     }
 
+    func setListening(_ listening: Bool) {
+        guard isListening != listening else { return }
+        isListening = listening
+        if listening {
+            if #available(macOS 15.0, *) {
+                ensureTranslationService()
+            }
+            activeLookupMode = .word
+            isParagraphOverlayPinned = false
+            isTapKeptOverlayPresented = false
+            tapKeptOverlayReleaseLocation = nil
+            hideInPlaceTranslation()
+            lastOcrPosition = nil
+            let position = NSEvent.mouseLocation
+            setOverlayAnchor(position)
+            overlayWindowController.setInteractive(false)
+            startMouseTracking()
+            startLookup(at: position)
+        } else {
+            isHotkeyActive = false
+            hotkeyManager.resetState()
+            stopMouseTracking()
+            cancelActiveLookupWork()
+            hideOverlay()
+            debugOverlayWindowController.hide()
+            paragraphHighlightWindowController.hide()
+        }
+    }
+
     func handleHotkeyRelease() {
         finishHotkeyRelease(allowWordOverlayPersistence: false)
     }
@@ -676,6 +706,10 @@ final class AppModel: ObservableObject {
             debugOverlayWindowController.hide()
         }
         paragraphHighlightWindowController.hide()
+
+        if isListening {
+            return
+        }
 
         if shouldKeepSentenceOverlayVisible {
             stopMouseTracking()
@@ -805,6 +839,11 @@ final class AppModel: ObservableObject {
 
     /// 手动关闭气泡（用于非持续翻译模式）
     func dismissOverlay() {
+        if isListening {
+            cancelActiveLookupWork()
+            hideOverlay()
+            return
+        }
         activeLookupMode = .word
         isHotkeyActive = false
         isTapKeptOverlayPresented = false
@@ -970,17 +1009,17 @@ final class AppModel: ObservableObject {
             return
         }
 
-        guard isHotkeyActive else { return }
+        guard isHotkeyActive || isListening else { return }
         guard activeLookupMode == .word else { return }
 
         // 如果关闭了持续翻译，鼠标移动不触发翻译
-        guard settings.continuousTranslation else { return }
+        guard isListening || settings.continuousTranslation else { return }
 
         debounceWorkItem?.cancel()
 
         let workItem = DispatchWorkItem { [weak self] in
             Task { @MainActor in
-                guard let self = self, self.isHotkeyActive else { return }
+                guard let self = self, self.isHotkeyActive || self.isListening else { return }
 
                 let currentPosition = NSEvent.mouseLocation
 
@@ -2722,6 +2761,7 @@ final class AppModel: ObservableObject {
 
     func updateOverlay(state: OverlayState, anchor: CGPoint? = nil) {
         guard isHotkeyActive
+                || isListening
                 || isParagraphOverlayPresented
                 || isTapKeptOverlayPresented
                 || !settings.continuousTranslation else { return }
@@ -2941,6 +2981,7 @@ final class AppModel: ObservableObject {
     private func prepareForSystemSleep() {
         captureService.invalidateCache()
         isHotkeyActive = false
+        isListening = false
         hotkeyManager.resetState()
         stopMouseTracking()
         cancelActiveLookupWork()
@@ -2957,6 +2998,7 @@ final class AppModel: ObservableObject {
 
     private func recoverAfterSystemWake() {
         isHotkeyActive = false
+        isListening = false
         hotkeyManager.resetState()
         stopMouseTracking()
         cancelActiveLookupWork()

@@ -48,6 +48,18 @@ struct SettingsView: View {
                 ) {
                     VStack(spacing: 14) {
                         SettingsToggleRow(
+                            title: L("Listen at Cursor"),
+                            subtitle: L("Pause or resume live lookup as you move the pointer"),
+                            isOn: Binding(
+                                get: { model.isListening },
+                                set: { model.setListening($0) }
+                            )
+                        )
+
+                        Divider()
+                            .opacity(0.5)
+
+                        SettingsToggleRow(
                             title: L("Continuous translation"),
                             subtitle: L("Keep translating as mouse moves"),
                             isOn: $model.settings.continuousTranslation

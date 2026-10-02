@@ -468,6 +468,15 @@ struct GeneralSettingsView: View {
                         .opacity(0.5)
 
                     ToggleRow(
+                        title: L("Listen at Cursor"),
+                        subtitle: L("Pause or resume live lookup as you move the pointer"),
+                        isOn: Binding(
+                            get: { model.isListening },
+                            set: { model.setListening($0) }
+                        )
+                    )
+
+                    ToggleRow(
                         title: L("Continuous Translation"),
                         subtitle: L("Keep translating as mouse moves"),
                         isOn: $model.settings.continuousTranslation

@@ -92,7 +92,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
     private weak var pronunciationMenuItem: NSMenuItem?
     private weak var wordPronunciationMenuItem: NSMenuItem?
     private weak var sentencePronunciationMenuItem: NSMenuItem?
-    private weak var continuousTranslationMenuItem: NSMenuItem?
+    private weak var listeningMenuItem: NSMenuItem?
     private weak var providerInfoMenuItem: NSMenuItem?
     #if DEBUG
     private weak var debugShowChannelMenuItem: NSMenuItem?
@@ -142,9 +142,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
             }
             .store(in: &cancellables)
 
-        model.settings.$continuousTranslation
+        model.$isListening
             .sink { [weak self] _ in
-                self?.scheduleVisibilityUpdate()
+                Task { @MainActor in
+                    self?.updateDynamicMenuItems()
+                }
             }
             .store(in: &cancellables)
 
@@ -267,7 +269,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         if let button = item.button {
             button.image = makeStatusBarImage()
             button.imagePosition = .imageOnly
-            button.toolTip = "KakuTra"
+            button.toolTip = L(model.isListening ? "KakuTra · Listening" : "KakuTra · Paused")
         }
 
         let menu = createStatusBarMenu()
@@ -306,15 +308,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         menu.addItem(.separator())
         
         // Status section - toggle items with checkmarks
-        // Continuous translation toggle
-        let continuousItem = NSMenuItem(
-            title: L("Continuous Translation"),
-            action: #selector(toggleContinuousTranslation),
+        // Explicit live listening toggle; listening always starts paused on launch.
+        let listeningItem = NSMenuItem(
+            title: L(model.isListening ? "Pause Listening" : "Resume Listening"),
+            action: #selector(toggleListening),
             keyEquivalent: ""
         )
-        continuousItem.target = self
-        menu.addItem(continuousItem)
-        self.continuousTranslationMenuItem = continuousItem
+        listeningItem.target = self
+        menu.addItem(listeningItem)
+        self.listeningMenuItem = listeningItem
 
         // Pronunciation submenu
         let pronunciationSubmenu = NSMenu()
@@ -426,8 +428,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         wordPronunciationMenuItem?.state = model.settings.playWordPronunciation ? .on : .off
         sentencePronunciationMenuItem?.state = model.settings.playSentencePronunciation ? .on : .off
 
-        // Update continuous translation menu item state (checkmark)
-        continuousTranslationMenuItem?.state = model.settings.continuousTranslation ? .on : .off
+        listeningMenuItem?.title = L(model.isListening ? "Pause Listening" : "Resume Listening")
+        listeningMenuItem?.state = model.isListening ? .on : .off
+        statusItem?.button?.toolTip = L(model.isListening ? "KakuTra · Listening" : "KakuTra · Paused")
         
         // Update provider info item to show both Word and Sentence providers
         let wordProvider = model.settings.wordTTSProvider
@@ -479,8 +482,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         model.settings.playSentencePronunciation.toggle()
     }
 
-    @MainActor @objc private func toggleContinuousTranslation() {
-        model.settings.continuousTranslation.toggle()
+    @MainActor @objc private func toggleListening() {
+        model.setListening(!model.isListening)
     }
 
     @objc private func quitApp() {
