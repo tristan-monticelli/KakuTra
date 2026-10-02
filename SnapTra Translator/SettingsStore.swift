@@ -411,6 +411,9 @@ final class SettingsStore: ObservableObject {
             LocalizationManager.shared.setLanguage(appLanguage)
         }
     }
+    @Published var voiceGender: VoiceGenderPreference {
+        didSet { defaults.set(voiceGender.rawValue, forKey: AppSettingKey.voiceGender) }
+    }
     @Published var englishAccent: EnglishAccent {
         didSet { defaults.set(englishAccent.rawValue, forKey: AppSettingKey.englishAccent) }
     }
@@ -566,6 +569,10 @@ final class SettingsStore: ObservableObject {
         let appLanguageValue = defaults.string(forKey: AppSettingKey.appLanguage)
         appLanguage = AppLanguage(rawValue: appLanguageValue ?? "system") ?? .system
         
+        // Load voice gender preference
+        let voiceGenderValue = defaults.string(forKey: AppSettingKey.voiceGender)
+        voiceGender = VoiceGenderPreference(rawValue: voiceGenderValue ?? "female") ?? .female
+
         // Load English accent preference
         let englishAccentValue = defaults.string(forKey: AppSettingKey.englishAccent)
         englishAccent = EnglishAccent(rawValue: englishAccentValue ?? "en-US") ?? .american
@@ -634,6 +641,7 @@ final class SettingsStore: ObservableObject {
         defaults.set(wordTTSProvider.rawValue, forKey: AppSettingKey.wordTTSProvider)
         defaults.set(sentenceTTSProvider.rawValue, forKey: AppSettingKey.sentenceTTSProvider)
         defaults.set(appLanguage.rawValue, forKey: AppSettingKey.appLanguage)
+        defaults.set(voiceGender.rawValue, forKey: AppSettingKey.voiceGender)
         defaults.set(englishAccent.rawValue, forKey: AppSettingKey.englishAccent)
         defaults.set(ocrSentenceTranslationEnabled, forKey: AppSettingKey.ocrSentenceTranslationEnabled)
         defaults.set(

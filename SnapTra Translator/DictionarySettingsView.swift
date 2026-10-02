@@ -478,7 +478,38 @@ struct DictionarySettingsView: View {
             }
             .padding(.horizontal)
 
-            englishAccentSection(for: model.settings.wordTTSProvider)
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text(L("Voice Gender"))
+                        .font(.system(size: 13, weight: .medium))
+                    Spacer()
+                    Picker("", selection: Binding(
+                        get: { model.settings.voiceGender },
+                        set: { newValue in
+                            DispatchQueue.main.async {
+                                model.settings.voiceGender = newValue
+                            }
+                        }
+                    )) {
+                        ForEach(VoiceGenderPreference.allCases) { preference in
+                            Text(preference.displayName).tag(preference)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .frame(width: 240)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(Color(nsColor: .controlBackgroundColor))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .strokeBorder(.quaternary, lineWidth: 0.5)
+                )
+                .padding(.horizontal)
+            }
 
             HStack {
                 Spacer()

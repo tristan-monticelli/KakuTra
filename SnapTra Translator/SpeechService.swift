@@ -18,7 +18,7 @@ protocol TTSServiceFetching: AnyObject {
 @MainActor
 protocol SpeechAudioOutput: AnyObject {
     func stop()
-    func playApple(text: String, language: String?)
+    func playApple(text: String, language: String?, gender: VoiceGenderPreference)
     func playOnlineAudio(_ data: Data) throws -> Bool
 }
 
@@ -108,19 +108,42 @@ final class AVFoundationSpeechAudioOutput: NSObject, SpeechAudioOutput, SpeechAu
         lifecycleDidFail = didFail
     }
 
-    func playApple(text: String, language: String?) {
+    func playApple(text: String, language: String?, gender: VoiceGenderPreference = .female) {
         let utterance = AVSpeechUtterance(string: text)
         let resolvedLang: String = {
             if let language, !language.isEmpty { return language }
             return LanguageClassificationService.classify(text).bcp47Code
         }()
-        utterance.voice = AVSpeechSynthesisVoice(language: resolvedLang)
+        utterance.voice = Self.resolveAppleVoice(for: resolvedLang, gender: gender)
         utterance.rate = AVSpeechUtteranceDefaultSpeechRate
         if let handler = nextAppleDidStartHandler {
             appleDidStartHandlers[ObjectIdentifier(utterance)] = handler
         }
         nextAppleDidStartHandler = nil
         synthesizer.speak(utterance)
+    }
+
+    static func resolveAppleVoice(for languageCode: String, gender: VoiceGenderPreference) -> AVSpeechSynthesisVoice? {
+        let normalized = languageCode.replacingOccurrences(of: "_", with: "-").lowercased()
+        let baseLang = normalized.split(separator: "-").first.map(String.init) ?? normalized
+
+        let allVoices = AVSpeechSynthesisVoice.speechVoices()
+        let matchingVoices = allVoices.filter { voice in
+            let lang = voice.language.lowercased()
+            return lang == normalized || lang.starts(with: "\(baseLang)-") || lang == baseLang
+        }
+
+        if gender == .female {
+            if let v = matchingVoices.first(where: { $0.gender == .female }) {
+                return v
+            }
+        } else if gender == .male {
+            if let v = matchingVoices.first(where: { $0.gender == .male }) {
+                return v
+            }
+        }
+
+        return matchingVoices.first ?? AVSpeechSynthesisVoice(language: languageCode)
     }
 
     func playOnlineAudio(_ data: Data) throws -> Bool {
@@ -246,6 +269,7 @@ final class SpeechService: ObservableObject {
         _ text: String,
         language: String?,
         provider: TTSProvider = .apple,
+        gender: VoiceGenderPreference = .female,
         useAmericanAccent: Bool = true,
         performance: LookupPerformanceContext? = nil,
         requestID: UUID = UUID()
@@ -261,6 +285,7 @@ final class SpeechService: ObservableObject {
             submitAppleSpeech(
                 text,
                 language: language,
+                gender: gender,
                 generation: generation,
                 requestID: requestID,
                 performance: performance
@@ -337,6 +362,7 @@ final class SpeechService: ObservableObject {
     private func submitAppleSpeech(
         _ text: String,
         language: String?,
+        gender: VoiceGenderPreference = .female,
         generation: UInt64,
         requestID: UUID,
         performance: LookupPerformanceContext?
@@ -352,7 +378,7 @@ final class SpeechService: ObservableObject {
             }
         }
         configureLifecycleHandlers(generation: generation, requestID: requestID)
-        output.playApple(text: text, language: language)
+        output.playApple(text: text, language: language, gender: gender)
 
         if !(output is any SpeechAudioLifecycleObserving) {
             playbackState = .playing(requestID: requestID)

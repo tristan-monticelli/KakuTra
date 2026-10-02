@@ -1094,6 +1094,7 @@ final class AppModel: ObservableObject {
             request.text,
             language: request.languageIdentifier.flatMap { Locale.Language(identifier: $0).languageCode?.identifier },
             provider: provider,
+            gender: settings.voiceGender,
             useAmericanAccent: settings.englishAccent.isAmerican,
             requestID: request.id
         )
@@ -1759,6 +1760,7 @@ final class AppModel: ObservableObject {
                 word,
                 language: "ja",
                 provider: .apple,
+                gender: settings.voiceGender,
                 useAmericanAccent: settings.englishAccent.isAmerican,
                 performance: nil
             )
@@ -1811,6 +1813,7 @@ final class AppModel: ObservableObject {
                 word,
                 language: classification.bcp47Code,
                 provider: .apple,
+                gender: settings.voiceGender,
                 useAmericanAccent: settings.englishAccent.isAmerican,
                 performance: nil
             )

@@ -244,6 +244,26 @@ enum AppSettingKey {
     static let learningMaxRecords = "learningMaxRecords"
     static let learningCleanupDays = "learningCleanupDays"
     static let learningAutoCleanup = "learningAutoCleanup"
+    static let voiceGender = "voiceGender"
+}
+
+enum VoiceGenderPreference: String, CaseIterable, Identifiable {
+    case female = "female"
+    case male = "male"
+    case system = "system"
+    
+    var id: String { rawValue }
+    
+    var displayName: String {
+        switch self {
+        case .female:
+            return L("Féminin")
+        case .male:
+            return L("Masculin")
+        case .system:
+            return L("Système")
+        }
+    }
 }
 
 enum EnglishAccent: String, CaseIterable, Identifiable {
