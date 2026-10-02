@@ -1753,6 +1753,16 @@ final class AppModel: ObservableObject {
                 if $0.contextSentence == nil { $0.contextSentence = contextSentence }
             }
         }
+
+        if settings.playWordPronunciation {
+            speechService.speak(
+                word,
+                language: "ja",
+                provider: .apple,
+                useAmericanAccent: settings.englishAccent.isAmerican,
+                performance: nil
+            )
+        }
     }
 
     private func performGeneralWordLookup(
@@ -1796,9 +1806,10 @@ final class AppModel: ObservableObject {
         }
 
         if settings.playWordPronunciation {
+            let classification = LanguageClassificationService.classify(word, context: contextSentence)
             speechService.speak(
                 word,
-                language: nil,
+                language: classification.bcp47Code,
                 provider: .apple,
                 useAmericanAccent: settings.englishAccent.isAmerican,
                 performance: nil

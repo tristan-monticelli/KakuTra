@@ -73,10 +73,7 @@ final class OCRService {
                 request.automaticallyDetectsLanguage = true
 
                 let preferredLanguages = Self.preferredRecognitionLanguages(for: language)
-                if let supportedLanguages = try? VNRecognizeTextRequest.supportedRecognitionLanguages(
-                    for: request.recognitionLevel,
-                    revision: request.revision
-                ) {
+                if let supportedLanguages = try? request.supportedRecognitionLanguages() {
                     let supported = preferredLanguages.filter(supportedLanguages.contains)
                     if !supported.isEmpty {
                         request.recognitionLanguages = supported
@@ -146,7 +143,7 @@ final class OCRService {
         guard !identifier.isEmpty else { return ["en-US"] }
 
         let locale = Locale(identifier: identifier)
-        let languageCode = locale.languageCode
+        let languageCode = locale.language.languageCode?.identifier
         var result = [identifier]
 
         if let languageCode, languageCode != identifier {

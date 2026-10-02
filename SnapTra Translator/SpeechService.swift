@@ -110,9 +110,11 @@ final class AVFoundationSpeechAudioOutput: NSObject, SpeechAudioOutput, SpeechAu
 
     func playApple(text: String, language: String?) {
         let utterance = AVSpeechUtterance(string: text)
-        if let language {
-            utterance.voice = AVSpeechSynthesisVoice(language: language)
-        }
+        let resolvedLang: String = {
+            if let language, !language.isEmpty { return language }
+            return LanguageClassificationService.classify(text).bcp47Code
+        }()
+        utterance.voice = AVSpeechSynthesisVoice(language: resolvedLang)
         utterance.rate = AVSpeechUtteranceDefaultSpeechRate
         if let handler = nextAppleDidStartHandler {
             appleDidStartHandlers[ObjectIdentifier(utterance)] = handler
