@@ -499,7 +499,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
     }
 
     @MainActor
-    private func openSettings(initialTab: SettingsTab) {
+    func openSettings(initialTab: SettingsTab) {
         isManualWindowOpen = true
         NSApp.setActivationPolicy(.regular)
         if let window = settingsWindow, window.isVisible {

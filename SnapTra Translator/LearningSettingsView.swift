@@ -165,6 +165,9 @@ struct LearningSettingsView: View {
                 Text(L("Track words you've looked up and review them with spaced repetition."))
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                Text(L("Local learning history is stored offline in SwiftData and is separate from Anki flashcards."))
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
             }
 
             Spacer()
@@ -265,19 +268,19 @@ struct LearningSettingsView: View {
                 Button {
                     exportWords(format: .plainText)
                 } label: {
-                    Label(L("TXT"), systemImage: "doc.text")
+                    Label(L("TXT File (.txt)"), systemImage: "doc.text")
                 }
 
                 Button {
                     exportWords(format: .ankiTSV)
                 } label: {
-                    Label(L("Anki"), systemImage: "square.and.arrow.up")
+                    Label(L("TSV File for Anki Import (.tsv)"), systemImage: "doc.plaintext")
                 }
 
                 Button {
                     exportWords(format: .csv)
                 } label: {
-                    Label(L("CSV"), systemImage: "tablecells")
+                    Label(L("CSV File (.csv)"), systemImage: "tablecells")
                 }
             }
             .disabled(learningService.visibleRows.isEmpty)

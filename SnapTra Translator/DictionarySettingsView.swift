@@ -443,15 +443,21 @@ struct DictionarySettingsView: View {
     
     private var dictionarySection: some View {
         VStack(alignment: .leading, spacing: 16) {
+            YomitanSettingsSection()
+                .padding(.horizontal)
+                .padding(.top)
+
+            Divider()
+                .padding(.horizontal)
+
             VStack(alignment: .leading, spacing: 4) {
-                Text(L("Dictionary Priority"))
+                Text(L("General Dictionaries (Non-Japanese)"))
                     .font(.headline)
                 Text(L("Drag the handle to reorder lookup priority. The first enabled dictionary will be queried first."))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
             .padding(.horizontal)
-            .padding(.top)
 
             ReorderableVStack(items: $sources, content: { source, index in
                 IntegratedDictionaryRow(

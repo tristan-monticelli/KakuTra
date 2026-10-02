@@ -31,6 +31,7 @@ struct SettingsView: View {
                 }
 
                 YomitanSettingsSection()
+                AnkiSettingsSection()
 
                 // MARK: - Shortcuts
                 SettingsSectionCard(

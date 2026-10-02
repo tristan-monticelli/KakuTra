@@ -1233,6 +1233,11 @@ final class OverlayWindowController: NSWindowController {
         }
     }
 
+    func isMouseInside(point: CGPoint) -> Bool {
+        guard let window, window.isVisible else { return false }
+        return window.frame.contains(point)
+    }
+
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

@@ -14,6 +14,7 @@ struct OverlayContent: Equatable {
     var dictionarySections: [OverlayDictionarySection]
     var sourceLanguageIdentifier: String?
     var yomitanLookupState: YomitanLookupState
+    var contextSentence: String?
 
     init(
         word: String,
@@ -22,7 +23,8 @@ struct OverlayContent: Equatable {
         usesCompactPrimaryTranslationStyle: Bool,
         dictionarySections: [OverlayDictionarySection] = [],
         sourceLanguageIdentifier: String? = nil,
-        yomitanLookupState: YomitanLookupState = .notRequested
+        yomitanLookupState: YomitanLookupState = .notRequested,
+        contextSentence: String? = nil
     ) {
         self.word = word
         self.phonetic = phonetic
@@ -31,6 +33,7 @@ struct OverlayContent: Equatable {
         self.dictionarySections = dictionarySections
         self.sourceLanguageIdentifier = sourceLanguageIdentifier
         self.yomitanLookupState = yomitanLookupState
+        self.contextSentence = contextSentence
     }
 
     nonisolated var translation: String {
@@ -82,6 +85,27 @@ enum YomitanLookupState: Equatable {
     case noResults
     case results([YomitanTermResult])
     case failed(String)
+}
+
+struct AnkiCardConfirmationDraft: Identifiable, Equatable {
+    let id = UUID()
+    var term: String
+    var reading: String
+    var definition: String
+    var contextSentence: String
+    var sourceDictionary: String
+    var tags: String
+    var deckName: String
+    var modelName: String
+
+    var isCheckingDuplicate: Bool = false
+    var isDuplicate: Bool = false
+    var duplicateCheckError: String? = nil
+
+    var isAdding: Bool = false
+    var createdNoteID: Int64? = nil
+    var additionError: String? = nil
+    var configurationError: String? = nil
 }
 
 enum OverlayPronunciationKind: Equatable {
@@ -466,6 +490,7 @@ private struct OcrWordCandidate: Sendable {
     let text: String
     let captureRect: CGRect
     let wordBoxes: [CGRect]
+    let contextSentence: String?
 }
 
 private enum OcrWordCandidateLoadResult: Sendable {
@@ -493,6 +518,7 @@ final class AppModel: ObservableObject {
     @Published private(set) var ankiDeckNames: [String] = []
     @Published private(set) var ankiModelNames: [String] = []
     @Published private(set) var ankiModelFieldNames: [String] = []
+    @Published var ankiConfirmationDraft: AnkiCardConfirmationDraft? = nil
     @Published private(set) var activePronunciationRequest: OverlayPronunciationRequest?
 
     @Published var settings: SettingsStore
@@ -737,7 +763,141 @@ final class AppModel: ObservableObject {
         guard case .result(let content) = overlayState,
               case .notConnected = content.yomitanLookupState,
               let lookupID = activeLookupID else { return }
-        await performYomitanWordLookup(content.word, lookupID: lookupID, mouseLocation: overlayAnchor, recordsLookup: false)
+        await performYomitanWordLookup(content.word, lookupID: lookupID, mouseLocation: overlayAnchor, contextSentence: content.contextSentence, recordsLookup: false)
+    }
+
+    func prepareAnkiNote(for result: YomitanTermResult, contextSentence: String?) {
+        overlayWindowController.setInteractive(true)
+
+        var configError: String? = nil
+        if case .connected = ankiConnectionState {
+            if settings.ankiDeckName.isEmpty || !ankiDeckNames.contains(settings.ankiDeckName) {
+                configError = L("Choose a valid Anki deck in Settings.")
+            } else if settings.ankiModelName.isEmpty || !ankiModelNames.contains(settings.ankiModelName) {
+                configError = L("Choose a valid Anki note type in Settings.")
+            } else {
+                let termMapped = settings.ankiFieldMappings[AnkiFieldRole.term.rawValue]
+                let defMapped = settings.ankiFieldMappings[AnkiFieldRole.definition.rawValue]
+                if termMapped == nil || termMapped?.isEmpty == true || !ankiModelFieldNames.contains(termMapped!) {
+                    configError = L("Map the required Japanese term field in Settings.")
+                } else if defMapped == nil || defMapped?.isEmpty == true || !ankiModelFieldNames.contains(defMapped!) {
+                    configError = L("Map the required Definition field in Settings.")
+                }
+            }
+        } else {
+            configError = L("AnkiConnect is not connected. Open Anki and enable the AnkiConnect add-on.")
+        }
+
+        let glossesText = result.glosses.joined(separator: "\n")
+        let draft = AnkiCardConfirmationDraft(
+            term: result.term,
+            reading: result.reading ?? "",
+            definition: glossesText,
+            contextSentence: contextSentence ?? "",
+            sourceDictionary: result.dictionary,
+            tags: settings.ankiTags,
+            deckName: settings.ankiDeckName,
+            modelName: settings.ankiModelName,
+            isCheckingDuplicate: configError == nil,
+            isDuplicate: false,
+            configurationError: configError
+        )
+
+        ankiConfirmationDraft = draft
+
+        guard configError == nil else { return }
+
+        // Perform duplicate check
+        Task {
+            do {
+                let noteDraft = self.makeAnkiNoteDraft(from: draft)
+                let canAdd = try await ankiConnectClient.canAddNotes([noteDraft])
+                guard self.ankiConfirmationDraft?.id == draft.id else { return }
+                if let canAddFirst = canAdd.first, !canAddFirst {
+                    self.ankiConfirmationDraft?.isDuplicate = true
+                } else {
+                    self.ankiConfirmationDraft?.isDuplicate = false
+                }
+                self.ankiConfirmationDraft?.isCheckingDuplicate = false
+            } catch {
+                guard self.ankiConfirmationDraft?.id == draft.id else { return }
+                self.ankiConfirmationDraft?.duplicateCheckError = error.localizedDescription
+                self.ankiConfirmationDraft?.isCheckingDuplicate = false
+            }
+        }
+    }
+
+    private func makeAnkiNoteDraft(from draft: AnkiCardConfirmationDraft) -> AnkiNoteDraft {
+        var fields: [String: String] = [:]
+        for role in AnkiFieldRole.allCases {
+            guard let fieldName = settings.ankiFieldMappings[role.rawValue], !fieldName.isEmpty else {
+                continue
+            }
+            switch role {
+            case .term:
+                fields[fieldName] = draft.term
+            case .reading:
+                fields[fieldName] = draft.reading
+            case .definition:
+                fields[fieldName] = draft.definition
+            case .context:
+                fields[fieldName] = draft.contextSentence
+            case .source:
+                fields[fieldName] = draft.sourceDictionary
+            }
+        }
+        let tags = draft.tags
+            .split(separator: " ")
+            .map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+
+        return AnkiNoteDraft(
+            deckName: draft.deckName,
+            modelName: draft.modelName,
+            fields: fields,
+            tags: tags
+        )
+    }
+
+    func confirmAddAnkiNote() {
+        guard var draft = ankiConfirmationDraft,
+              !draft.isAdding,
+              !draft.isDuplicate,
+              draft.configurationError == nil else {
+            return
+        }
+
+        draft.isAdding = true
+        draft.additionError = nil
+        ankiConfirmationDraft = draft
+
+        let noteDraft = makeAnkiNoteDraft(from: draft)
+
+        Task {
+            do {
+                let noteID = try await ankiConnectClient.addNote(noteDraft)
+                guard self.ankiConfirmationDraft?.id == draft.id else { return }
+                self.ankiConfirmationDraft?.isAdding = false
+                self.ankiConfirmationDraft?.createdNoteID = noteID
+            } catch {
+                guard self.ankiConfirmationDraft?.id == draft.id else { return }
+                self.ankiConfirmationDraft?.isAdding = false
+                self.ankiConfirmationDraft?.additionError = error.localizedDescription
+            }
+        }
+    }
+
+    func dismissAnkiConfirmation() {
+        ankiConfirmationDraft = nil
+        overlayWindowController.setInteractive(false)
+    }
+
+    func openSettingsTab(_ tab: SettingsTab) {
+        if let appDelegate = NSApp.delegate as? AppDelegate {
+            appDelegate.openSettings(initialTab: tab)
+        } else {
+            NotificationCenter.default.post(name: .switchSettingsTab, object: tab)
+        }
     }
 
     func handleHotkeyTrigger() {
@@ -1110,6 +1270,12 @@ final class AppModel: ObservableObject {
     }
     
     private func handleMouseMoved() {
+        if ankiConfirmationDraft != nil {
+            return
+        }
+        if overlayWindowController.isMouseInside(point: NSEvent.mouseLocation) {
+            return
+        }
         if isTapKeptOverlayPresented {
             handleTapKeptOverlayMouseMoved()
             return
@@ -1126,8 +1292,10 @@ final class AppModel: ObservableObject {
         let workItem = DispatchWorkItem { [weak self] in
             Task { @MainActor in
                 guard let self = self, self.isHotkeyActive || self.isListening else { return }
+                guard self.ankiConfirmationDraft == nil else { return }
 
                 let currentPosition = NSEvent.mouseLocation
+                guard !self.overlayWindowController.isMouseInside(point: currentPosition) else { return }
 
                 if let lastPosition = self.lastOcrPosition {
                     let dx = abs(currentPosition.x - lastPosition.x)
@@ -1369,11 +1537,35 @@ final class AppModel: ObservableObject {
                     wordBoxes: wordBoxes
                 )
             }
+
+            let selectedBox = selected.boundingBox
+            let isVertical = selectedBox.height > selectedBox.width * 1.4
+            let lineWords: [RecognizedWord]
+            if isVertical {
+                let tolerance = max(selectedBox.width * 0.9, 0.02)
+                lineWords = words
+                    .filter { abs($0.boundingBox.midX - selectedBox.midX) <= tolerance }
+                    .sorted { $0.boundingBox.midY > $1.boundingBox.midY }
+            } else {
+                let tolerance = max(selectedBox.height * 0.9, 0.02)
+                lineWords = words
+                    .filter { abs($0.boundingBox.midY - selectedBox.midY) <= tolerance }
+                    .sorted { $0.boundingBox.minX < $1.boundingBox.minX }
+            }
+            let contextSentence: String?
+            if !lineWords.isEmpty {
+                let rawText = lineWords.map(\.text).joined(separator: Self.containsJapaneseText(selected.text) ? "" : " ")
+                contextSentence = rawText.trimmingCharacters(in: .whitespacesAndNewlines)
+            } else {
+                contextSentence = selected.text
+            }
+
             return .word(
                 OcrWordCandidate(
                     text: selected.text,
                     captureRect: capture.region.rect,
-                    wordBoxes: wordBoxes
+                    wordBoxes: wordBoxes,
+                    contextSentence: contextSentence
                 )
             )
         } catch is CancellationError {
@@ -1437,6 +1629,7 @@ final class AppModel: ObservableObject {
             }
             await performResolvedOcrWordLookup(
                 word: candidate.text,
+                contextSentence: candidate.contextSentence,
                 request: request
             )
 
@@ -1453,6 +1646,7 @@ final class AppModel: ObservableObject {
 
     private func performResolvedOcrWordLookup(
         word: String,
+        contextSentence: String? = nil,
         request: SinglePressLookupRequest
     ) async {
         let lookupID = request.lookupID
@@ -1462,7 +1656,12 @@ final class AppModel: ObservableObject {
         guard !Task.isCancelled, activeLookupID == lookupID else { return }
 
         if Self.containsJapaneseText(word) {
-            await performYomitanWordLookup(word, lookupID: lookupID, mouseLocation: mouseLocation)
+            await performYomitanWordLookup(
+                word,
+                lookupID: lookupID,
+                mouseLocation: mouseLocation,
+                contextSentence: contextSentence
+            )
             return
         }
 
@@ -1585,6 +1784,7 @@ final class AppModel: ObservableObject {
         _ word: String,
         lookupID: UUID,
         mouseLocation: CGPoint,
+        contextSentence: String? = nil,
         recordsLookup: Bool = true
     ) async {
         guard !Task.isCancelled, activeLookupID == lookupID else { return }
@@ -1594,7 +1794,8 @@ final class AppModel: ObservableObject {
             primaryTranslationState: .empty,
             usesCompactPrimaryTranslationStyle: false,
             sourceLanguageIdentifier: "ja",
-            yomitanLookupState: .loading
+            yomitanLookupState: .loading,
+            contextSentence: contextSentence
         )
         updateOverlay(state: .result(initialContent), anchor: mouseLocation)
         if recordsLookup {
@@ -1610,6 +1811,9 @@ final class AppModel: ObservableObject {
             yomitanConnectionState = .connected(YomitanStatus(serverVersion: 1, extensionVersion: nil))
             updateOverlayContent(for: lookupID, anchor: mouseLocation) { content in
                 content.yomitanLookupState = entries.isEmpty ? .noResults : .results(entries)
+                if content.contextSentence == nil {
+                    content.contextSentence = contextSentence
+                }
             }
             let definition = entries.flatMap(\.glosses).joined(separator: "; ")
             if !definition.isEmpty {
@@ -1622,9 +1826,15 @@ final class AppModel: ObservableObject {
             if let yomitanError = error as? YomitanClientError,
                case .unavailable = yomitanError {
                 yomitanConnectionState = .notConnected
-                updateOverlayContent(for: lookupID, anchor: mouseLocation) { $0.yomitanLookupState = .notConnected }
+                updateOverlayContent(for: lookupID, anchor: mouseLocation) {
+                    $0.yomitanLookupState = .notConnected
+                    if $0.contextSentence == nil { $0.contextSentence = contextSentence }
+                }
             } else {
-                updateOverlayContent(for: lookupID, anchor: mouseLocation) { $0.yomitanLookupState = .failed(error.localizedDescription) }
+                updateOverlayContent(for: lookupID, anchor: mouseLocation) {
+                    $0.yomitanLookupState = .failed(error.localizedDescription)
+                    if $0.contextSentence == nil { $0.contextSentence = contextSentence }
+                }
             }
         }
     }
@@ -3863,6 +4073,7 @@ final class AppModel: ObservableObject {
         if overlayState != .idle {
             overlayState = .idle
         }
+        ankiConfirmationDraft = nil
         activeParagraphRect = nil
         overlayPreferredWidth = nil
         paragraphHighlightWindowController.hide()

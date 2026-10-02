@@ -230,19 +230,206 @@ struct OverlayView: View {
 
     @ViewBuilder
     private func resultView(content: OverlayContent) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            // Header: Word + Phonetic
-            headerSection(content: content)
+        if let draft = model.ankiConfirmationDraft {
+            ankiConfirmationOverlay(draft: draft)
+        } else {
+            VStack(alignment: .leading, spacing: 0) {
+                // Header: Word + Phonetic
+                headerSection(content: content)
 
-            if content.yomitanLookupState != .notRequested {
-                yomitanResultsSection(state: content.yomitanLookupState)
-            } else {
-                primaryTranslationSection(content: content)
-                if !content.visibleDictionarySections.isEmpty {
-                    dictionarySectionsView(sections: content.visibleDictionarySections)
+                if content.yomitanLookupState != .notRequested {
+                    yomitanResultsSection(state: content.yomitanLookupState)
+                } else {
+                    primaryTranslationSection(content: content)
+                    if !content.visibleDictionarySections.isEmpty {
+                        dictionarySectionsView(sections: content.visibleDictionarySections)
+                    }
                 }
             }
         }
+    }
+
+    @ViewBuilder
+    private func ankiConfirmationOverlay(draft: AnkiCardConfirmationDraft) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Header
+            HStack(spacing: 8) {
+                Image(systemName: "rectangle.stack.badge.plus")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(Color.accentColor)
+                Text(L("Add to Anki"))
+                    .font(.system(size: 13, weight: .bold))
+                Spacer()
+                Button {
+                    model.dismissAnkiConfirmation()
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(.secondary)
+                        .font(.system(size: 15))
+                }
+                .buttonStyle(.plain)
+            }
+
+            if let configError = draft.configurationError {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(alignment: .top, spacing: 6) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundStyle(.orange)
+                        Text(configError)
+                            .font(.system(size: 11))
+                            .foregroundStyle(.primary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    Button(L("Open Anki Settings")) {
+                        model.openSettingsTab(.anki)
+                    }
+                    .controlSize(.small)
+                }
+                .padding(10)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color.orange.opacity(0.12), in: RoundedRectangle(cornerRadius: 8))
+            } else if let noteID = draft.createdNoteID {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                        Text(L("Note successfully created in Anki (ID: %lld)", noteID))
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundStyle(.primary)
+                    }
+                    Button(L("Done")) {
+                        model.dismissAnkiConfirmation()
+                    }
+                    .controlSize(.small)
+                }
+                .padding(10)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color.green.opacity(0.12), in: RoundedRectangle(cornerRadius: 8))
+            } else {
+                if draft.isCheckingDuplicate {
+                    HStack(spacing: 6) {
+                        ProgressView().controlSize(.small)
+                        Text(L("Checking for duplicate notes in Anki…"))
+                            .font(.system(size: 11))
+                            .foregroundStyle(.secondary)
+                    }
+                } else if draft.isDuplicate {
+                    HStack(alignment: .top, spacing: 6) {
+                        Image(systemName: "exclamationmark.circle.fill")
+                            .foregroundStyle(.orange)
+                        Text(L("This note already exists in deck '%@'. KakuTra never overwrites notes silently.", draft.deckName))
+                            .font(.system(size: 11))
+                            .foregroundStyle(.orange)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .padding(8)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.orange.opacity(0.12), in: RoundedRectangle(cornerRadius: 8))
+                } else if let dupError = draft.duplicateCheckError {
+                    Text(L("Duplicate check warning: %@", dupError))
+                        .font(.system(size: 10))
+                        .foregroundStyle(.secondary)
+                }
+
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        Text(draft.term)
+                            .font(.system(size: 17, weight: .bold, design: .rounded))
+                        if !draft.reading.isEmpty && draft.reading != draft.term {
+                            Text(draft.reading)
+                                .font(.system(size: 13, weight: .medium))
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Text(draft.sourceDictionary)
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundStyle(Color.accentColor)
+                    }
+
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(L("Definition"))
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundStyle(.secondary)
+                        TextEditor(text: Binding(
+                            get: { model.ankiConfirmationDraft?.definition ?? "" },
+                            set: { model.ankiConfirmationDraft?.definition = $0 }
+                        ))
+                        .font(.system(size: 11))
+                        .frame(minHeight: 44, maxHeight: 70)
+                        .padding(4)
+                        .background(Color.primary.opacity(0.04), in: RoundedRectangle(cornerRadius: 6))
+                    }
+
+                    if !draft.contextSentence.isEmpty {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(L("Context Sentence"))
+                                .font(.system(size: 10, weight: .semibold))
+                                .foregroundStyle(.secondary)
+                            TextEditor(text: Binding(
+                                get: { model.ankiConfirmationDraft?.contextSentence ?? "" },
+                                set: { model.ankiConfirmationDraft?.contextSentence = $0 }
+                            ))
+                            .font(.system(size: 11))
+                            .frame(minHeight: 36, maxHeight: 60)
+                            .padding(4)
+                            .background(Color.primary.opacity(0.04), in: RoundedRectangle(cornerRadius: 6))
+                        }
+                    }
+
+                    HStack(spacing: 8) {
+                        Label(draft.deckName, systemImage: "folder")
+                        Label(draft.modelName, systemImage: "doc")
+                    }
+                    .font(.system(size: 10))
+                    .foregroundStyle(.secondary)
+
+                    HStack(spacing: 6) {
+                        Text(L("Tags:"))
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundStyle(.secondary)
+                        TextField("kakutra", text: Binding(
+                            get: { model.ankiConfirmationDraft?.tags ?? "" },
+                            set: { model.ankiConfirmationDraft?.tags = $0 }
+                        ))
+                        .font(.system(size: 10))
+                        .textFieldStyle(.roundedBorder)
+                        .controlSize(.mini)
+                    }
+
+                    if let addError = draft.additionError {
+                        Text(addError)
+                            .font(.system(size: 10))
+                            .foregroundStyle(.red)
+                    }
+                }
+
+                HStack {
+                    Button(L("Cancel")) {
+                        model.dismissAnkiConfirmation()
+                    }
+                    .controlSize(.small)
+
+                    Spacer()
+
+                    Button {
+                        model.confirmAddAnkiNote()
+                    } label: {
+                        HStack(spacing: 4) {
+                            if draft.isAdding {
+                                ProgressView().controlSize(.small)
+                            } else {
+                                Image(systemName: "plus.circle.fill")
+                            }
+                            Text(L("Add Note"))
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.small)
+                    .disabled(draft.isAdding || draft.isCheckingDuplicate || draft.isDuplicate || draft.term.isEmpty || draft.definition.isEmpty)
+                }
+            }
+        }
+        .padding(14)
     }
 
     @ViewBuilder
@@ -364,6 +551,22 @@ struct OverlayView: View {
                         .foregroundStyle(.secondary)
                 }
                 Spacer(minLength: 0)
+
+                Button {
+                    if case .result(let content) = model.overlayState {
+                        model.prepareAnkiNote(for: result, contextSentence: content.contextSentence)
+                    }
+                } label: {
+                    HStack(spacing: 3) {
+                        Image(systemName: "rectangle.stack.badge.plus")
+                        Text(L("Add to Anki"))
+                    }
+                    .font(.system(size: 10, weight: .medium))
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 3)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.mini)
             }
             HStack(spacing: 5) {
                 Text(result.dictionary)
