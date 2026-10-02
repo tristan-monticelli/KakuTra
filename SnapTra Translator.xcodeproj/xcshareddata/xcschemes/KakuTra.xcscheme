@@ -15,9 +15,23 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E1D555555555555555555555"
-               BuildableName = "SnapTra Translator.app"
-               BlueprintName = "SnapTra Translator Direct"
+               BlueprintIdentifier = "D3F4D8FD2F14D1A2004035A9"
+               BuildableName = "KakuTra.app"
+               BlueprintName = "KakuTra"
+               ReferencedContainer = "container:SnapTra Translator.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "FED1CBA877953D929370FCE6"
+               BuildableName = "KakuTraTests.xctest"
+               BlueprintName = "KakuTraTests"
                ReferencedContainer = "container:SnapTra Translator.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -29,6 +43,16 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "FED1CBA877953D929370FCE6"
+               BuildableName = "KakuTraTests.xctest"
+               BlueprintName = "KakuTraTests"
+               ReferencedContainer = "container:SnapTra Translator.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -45,9 +69,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E1D555555555555555555555"
-            BuildableName = "SnapTra Translator.app"
-            BlueprintName = "SnapTra Translator Direct"
+            BlueprintIdentifier = "D3F4D8FD2F14D1A2004035A9"
+            BuildableName = "KakuTra.app"
+            BlueprintName = "KakuTra"
             ReferencedContainer = "container:SnapTra Translator.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -62,9 +86,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E1D555555555555555555555"
-            BuildableName = "SnapTra Translator.app"
-            BlueprintName = "SnapTra Translator Direct"
+            BlueprintIdentifier = "D3F4D8FD2F14D1A2004035A9"
+            BuildableName = "KakuTra.app"
+            BlueprintName = "KakuTra"
             ReferencedContainer = "container:SnapTra Translator.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

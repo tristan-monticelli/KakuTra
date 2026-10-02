@@ -2,14 +2,14 @@ import Foundation
 import SQLite3
 
 /// Queries an offline ECDICT SQLite database for English word definitions.
-/// Database location: ~/Library/Application Support/SnapTra Translator/Dictionaries/stardict.db
+/// Database location: ~/Library/Application Support/KakuTra/Dictionaries/stardict.db
 final class OfflineDictionaryService {
 
     static let databaseFilename = "stardict.db"
 
     static var databaseDirectory: URL {
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        return appSupport.appendingPathComponent("SnapTra Translator/Dictionaries")
+        return appSupport.appendingPathComponent("KakuTra/Dictionaries")
     }
 
     static var databaseURL: URL {

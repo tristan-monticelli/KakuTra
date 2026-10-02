@@ -4,7 +4,7 @@ import os.log
 final class MemoryMonitor {
     static let shared = MemoryMonitor()
 
-    private let logger = Logger(subsystem: "com.yelog.SnapTra-Translator", category: "MemoryMonitor")
+    private let logger = Logger(subsystem: "com.tristanmonticelli.KakuTra", category: "MemoryMonitor")
     private var source: DispatchSourceMemoryPressure?
 
     private init() {}

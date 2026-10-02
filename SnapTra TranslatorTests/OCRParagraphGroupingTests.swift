@@ -1,5 +1,5 @@
 import XCTest
-@testable import SnapTra_Translator
+@testable import KakuTra
 
 final class OCRParagraphGroupingTests: XCTestCase {
     func testTokenTextsExtractsEnglishAndChineseTokensForChineseSourceLanguage() {

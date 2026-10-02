@@ -7,13 +7,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Building
 ```bash
 # Debug build
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "KakuTra" -configuration Debug build
 
 # Release build
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Release build
+xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "KakuTra" -configuration Release build
 
 # Clean
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" clean
+xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "KakuTra" clean
 ```
 
 ### Running
@@ -24,12 +24,15 @@ open "SnapTra Translator.xcodeproj"
 Then run the "SnapTra Translator" scheme (⌘R).
 
 ### Testing
-No test target currently exists in this project.
+Run the `KakuTraTests` target through the shared `KakuTra` scheme:
+```bash
+xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "KakuTra" test
+```
 
 ## Project Architecture
 
 ### App Structure
-**SnapTra Translator** is a macOS menu bar app (accessory app) that provides instant translation via OCR. The app runs as a status item (menu bar icon) and shows windows only when needed.
+**KakuTra** is a macOS menu bar app (accessory app) that provides instant translation via OCR. The app runs as a status item (menu bar icon) and shows windows only when needed.
 
 ### Core Flow
 1. User presses configured hotkey (modifier key like Shift, Control, Option, Command, or Fn)
@@ -122,7 +125,7 @@ On macOS 15+, `warmupServices()` performs a dummy translation at launch ("hello"
 
 #### Offline Dictionary (ECDICT)
 `OfflineDictionaryService`: SQLite-based lookup against ECDICT database (~3.4M entries).
-- Database path: `~/Library/Application Support/SnapTra Translator/Dictionaries/stardict.db`
+- Database path: `~/Library/Application Support/KakuTra/Dictionaries/stardict.db`
 - Uses `SQLite3` framework (system, no external deps)
 - `DictionaryService` tries offline lookup first, falls back to system `DCSCopyTextDefinition`
 - Includes basic inflection stemming: -ing/-ed/-s/-ies variants tried in sequence

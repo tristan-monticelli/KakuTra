@@ -1,6 +1,6 @@
 //
 //  AboutSettingsView.swift
-//  SnapTra Translator
+//  KakuTra
 //
 //  About tab for the settings window.
 //
@@ -12,12 +12,6 @@ import SwiftUI
 private func appVersionString() -> String {
     let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0"
     return "v\(version)"
-}
-
-private func openAppStore() {
-    if let url = URL(string: "https://apps.apple.com/cn/app/snaptra-translator/id6757981764") {
-        NSWorkspace.shared.open(url)
-    }
 }
 
 // MARK: - About Settings Tab
@@ -50,34 +44,13 @@ struct AboutSettingsView: View {
                 AppIdentityHeader()
                     .padding(.top, 4)
 
-                // GitHub Star CTA
-                GitHubStarCard()
-
-                // Links Card
+                // Project link
                 VStack(spacing: 0) {
-                    AboutLinkRow(
-                        icon: "globe",
-                        iconColor: .blue,
-                        title: L("Website"),
-                        url: URL(string: "https://snaptra.yelog.org/")!
-                    )
-                    Divider()
-                        .padding(.horizontal, 14)
-                        .opacity(0.5)
                     AboutLinkRow(
                         icon: "chevron.left.forwardslash.chevron.right",
                         iconColor: .primary,
                         title: "GitHub",
-                        url: URL(string: "https://github.com/yelog/SnapTraTranslator")!
-                    )
-                    Divider()
-                        .padding(.horizontal, 14)
-                        .opacity(0.5)
-                    AboutLinkRow(
-                        icon: "at",
-                        iconColor: .cyan,
-                        title: "Twitter / X",
-                        url: URL(string: "https://x.com/yelogeek")!
+                        url: URL(string: "https://github.com/tristan-monticelli/KakuTra")!
                     )
                 }
                 .background(
@@ -125,11 +98,6 @@ struct AboutSettingsView: View {
                 .controlSize(.regular)
                 .disabled(updateChecker.isCheckingForUpdates)
 
-                // Copyright
-                Text("© 2025 yelog. All rights reserved.")
-                    .font(.system(size: 10))
-                    .foregroundStyle(.quaternary)
-                    .padding(.bottom, 4)
             }
             .padding()
             .background(
@@ -153,25 +121,11 @@ struct AboutView: View {
         VStack(spacing: 16) {
             AppIdentityHeader()
 
-            GitHubStarCard()
-
-            HStack(spacing: 12) {
-                LinkButton(
-                    icon: "globe",
-                    title: L("Website"),
-                    url: URL(string: "https://snaptra.yelog.org/")!
-                )
-                LinkButton(
-                    icon: "chevron.left.forwardslash.chevron.right",
-                    title: "GitHub",
-                    url: URL(string: "https://github.com/yelog/SnapTraTranslator")!
-                )
-                LinkButton(
-                    icon: "at",
-                    title: "Twitter / X",
-                    url: URL(string: "https://x.com/yelogeek")!
-                )
-            }
+            LinkButton(
+                icon: "chevron.left.forwardslash.chevron.right",
+                title: "GitHub",
+                url: URL(string: "https://github.com/tristan-monticelli/KakuTra")!
+            )
 
             Spacer()
         }
@@ -191,7 +145,7 @@ struct AppIdentityHeader: View {
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 .shadow(color: .black.opacity(0.12), radius: 10, x: 0, y: 4)
 
-            Text("SnapTra Translator")
+            Text("KakuTra")
                 .font(.system(size: 20, weight: .bold, design: .rounded))
 
             Text(appVersionString())
@@ -204,46 +158,6 @@ struct AppIdentityHeader: View {
                 .foregroundStyle(.tertiary)
                 .padding(.horizontal, 20)
         }
-    }
-}
-
-struct GitHubStarCard: View {
-    var body: some View {
-        Button {
-            if let url = URL(string: "https://github.com/yelog/SnapTraTranslator") {
-                NSWorkspace.shared.open(url)
-            }
-        } label: {
-            VStack(spacing: 8) {
-                HStack(spacing: 6) {
-                    Image(systemName: "star.fill")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(.yellow)
-                    Text(L("Star on GitHub"))
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(.primary)
-                }
-
-                Text(L("If SnapTra helps you, a ⭐ on GitHub means a lot!"))
-                    .font(.system(size: 11))
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(.secondary)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
-            .padding(.horizontal, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(Color.yellow.opacity(0.08))
-                    .shadow(color: .yellow.opacity(0.08), radius: 8, x: 0, y: 2)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .strokeBorder(Color.yellow.opacity(0.35), lineWidth: 1)
-            )
-        }
-        .buttonStyle(.plain)
-        .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 }
 

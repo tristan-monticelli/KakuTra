@@ -1,6 +1,6 @@
 //
 //  DictionarySettingsView.swift
-//  SnapTra Translator
+//  KakuTra
 //
 //  Dictionary management tab with priority ordering.
 //

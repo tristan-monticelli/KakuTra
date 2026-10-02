@@ -39,10 +39,6 @@
     <key>NSSupportsSuddenTermination</key>
     <false/>
     <key>NSScreenCaptureUsageDescription</key>
-    <string>SnapTra Translator needs screen recording to detect words under the cursor.</string>
-    <key>SUEnableInstallerLauncherService</key>
-    <true/>
-    <key>SUPublicEDKey</key>
-    <string>OJo/oEqSjtmok1HYx+XgFHLq1FkUAJs8hsDms0+Uv98=</string>
+    <string>KakuTra needs screen recording to detect words under the cursor.</string>
 </dict>
 </plist>

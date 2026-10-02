@@ -64,7 +64,7 @@ nonisolated final class SelectedTextProbeExecutor: @unchecked Sendable {
 
     private let queue: DispatchQueue
 
-    init(label: String = "app.snaptra.selected-text-probe") {
+    init(label: String = "app.kakutra.selected-text-probe") {
         queue = DispatchQueue(
             label: label,
             qos: .userInitiated

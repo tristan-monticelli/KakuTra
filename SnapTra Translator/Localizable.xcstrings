@@ -26,9 +26,6 @@
     "•" : {
 
     },
-    "© 2025 yelog. All rights reserved." : {
-
-    },
     "About" : {
       "comment" : "About menu item",
       "extractionState" : "stale",
@@ -65,74 +62,38 @@
         }
       }
     },
-    "About SnapTra" : {
+    "About KakuTra" : {
       "comment" : "About menu item",
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "About SnapTra"
+            "value" : "About KakuTra"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SnapTraについて"
+            "value" : "KakuTraについて"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SnapTra 정보"
+            "value" : "KakuTra 정보"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "关于 SnapTra"
+            "value" : "关于 KakuTra"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "關於 SnapTra"
-          }
-        }
-      }
-    },
-    "About SnapTra Translator" : {
-      "comment" : "About window title",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "About SnapTra Translator"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "SnapTra Translator について"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "SnapTra Translator 정보"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "关于 SnapTra Translator"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "關於 SnapTra Translator"
+            "value" : "關於 KakuTra"
           }
         }
       }
@@ -3889,37 +3850,37 @@
         }
       }
     },
-    "If SnapTra helps you, a ⭐ on GitHub means a lot!" : {
+    "If KakuTra helps you, a ⭐ on GitHub means a lot!" : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "If SnapTra helps you, a ⭐ on GitHub means a lot!"
+            "value" : "If KakuTra helps you, a ⭐ on GitHub means a lot!"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SnapTra が役立つなら、GitHub の ⭐ がとても励みになります！"
+            "value" : "KakuTra が役立つなら、GitHub の ⭐ がとても励みになります！"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SnapTra가 도움이 됐다면, GitHub ⭐ 하나가 큰 힘이 됩니다!"
+            "value" : "KakuTra가 도움이 됐다면, GitHub ⭐ 하나가 큰 힘이 됩니다!"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "如果 SnapTra 对你有帮助，在 GitHub 点个 ⭐ 吧！"
+            "value" : "如果 KakuTra 对你有帮助，在 GitHub 点个 ⭐ 吧！"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "如果 SnapTra 對你有幫助，在 GitHub 點個 ⭐ 吧！"
+            "value" : "如果 KakuTra 對你有幫助，在 GitHub 點個 ⭐ 吧！"
           }
         }
       }
@@ -7617,72 +7578,72 @@
         }
       }
     },
-    "SnapTra Translator" : {
+    "KakuTra" : {
       "comment" : "App name - keep in English",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SnapTra Translator"
+            "value" : "KakuTra"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SnapTra Translator"
+            "value" : "KakuTra"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SnapTra Translator"
+            "value" : "KakuTra"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SnapTra Translator"
+            "value" : "KakuTra"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SnapTra Translator"
+            "value" : "KakuTra"
           }
         }
       }
     },
-    "SnapTra Translator needs screen recording to detect words under the cursor." : {
+    "KakuTra needs screen recording to detect words under the cursor." : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SnapTra Translator needs screen recording to detect words under the cursor."
+            "value" : "KakuTra needs screen recording to detect words under the cursor."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SnapTra Translator がカーソル下の単語を検出するには、画面収録の権限が必要です。"
+            "value" : "KakuTra がカーソル下の単語を検出するには、画面収録の権限が必要です。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SnapTra Translator가 커서 아래의 단어를 감지하려면 화면 기록 권한이 필요합니다."
+            "value" : "KakuTra가 커서 아래의 단어를 감지하려면 화면 기록 권한이 필요합니다."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SnapTra Translator 需要屏幕录制权限来检测光标下的单词。"
+            "value" : "KakuTra 需要屏幕录制权限来检测光标下的单词。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SnapTra Translator 需要螢幕錄製權限來偵測游標下的單字。"
+            "value" : "KakuTra 需要螢幕錄製權限來偵測游標下的單字。"
           }
         }
       }

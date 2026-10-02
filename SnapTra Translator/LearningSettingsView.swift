@@ -492,7 +492,7 @@ struct LearningSettingsView: View {
 
             let panel = NSSavePanel()
             panel.title = L("Export Learning Words")
-            panel.nameFieldStringValue = "snaptra-learning-words.\(format.fileExtension)"
+            panel.nameFieldStringValue = "kakutra-learning-words.\(format.fileExtension)"
             panel.canCreateDirectories = true
             panel.allowedContentTypes = [.plainText]
 

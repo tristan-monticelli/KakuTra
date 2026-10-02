@@ -1,13 +1,14 @@
 # AGENTS.md
 
 ## Scope
-- Applies to the entire repository at `/Users/yelog/workspace/swift/SnapTra Translator`.
+- Applies to the entire repository.
 - This file is intended for agentic coding assistants.
 
 ## Project Overview
 - **Xcode project**: `SnapTra Translator.xcodeproj`
 - **SwiftUI macOS app**: Menu bar (accessory) app for instant OCR translation
-- **Target**: `SnapTra Translator` (single app target, no test targets)
+- **App targets**: `KakuTra` and `KakuTra Direct`
+- **Test target**: `KakuTraTests`
 - **Minimum macOS**: 14.0 (translation features require macOS 15.0+)
 
 ## Build / Run / Test Commands
@@ -15,10 +16,10 @@
 ### Build (CLI)
 ```bash
 # Debug build
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "KakuTra" -configuration Debug build
 
 # Release build
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Release build
+xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "KakuTra" -configuration Release build
 ```
 
 ### Run
@@ -33,15 +34,15 @@ xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" 
 ```
 
 ### Tests
-- No test target currently exists.
-- When added, run all tests:
+- The `KakuTraTests` target is included in the `KakuTra` scheme.
+- Run all tests:
   ```bash
-  xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test
+  xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "KakuTra" test
   ```
 - Run a single test:
   ```bash
-  xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test \
-    -only-testing:<TestTarget>/<TestCase>/<testMethod>
+  xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "KakuTra" test \
+    -only-testing:KakuTraTests/<TestCase>/<testMethod>
   ```
 
 ### Lint / Format

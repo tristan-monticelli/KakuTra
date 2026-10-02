@@ -12,7 +12,7 @@ struct CaptureRegion {
 
 final class ScreenCaptureService {
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "SnapTraTranslator",
+        subsystem: Bundle.main.bundleIdentifier ?? "KakuTra",
         category: "ScreenCapture"
     )
 

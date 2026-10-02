@@ -23,7 +23,7 @@ struct RecognizedParagraph: Equatable {
 
 final class OCRService {
     private static let logger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "SnapTraTranslator",
+        subsystem: Bundle.main.bundleIdentifier ?? "KakuTra",
         category: "OCR"
     )
 

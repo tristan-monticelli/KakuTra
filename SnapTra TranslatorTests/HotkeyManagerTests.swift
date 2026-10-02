@@ -1,7 +1,7 @@
 import AppKit
 import Carbon
 import XCTest
-@testable import SnapTra_Translator
+@testable import KakuTra
 
 final class HotkeyManagerTests: XCTestCase {
     func testFirstPressTriggersImmediately() {

@@ -395,7 +395,7 @@ nonisolated final class LookupPerformanceSystemEventSink:
         let stage: String
     }
 
-    private static let subsystem = "com.yelog.SnapTra-Translator"
+    private static let subsystem = "com.tristanmonticelli.KakuTra"
     private static let category = "LookupPerformance"
 
     private let logger: Logger

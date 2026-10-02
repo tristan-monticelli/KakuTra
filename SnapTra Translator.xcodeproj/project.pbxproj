@@ -29,7 +29,7 @@
 			containerPortal = D3F4D8F62F14D1A2004035A9 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = D3F4D8FD2F14D1A2004035A9;
-			remoteInfo = "SnapTra Translator";
+			remoteInfo = "KakuTra";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -43,13 +43,13 @@
 		9B7C1A1C4F9F4A5A9F7D0001 /* LearningServicePaginationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LearningServicePaginationTests.swift; sourceTree = "<group>"; };
 		A7C81D2E3F405162738495A6 /* SpeechServiceTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SpeechServiceTests.swift; sourceTree = "<group>"; };
 		A9757C4D27EFDE23144043C9 /* SettingsStoreTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SettingsStoreTests.swift; sourceTree = "<group>"; };
-		CA9FDDCF14665092D5945F0C /* SnapTra TranslatorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "SnapTra TranslatorTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CA9FDDCF14665092D5945F0C /* KakuTraTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "KakuTraTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0878597B29F37191DDAD9BF /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
-		D3F4D8FE2F14D1A2004035A9 /* SnapTra Translator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SnapTra Translator.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D3F4D8FE2F14D1A2004035A9 /* KakuTra.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "KakuTra.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E1B111111111111111111111 /* HotkeyManagerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HotkeyManagerTests.swift; sourceTree = "<group>"; };
 		E1B222222222222222222222 /* OCRParagraphGroupingTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OCRParagraphGroupingTests.swift; sourceTree = "<group>"; };
 		E1B333333333333333333333 /* ParagraphOverlayLayoutTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ParagraphOverlayLayoutTests.swift; sourceTree = "<group>"; };
-		E1D111111111111111111111 /* SnapTra Translator Direct.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "SnapTra Translator Direct.app"; path = "SnapTra Translator.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E1D111111111111111111111 /* SnapTra Translator Direct.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "KakuTra.app"; path = "KakuTra.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -158,7 +158,7 @@
 		D3F4D8FF2F14D1A2004035A9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D3F4D8FE2F14D1A2004035A9 /* SnapTra Translator.app */,
+				D3F4D8FE2F14D1A2004035A9 /* KakuTra.app */,
 				E1D111111111111111111111 /* SnapTra Translator Direct.app */,
 				CA9FDDCF14665092D5945F0C /* SnapTra TranslatorTests.xctest */,
 			);
@@ -183,11 +183,11 @@
 			fileSystemSynchronizedGroups = (
 				D3F4D9002F14D1A2004035A9 /* SnapTra Translator */,
 			);
-			name = "SnapTra Translator";
+			name = "KakuTra";
 			packageProductDependencies = (
 			);
-			productName = "Snap Translate";
-			productReference = D3F4D8FE2F14D1A2004035A9 /* SnapTra Translator.app */;
+			productName = "KakuTra";
+			productReference = D3F4D8FE2F14D1A2004035A9 /* KakuTra.app */;
 			productType = "com.apple.product-type.application";
 		};
 		E1D555555555555555555555 /* SnapTra Translator Direct */ = {
@@ -205,11 +205,11 @@
 			fileSystemSynchronizedGroups = (
 				D3F4D9002F14D1A2004035A9 /* SnapTra Translator */,
 			);
-			name = "SnapTra Translator Direct";
+			name = "KakuTra Direct";
 			packageProductDependencies = (
 				E1SPARKLE000000000000002 /* Sparkle */,
 			);
-			productName = "SnapTra Translator";
+			productName = "KakuTra";
 			productReference = E1D111111111111111111111 /* SnapTra Translator Direct.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -226,8 +226,8 @@
 			dependencies = (
 				B03FE28491E7A5BA3E8F8F7B /* PBXTargetDependency */,
 			);
-			name = "SnapTra TranslatorTests";
-			productName = "SnapTra TranslatorTests";
+			name = "KakuTraTests";
+			productName = "KakuTraTests";
 			productReference = CA9FDDCF14665092D5945F0C /* SnapTra TranslatorTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
@@ -340,7 +340,7 @@
 /* Begin PBXTargetDependency section */
 		B03FE28491E7A5BA3E8F8F7B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "SnapTra Translator";
+			name = "KakuTra";
 			target = D3F4D8FD2F14D1A2004035A9 /* SnapTra Translator */;
 			targetProxy = 0B9ED250597902B4C19677D1 /* PBXContainerItemProxy */;
 		};
@@ -350,32 +350,30 @@
 		0FAEB8F97B598EFB7D39DB94 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/SnapTra Translator.app/Contents/MacOS/SnapTra Translator";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/KakuTra.app/Contents/MacOS/KakuTra";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 4MF263RHY3;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.yelog.SnapTraTranslateTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tristanmonticelli.KakuTraTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SnapTra Translator.app/Contents/MacOS/SnapTra Translator";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KakuTra.app/Contents/MacOS/KakuTra";
 			};
 			name = Debug;
 		};
 		998FCF38ACDD712A119D9D87 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/SnapTra Translator.app/Contents/MacOS/SnapTra Translator";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/KakuTra.app/Contents/MacOS/KakuTra";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 4MF263RHY3;
 				GENERATE_INFOPLIST_FILE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.yelog.SnapTraTranslateTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tristanmonticelli.KakuTraTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SnapTra Translator.app/Contents/MacOS/SnapTra Translator";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KakuTra.app/Contents/MacOS/KakuTra";
 			};
 			name = Release;
 		};
@@ -506,25 +504,24 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 21;
-				DEVELOPMENT_TEAM = 4MF263RHY3;
+				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "SnapTra Translator/Info-AppStore.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "SnapTra Translator";
+				INFOPLIST_KEY_CFBundleDisplayName = "KakuTra";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSScreenCaptureUsageDescription = "SnapTra Translator needs screen recording to detect words under the cursor.";
+				INFOPLIST_KEY_NSScreenCaptureUsageDescription = "KakuTra needs screen recording to detect words under the cursor.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.3.11-beta.3;
-				PRODUCT_BUNDLE_IDENTIFIER = org.yelog.SnapTraTranslate;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tristanmonticelli.KakuTra;
+				PRODUCT_NAME = "KakuTra";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -546,25 +543,24 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 21;
-				DEVELOPMENT_TEAM = 4MF263RHY3;
+				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "SnapTra Translator/Info-AppStore.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "SnapTra Translator";
+				INFOPLIST_KEY_CFBundleDisplayName = "KakuTra";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSScreenCaptureUsageDescription = "SnapTra Translator needs screen recording to detect words under the cursor.";
+				INFOPLIST_KEY_NSScreenCaptureUsageDescription = "KakuTra needs screen recording to detect words under the cursor.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.3.11-beta.3;
-				PRODUCT_BUNDLE_IDENTIFIER = org.yelog.SnapTraTranslate;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tristanmonticelli.KakuTra;
+				PRODUCT_NAME = "KakuTra";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -586,25 +582,24 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 21;
-				DEVELOPMENT_TEAM = 4MF263RHY3;
+				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "SnapTra Translator/Info-Direct.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "SnapTra Translator";
+				INFOPLIST_KEY_CFBundleDisplayName = "KakuTra";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSScreenCaptureUsageDescription = "SnapTra Translator needs screen recording to detect words under the cursor.";
+				INFOPLIST_KEY_NSScreenCaptureUsageDescription = "KakuTra needs screen recording to detect words under the cursor.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.3.11-beta.3;
-				PRODUCT_BUNDLE_IDENTIFIER = org.yelog.SnapTraTranslate;
-				PRODUCT_NAME = "SnapTra Translator";
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tristanmonticelli.KakuTra;
+				PRODUCT_NAME = "KakuTra";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -627,25 +622,24 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 21;
-				DEVELOPMENT_TEAM = 4MF263RHY3;
+				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "SnapTra Translator/Info-Direct.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "SnapTra Translator";
+				INFOPLIST_KEY_CFBundleDisplayName = "KakuTra";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSScreenCaptureUsageDescription = "SnapTra Translator needs screen recording to detect words under the cursor.";
+				INFOPLIST_KEY_NSScreenCaptureUsageDescription = "KakuTra needs screen recording to detect words under the cursor.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.3.11-beta.3;
-				PRODUCT_BUNDLE_IDENTIFIER = org.yelog.SnapTraTranslate;
-				PRODUCT_NAME = "SnapTra Translator";
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tristanmonticelli.KakuTra;
+				PRODUCT_NAME = "KakuTra";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;

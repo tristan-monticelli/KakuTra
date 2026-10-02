@@ -32,7 +32,7 @@ struct Snap_TranslateApp: App {
 }
 
 final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMenuDelegate {
-    private static let logger = Logger(subsystem: "com.yelog.SnapTra-Translator", category: "AppDelegate")
+    private static let logger = Logger(subsystem: "com.tristanmonticelli.KakuTra", category: "AppDelegate")
     private let isRunningTests = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
     private let modelContainer: ModelContainer
     private let modelContainerDidFallBackToMemory: Bool
@@ -51,8 +51,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
 
     override init() {
         let schema = Schema([WordRecord.self])
-        let persistentConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        let storeDirectory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+            .appendingPathComponent("KakuTra", isDirectory: true)
+        let persistentConfiguration = ModelConfiguration(
+            schema: schema,
+            url: storeDirectory.appendingPathComponent("default.store")
+        )
         do {
+            try FileManager.default.createDirectory(
+                at: storeDirectory,
+                withIntermediateDirectories: true
+            )
             modelContainer = try ModelContainer(for: schema, configurations: [persistentConfiguration])
             modelContainerDidFallBackToMemory = false
         } catch {
@@ -110,7 +119,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         // not SIGKILL us under memory pressure / logout / idle conditions —
         // this is the dominant cause of App Store users seeing the app
         // disappear in the background.
-        ProcessInfo.processInfo.disableAutomaticTermination("SnapTra Translator is a menu bar utility that must remain running")
+        ProcessInfo.processInfo.disableAutomaticTermination("KakuTra is a menu bar utility that must remain running")
         ProcessInfo.processInfo.disableSuddenTermination()
 
         // Hold a long-lived activity assertion so App Nap doesn't freeze our
@@ -119,7 +128,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         // `applicationWillTerminate`.
         backgroundActivityToken = ProcessInfo.processInfo.beginActivity(
             options: [.userInitiatedAllowingIdleSystemSleep],
-            reason: "SnapTra Translator menu bar agent"
+            reason: "KakuTra menu bar agent"
         )
 
         if modelContainerDidFallBackToMemory {
@@ -261,7 +270,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         if let button = item.button {
             button.image = makeStatusBarImage()
             button.imagePosition = .imageOnly
-            button.toolTip = "SnapTra Translator"
+            button.toolTip = "KakuTra"
         }
 
         let menu = createStatusBarMenu()
@@ -293,8 +302,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         let menu = NSMenu()
         menu.delegate = self
         
-        // Header section - SnapTra title (styled as header, not disabled item)
-        let titleItem = createHeaderMenuItem(title: "SnapTra")
+        // Header section - KakuTra title (styled as header, not disabled item)
+        let titleItem = createHeaderMenuItem(title: "KakuTra")
         menu.addItem(titleItem)
         
         menu.addItem(.separator())
@@ -393,7 +402,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         
         // About
         let aboutItem = NSMenuItem(
-            title: L("About SnapTra"),
+            title: L("About KakuTra"),
             action: #selector(openAbout),
             keyEquivalent: ""
         )

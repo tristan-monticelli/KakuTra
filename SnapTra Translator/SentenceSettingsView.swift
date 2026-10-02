@@ -1,6 +1,6 @@
 //
 //  SentenceSettingsView.swift
-//  SnapTra Translator
+//  KakuTra
 //
 //  Sentence translation services management with priority ordering.
 //

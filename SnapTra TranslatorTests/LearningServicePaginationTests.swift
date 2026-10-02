@@ -1,6 +1,6 @@
 import SwiftData
 import XCTest
-@testable import SnapTra_Translator
+@testable import KakuTra
 
 @MainActor
 final class LearningServicePaginationTests: XCTestCase {

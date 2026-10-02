@@ -45,7 +45,7 @@ actor TTSDebugAudioDumper: TTSDebugAudioDumping {
 
     init(
         directory: URL = FileManager.default.temporaryDirectory
-            .appendingPathComponent("SnapTraTranslator/TTS", isDirectory: true)
+            .appendingPathComponent("KakuTra/TTS", isDirectory: true)
     ) {
         self.directory = directory
     }
@@ -211,7 +211,7 @@ final class SpeechService: ObservableObject {
     private let fetcher: any TTSServiceFetching
     private let output: any SpeechAudioOutput
     private let debugDumper: (any TTSDebugAudioDumping)?
-    private let logger = Logger(subsystem: "com.yelog.SnapTra-Translator", category: "SpeechService")
+    private let logger = Logger(subsystem: "com.tristanmonticelli.KakuTra", category: "SpeechService")
     private var activeTask: Task<Void, Never>?
     private var requestGeneration: UInt64 = 0
     @Published private(set) var playbackState: SpeechPlaybackState = .idle
@@ -585,7 +585,7 @@ enum TTSError: Error, LocalizedError {
 
 final class YoudaoTTSService {
     private let baseURL = "https://dict.youdao.com/dictvoice"
-    private let logger = Logger(subsystem: "com.yelog.SnapTra-Translator", category: "YoudaoTTS")
+    private let logger = Logger(subsystem: "com.tristanmonticelli.KakuTra", category: "YoudaoTTS")
     private let session: URLSession
     private let uncachedSession: URLSession
 
@@ -667,7 +667,7 @@ final class YoudaoTTSService {
 
 final class BaiduTTSService {
     private let baseURL = "https://fanyi.baidu.com/gettts"
-    private let logger = Logger(subsystem: "com.yelog.SnapTra-Translator", category: "BaiduTTS")
+    private let logger = Logger(subsystem: "com.tristanmonticelli.KakuTra", category: "BaiduTTS")
     private let session: URLSession
     private let uncachedSession: URLSession
 
@@ -784,7 +784,7 @@ struct URLSessionTTSWebSocketTaskFactory: TTSWebSocketTaskCreating {
 }
 
 final class EdgeTTSService {
-    private let logger = Logger(subsystem: "com.yelog.SnapTra-Translator", category: "EdgeTTS")
+    private let logger = Logger(subsystem: "com.tristanmonticelli.KakuTra", category: "EdgeTTS")
     private let taskFactory: any TTSWebSocketTaskCreating
     private let timeoutNanoseconds: UInt64
 
@@ -1033,7 +1033,7 @@ final class EdgeTTSService {
 // MARK: - Bing TTS Service (Redirects to Edge)
 
 final class BingTTSService {
-    private let logger = Logger(subsystem: "com.yelog.SnapTra-Translator", category: "BingTTS")
+    private let logger = Logger(subsystem: "com.tristanmonticelli.KakuTra", category: "BingTTS")
     private let edgeService: EdgeTTSService
 
     init(edgeService: EdgeTTSService = EdgeTTSService()) {
@@ -1054,7 +1054,7 @@ final class BingTTSService {
 // MARK: - Google TTS Service
 
 final class GoogleTTSService {
-    private let logger = Logger(subsystem: "com.yelog.SnapTra-Translator", category: "GoogleTTS")
+    private let logger = Logger(subsystem: "com.tristanmonticelli.KakuTra", category: "GoogleTTS")
     private let session: URLSession
     private let uncachedSession: URLSession
 

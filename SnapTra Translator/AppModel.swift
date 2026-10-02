@@ -2793,7 +2793,7 @@ final class AppModel: ObservableObject {
 
         switch state {
         case .error(let message):
-            sendNotification(title: "SnapTra Translator", body: message)
+            sendNotification(title: "KakuTra", body: message)
         case .idle:
             break
         case .paragraphLoading, .paragraphResult:
@@ -3080,7 +3080,7 @@ final class AppModel: ObservableObject {
         }
 
         sendNotification(
-            title: L("SnapTra Translator"),
+            title: L("KakuTra"),
             body: message(for: firstUnavailable)
         )
     }

@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import SnapTra_Translator
+@testable import KakuTra
 
 private extension String {
     func firstMatch(pattern: String, group: Int) -> String? {

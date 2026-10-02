@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import SnapTra_Translator
+@testable import KakuTra
 
 final class LookupPerformanceTests: XCTestCase {
     func testFirstMilestoneForSameLookupIsRecordedOnlyOnce() {

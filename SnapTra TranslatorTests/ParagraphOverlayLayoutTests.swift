@@ -1,5 +1,5 @@
 import XCTest
-@testable import SnapTra_Translator
+@testable import KakuTra
 
 final class ParagraphOverlayLayoutTests: XCTestCase {
     func testManualRegionSelectionPresentationKeepsBrowserFocusAndAcceptsInitialClick() {
@@ -491,7 +491,7 @@ final class ParagraphOverlayLayoutTests: XCTestCase {
         ))
     }
 
-    func testPersistentOverlayApplicationActivationPolicyKeepsSnapTraActivation() {
+    func testPersistentOverlayApplicationActivationPolicyKeepsKakuTraActivation() {
         XCTAssertFalse(PersistentOverlayApplicationActivationPolicy.shouldDismiss(
             isPersistentOverlayPresented: true,
             sourceApplicationProcessIdentifier: 100,

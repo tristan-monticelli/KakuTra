@@ -1,6 +1,6 @@
 //
 //  SentenceLatencyTester.swift
-//  SnapTra Translator
+//  KakuTra
 //
 //  Latency testing for sentence translation services.
 //

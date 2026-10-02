@@ -1,6 +1,6 @@
 //
 //  SettingsWindowView.swift
-//  SnapTra Translator
+//  KakuTra
 //
 //  Settings window with tabbed interface (General, Dictionary, About).
 //

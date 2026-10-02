@@ -65,10 +65,8 @@ final class UpdateChecker: NSObject, ObservableObject {
         super.init()
     }
 
-    fileprivate func openAppStore() {
-        if let url = URL(string: "https://apps.apple.com/cn/app/snaptra-translator/id6757981764") {
-            NSWorkspace.shared.open(url)
-        }
+    fileprivate func openProjectReleases() {
+        openGitHubReleases()
     }
 
     fileprivate func openGitHubReleases() {
@@ -78,9 +76,9 @@ final class UpdateChecker: NSObject, ObservableObject {
         let urlString: String
         switch channel {
         case .stable:
-            urlString = "https://github.com/yelog/SnapTraTranslator/releases/latest"
+            urlString = "https://github.com/tristan-monticelli/KakuTra/releases/latest"
         case .beta:
-            urlString = "https://github.com/yelog/SnapTraTranslator/releases"
+            urlString = "https://github.com/tristan-monticelli/KakuTra/releases"
         }
 
         if let url = URL(string: urlString) {
@@ -131,18 +129,8 @@ extension UpdateChecker: SPUUpdaterDelegate {
     }
 
     func initialize() {
-        guard SparkleState.updaterController == nil else { return }
-
-        SparkleState.updaterController = SPUStandardUpdaterController(
-            startingUpdater: true,
-            updaterDelegate: self,
-            userDriverDelegate: nil
-        )
-
-        if let updater = SparkleState.updaterController?.updater {
-            updater.automaticallyChecksForUpdates = SettingsStore.shared.autoCheckUpdates && isGitHubRelease
-            updater.updateCheckInterval = checkInterval
-        }
+        // KakuTra has no signed release feed yet. Do not inherit the upstream
+        // Sparkle feed or update signing key from KakuTra.
     }
 
     func updateFeedURL() {
@@ -162,6 +150,7 @@ extension UpdateChecker: SPUUpdaterDelegate {
     }
 
     func startAutoCheckIfNeeded() {
+        guard SparkleState.updaterController?.updater != nil else { return }
         guard isGitHubRelease else { return }
         guard SettingsStore.shared.autoCheckUpdates else { return }
 
@@ -195,7 +184,7 @@ extension UpdateChecker: SPUUpdaterDelegate {
             }
         } else {
             guard !silent else { return }
-            openAppStore()
+            openProjectReleases()
         }
     }
 
@@ -214,7 +203,7 @@ extension UpdateChecker: SPUUpdaterDelegate {
                 showSparkleNotInitializedAlert()
             }
         } else {
-            openAppStore()
+            openProjectReleases()
         }
     }
 
@@ -251,18 +240,7 @@ extension UpdateChecker: SPUUpdaterDelegate {
     }
 
     func feedURLString(for updater: SPUUpdater) -> String? {
-        let channelValue = UserDefaults.standard.string(forKey: AppSettingKey.updateChannel) ?? "stable"
-        let channel = UpdateChannel(rawValue: channelValue) ?? .stable
-
-        let url: String
-        switch channel {
-        case .stable:
-            url = "https://snaptra.yelog.org/appcast.xml"
-        case .beta:
-            url = "https://snaptra.yelog.org/appcast-beta.xml"
-        }
-        print("[UpdateChecker] Using feed URL for channel '\(channel)': \(url)")
-        return url
+        nil
     }
 
     func updater(_ updater: SPUUpdater, didFindValidUpdate item: SUAppcastItem) {
@@ -316,7 +294,7 @@ extension UpdateChecker {
 
     func checkForUpdates(silent: Bool = false) {
         guard !silent else { return }
-        openAppStore()
+        openProjectReleases()
     }
 
     func checkForUpdatesWithUI() {
@@ -324,7 +302,7 @@ extension UpdateChecker {
             print("[UpdateChecker] Update check already in progress, skipping")
             return
         }
-        openAppStore()
+        openProjectReleases()
     }
 }
 #endif
