@@ -76,7 +76,6 @@ struct YomitanSettingsSection: View {
                     Picker("", selection: $model.settings.yomitanPreferredGlossaryLanguage) {
                         Text(L("Anglais (Recommandé)")).tag("en")
                         Text(L("Français")).tag("fr")
-                        Text(L("Toutes les langues")).tag("all")
                     }
                     .labelsHidden()
                     .pickerStyle(.segmented)

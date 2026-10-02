@@ -195,15 +195,6 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
             if let enDb = dbs["en"] {
                 return queryCandidates(candidates, in: enDb)
             }
-        } else if language == "all" {
-            var combined: [JapaneseDictionaryEntry] = []
-            if let frDb = dbs["fr"] {
-                combined.append(contentsOf: queryCandidates(candidates, in: frDb))
-            }
-            if let enDb = dbs["en"] {
-                combined.append(contentsOf: queryCandidates(candidates, in: enDb))
-            }
-            return combined
         } else {
             // Default: English DB (gold standard)
             if let enDb = dbs["en"] {
