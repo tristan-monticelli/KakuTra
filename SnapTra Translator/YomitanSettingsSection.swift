@@ -97,52 +97,38 @@ struct YomitanSettingsSection: View {
                     }
                 }
 
-                Divider().opacity(0.6)
+                // Actions: Import & Open Folder
+                HStack(spacing: 10) {
+                    Button {
+                        importDictionaryFile()
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "plus.circle.fill")
+                            Text(L("Importer un dictionnaire (.zip)…"))
+                        }
+                    }
+                    .controlSize(.small)
+                    .disabled(isImporting)
 
-                // Preferred Language (Clean vertical layout with Segmented Picker)
-                VStack(alignment: .leading, spacing: 8) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(L("Affichage des définitions"))
-                            .font(.system(size: 12, weight: .medium))
-                        Text(L("Priorité d'affichage dans la bulle d'immersion"))
-                            .font(.system(size: 10))
+                    Button {
+                        model.japaneseDictionaryService.openDatabaseFolder()
+                    } label: {
+                        HStack(spacing: 5) {
+                            Image(systemName: "folder")
+                            Text(L("Ouvrir le dossier"))
+                        }
+                    }
+                    .controlSize(.small)
+
+                    if isImporting {
+                        ProgressView().controlSize(.small)
+                        Text(L("Importation en cours…"))
+                            .font(.system(size: 11))
                             .foregroundStyle(.secondary)
                     }
 
-                    Picker("", selection: $model.settings.yomitanPreferredGlossaryLanguage) {
-                        Text(L("Tous (FR prioritaire)")).tag("all")
-                        Text(L("Français seul")).tag("fr")
-                        Text(L("Anglais / Argot seul")).tag("en")
-                    }
-                    .labelsHidden()
-                    .pickerStyle(.segmented)
+                    Spacer()
                 }
-
-                Divider().opacity(0.6)
-
-                // Import Button & Feedback
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Button {
-                            importDictionaryFile()
-                        } label: {
-                            HStack(spacing: 6) {
-                                Image(systemName: "plus.circle.fill")
-                                Text(L("Importer un dictionnaire (.zip)…"))
-                            }
-                        }
-                        .controlSize(.small)
-                        .disabled(isImporting)
-
-                        if isImporting {
-                            ProgressView().controlSize(.small)
-                            Text(L("Importation en cours…"))
-                                .font(.system(size: 11))
-                                .foregroundStyle(.secondary)
-                        }
-
-                        Spacer()
-                    }
 
                     if let message = importMessage {
                         HStack(spacing: 6) {
@@ -171,9 +157,7 @@ struct YomitanSettingsSection: View {
                     }
                 }
             }
-            .padding(14)
         }
-    }
 
     private func dictBadge(for name: String) -> String {
         if name.contains("Français") {

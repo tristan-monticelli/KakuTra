@@ -7,6 +7,7 @@
 //  instant offline lookup (<0.3 ms), and 1-click Yomitan zip import.
 //
 
+import AppKit
 import Foundation
 import SQLite3
 
@@ -70,6 +71,10 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
         closeDatabase()
         openDatabase()
         refreshStats()
+    }
+
+    func openDatabaseFolder() {
+        NSWorkspace.shared.selectFile(Self.databaseURL.path, inFileViewerRootedAtPath: Self.databaseDirectory.path)
     }
 
     private func createSchema() {
@@ -174,7 +179,7 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
         SELECT term, reading, glossary, pos, dictionary, score 
         FROM entries 
         WHERE term = ? OR reading = ? 
-        ORDER BY (dictionary LIKE '%Français%') DESC, score DESC 
+        ORDER BY score DESC 
         LIMIT 10;
         """
 
@@ -217,15 +222,6 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
             }
 
             if entries.count >= 15 { break }
-        }
-
-        // Apply language filter if explicitly requested
-        if preferredGlossaryLanguage == "fr" {
-            let frEntries = entries.filter { $0.dictionary.contains("Français") }
-            return frEntries.isEmpty ? entries : frEntries
-        } else if preferredGlossaryLanguage == "en" {
-            let enEntries = entries.filter { $0.dictionary.contains("English") }
-            return enEntries.isEmpty ? entries : enEntries
         }
 
         return entries
