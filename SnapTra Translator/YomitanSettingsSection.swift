@@ -1,152 +1,220 @@
+//
+//  YomitanSettingsSection.swift
+//  KakuTra
+//
+//  Embedded Japanese immersion dictionary settings:
+//  Displays local SQLite status (551,000+ entries), language preference,
+//  and allows importing custom Yomitan .zip archives.
+//
+
+import AppKit
 import SwiftUI
 
 struct YomitanSettingsSection: View {
     @EnvironmentObject private var model: AppModel
+    @State private var isImporting = false
+    @State private var importMessage: String? = nil
+    @State private var importErrorMessage: String? = nil
 
-    private var dictionaryNames: [String] {
-        Array(Set(model.detectedYomitanDictionaries + Array(model.settings.yomitanDictionaryLanguages.keys))).sorted()
-    }
-
-    private var assignedLanguages: [YomitanGlossaryLanguage] {
-        var assigned = Set(model.settings.yomitanDictionaryLanguages.values)
-        if model.settings.yomitanPreferredGlossaryLanguage != "all" {
-            assigned.insert(model.settings.yomitanPreferredGlossaryLanguage)
-        }
-        return YomitanGlossaryLanguage.allCases.filter { assigned.contains($0.rawValue) }
+    private var totalEntriesFormatted: String {
+        let count = model.japaneseDictionaryService.totalEntriesCount
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter.string(from: NSNumber(value: count)) ?? "\(count)"
     }
 
     var body: some View {
         SettingsSectionCard(title: L("Japanese Dictionaries"), icon: "character.book.closed") {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack(alignment: .center, spacing: 8) {
-                    connectionIndicator
+            VStack(alignment: .leading, spacing: 14) {
+                // Status Header
+                HStack(alignment: .center, spacing: 10) {
+                    if model.japaneseDictionaryService.isDatabaseInstalled {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                            .font(.system(size: 18))
+                    } else {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundStyle(.orange)
+                            .font(.system(size: 18))
+                    }
+
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(connectionTitle)
-                            .font(.system(size: 13, weight: .medium))
+                        Text(model.japaneseDictionaryService.isDatabaseInstalled ? L("Moteur SQLite KakuTra Actif") : L("Base SQLite non installée"))
+                            .font(.system(size: 13, weight: .semibold))
                             .foregroundStyle(.primary)
-                        Text(connectionDetail)
-                            .font(.system(size: 11))
-                            .foregroundStyle(.secondary)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    Spacer(minLength: 4)
-                    Button(L("Check")) {
-                        Task { await model.refreshYomitanStatus() }
-                    }
-                    .controlSize(.small)
-                    .disabled(isChecking)
-                }
 
-                if case .notConnected = model.yomitanConnectionState {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(L("Comment activer la connexion locale Yomitan :"))
-                            .font(.system(size: 11, weight: .semibold))
-                            .foregroundStyle(.primary)
-                        Text(L("1. Ouvrez votre navigateur (Chrome / Brave / Firefox) où Yomitan est installé."))
-                            .font(.system(size: 11))
-                            .foregroundStyle(.secondary)
-                        Text(L("2. Ouvrez les Paramètres de Yomitan et activez « Options avancées »."))
-                            .font(.system(size: 11))
-                            .foregroundStyle(.secondary)
-                        Text(L("3. Dans Général, activez « Activer l'API Yomitan » (Port local 19633)."))
+                        Text("\(totalEntriesFormatted) entrées actives · < 0,3 ms · 100% Hors-ligne · Zéro extension")
                             .font(.system(size: 11))
                             .foregroundStyle(.secondary)
                     }
-                    .padding(10)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.orange.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
-                }
 
-                if dictionaryNames.isEmpty {
-                    Text(L("No dictionary detected yet. Look up a Japanese word to discover your sources."))
-                        .font(.system(size: 11))
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.top, 2)
-                } else {
-                    Divider().padding(.vertical, 2)
-                    Text(L("Assign each dictionary's glossary language. KakuTra never guesses it from a definition."))
-                        .font(.system(size: 11))
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                    ForEach(dictionaryNames, id: \.self) { name in
-                        HStack(spacing: 8) {
-                            Text(name)
-                                .font(.system(size: 12, weight: .medium))
-                                .lineLimit(1)
-                                .help(name)
-                            Spacer(minLength: 4)
-                            Picker(name, selection: Binding(
-                                get: { model.settings.yomitanDictionaryLanguages[name] ?? "" },
-                                set: { model.setYomitanGlossaryLanguage($0, for: name) }
-                            )) {
-                                ForEach(YomitanGlossaryLanguage.allCases) { language in
-                                    Text(language.title).tag(language.rawValue)
-                                }
-                            }
-                            .labelsHidden()
-                            .frame(width: 150)
-                        }
-                    }
-                }
-
-                Divider().padding(.vertical, 2)
-                HStack {
-                    Text(L("Preferred glossary"))
-                        .font(.system(size: 12, weight: .medium))
                     Spacer()
-                    Picker(L("Preferred glossary"), selection: $model.settings.yomitanPreferredGlossaryLanguage) {
-                        Text(L("All glossaries")).tag("all")
-                        ForEach(assignedLanguages) { language in
-                            Text(language.title).tag(language.rawValue)
+
+                    Button {
+                        Task { await model.refreshYomitanStatus() }
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.system(size: 12))
+                    }
+                    .buttonStyle(.plain)
+                    .help(L("Actualiser"))
+                }
+
+                Divider().opacity(0.6)
+
+                // Installed Dictionaries List
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(L("Dictionnaires intégrés :"))
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(.secondary)
+
+                    if model.japaneseDictionaryService.installedDictionaries.isEmpty {
+                        Text(L("Aucun dictionnaire installé."))
+                            .font(.system(size: 11))
+                            .foregroundStyle(.secondary)
+                    } else {
+                        ForEach(model.japaneseDictionaryService.installedDictionaries, id: \.self) { dictName in
+                            HStack(spacing: 8) {
+                                Image(systemName: "book.pages")
+                                    .font(.system(size: 12))
+                                    .foregroundStyle(Color.accentColor)
+
+                                Text(dictName)
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundStyle(.primary)
+
+                                Spacer()
+
+                                Text(dictBadge(for: dictName))
+                                    .font(.system(size: 10, weight: .medium))
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(Color.accentColor.opacity(0.12), in: Capsule())
+                                    .foregroundStyle(Color.accentColor)
+                            }
+                            .padding(.vertical, 2)
                         }
+                    }
+                }
+
+                Divider().opacity(0.6)
+
+                // Preferred Language
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(L("Affichage des définitions"))
+                            .font(.system(size: 12, weight: .medium))
+                        Text(L("Priorité d'affichage dans la bulle d'immersion"))
+                            .font(.system(size: 10))
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Spacer()
+
+                    Picker("", selection: $model.settings.yomitanPreferredGlossaryLanguage) {
+                        Text(L("Tous (Français prioritaire puis Anglais / Argot)")).tag("all")
+                        Text(L("Français uniquement")).tag("fr")
+                        Text(L("Anglais / Argot uniquement")).tag("en")
                     }
                     .labelsHidden()
-                    .frame(width: 165)
+                    .frame(width: 280)
+                }
+
+                Divider().opacity(0.6)
+
+                // Import Button & Feedback
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Button {
+                            importDictionaryFile()
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "plus.circle.fill")
+                                Text(L("Importer un dictionnaire (.zip)…"))
+                            }
+                        }
+                        .controlSize(.small)
+                        .disabled(isImporting)
+
+                        if isImporting {
+                            ProgressView().controlSize(.small)
+                            Text(L("Importation en cours…"))
+                                .font(.system(size: 11))
+                                .foregroundStyle(.secondary)
+                        }
+
+                        Spacer()
+                    }
+
+                    if let message = importMessage {
+                        HStack(spacing: 6) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(.green)
+                            Text(message)
+                                .font(.system(size: 11))
+                                .foregroundStyle(.primary)
+                        }
+                        .padding(8)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color.green.opacity(0.1), in: RoundedRectangle(cornerRadius: 6))
+                    }
+
+                    if let error = importErrorMessage {
+                        HStack(spacing: 6) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundStyle(.orange)
+                            Text(error)
+                                .font(.system(size: 11))
+                                .foregroundStyle(.primary)
+                        }
+                        .padding(8)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color.orange.opacity(0.1), in: RoundedRectangle(cornerRadius: 6))
+                    }
                 }
             }
             .padding(14)
         }
     }
 
-    @ViewBuilder
-    private var connectionIndicator: some View {
-        switch model.yomitanConnectionState {
-        case .checking:
-            ProgressView().controlSize(.small).frame(width: 16, height: 16)
-        case .connected:
-            Image(systemName: "checkmark.circle.fill")
-                .foregroundStyle(.green)
-                .font(.system(size: 15))
-        case .notConnected:
-            Image(systemName: "exclamationmark.circle.fill")
-                .foregroundStyle(.orange)
-                .font(.system(size: 15))
+    private func dictBadge(for name: String) -> String {
+        if name.contains("Français") {
+            return L("Français")
+        } else if name.contains("English") {
+            return L("Anglais & Argot")
+        } else {
+            return L("Personnalisé")
         }
     }
 
-    private var isChecking: Bool {
-        if case .checking = model.yomitanConnectionState { return true }
-        return false
-    }
+    private func importDictionaryFile() {
+        let panel = NSOpenPanel()
+        panel.allowedContentTypes = [.zip]
+        panel.allowsMultipleSelection = false
+        panel.canChooseDirectories = false
+        panel.canChooseFiles = true
+        panel.message = L("Sélectionnez une archive de dictionnaire Yomitan (.zip)")
 
-    private var connectionTitle: String {
-        switch model.yomitanConnectionState {
-        case .checking: return L("Checking local API…")
-        case .connected(let status):
-            if let version = status.extensionVersion, !version.isEmpty {
-                return "Yomitan · \(version)"
+        if panel.runModal() == .OK, let url = panel.url {
+            isImporting = true
+            importMessage = nil
+            importErrorMessage = nil
+
+            Task {
+                do {
+                    let result = try await model.japaneseDictionaryService.importYomitanZip(at: url)
+                    await MainActor.run {
+                        self.isImporting = false
+                        self.importMessage = L("Dictionnaire « %@ » importé avec succès (%lld entrées ajoutées).", result.dictionaryName, Int64(result.count))
+                    }
+                    await model.refreshYomitanStatus()
+                } catch {
+                    await MainActor.run {
+                        self.isImporting = false
+                        self.importErrorMessage = error.localizedDescription
+                    }
+                }
             }
-            return L("Yomitan connected")
-        case .notConnected: return L("Yomitan not connected")
-        }
-    }
-
-    private var connectionDetail: String {
-        switch model.yomitanConnectionState {
-        case .checking: return L("Checking the local Yomitan service on this Mac.")
-        case .connected: return L("Japanese lookups stay on this Mac.")
-        case .notConnected: return L("Open your browser, start Yomitan, and enable its API.")
         }
     }
 }

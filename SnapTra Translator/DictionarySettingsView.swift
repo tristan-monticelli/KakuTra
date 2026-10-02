@@ -417,35 +417,7 @@ struct DictionarySettingsView: View {
         VStack(alignment: .leading, spacing: 16) {
             YomitanSettingsSection()
                 .padding(.horizontal)
-                .padding(.top)
-
-            Divider()
-                .padding(.horizontal)
-
-            SettingsSectionCard(title: L("Dictionnaire Système macOS"), icon: "book.closed") {
-                VStack(alignment: .leading, spacing: 10) {
-                    HStack(alignment: .center, spacing: 8) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundStyle(.green)
-                            .font(.system(size: 15))
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(L("Dictionnaire natif actif"))
-                                .font(.system(size: 13, weight: .medium))
-                            Text(L("Utilisé pour le français, l'anglais, et en secours instantané si Yomitan est hors ligne."))
-                                .font(.system(size: 11))
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-
-                    Text(L("Les dictionnaires installés se configurent directement dans l'application Dictionnaire de macOS (Dictionnaire > Réglages)."))
-                        .font(.system(size: 11))
-                        .foregroundStyle(.secondary)
-                        .padding(.top, 4)
-                }
-                .padding(14)
-            }
-            .padding(.horizontal)
-            .padding(.bottom)
+                .padding(.vertical)
         }
     }
 

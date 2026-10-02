@@ -239,26 +239,6 @@ struct OverlayView: View {
 
                 if content.yomitanLookupState != .notRequested {
                     yomitanResultsSection(state: content.yomitanLookupState)
-                    switch content.yomitanLookupState {
-                    case .notConnected, .noResults, .failed:
-                        if !content.visibleDictionarySections.isEmpty {
-                            dictionarySectionsView(sections: content.visibleDictionarySections)
-                        }
-                    case .results(let results):
-                        let language = model.settings.yomitanPreferredGlossaryLanguage
-                        let visible = results.filter { result in
-                            language == "all" || model.settings.yomitanDictionaryLanguages[result.dictionary] == language
-                        }
-                        if visible.isEmpty && !content.visibleDictionarySections.isEmpty {
-                            dictionarySectionsView(sections: content.visibleDictionarySections)
-                        }
-                    default:
-                        EmptyView()
-                    }
-                } else {
-                    if !content.visibleDictionarySections.isEmpty {
-                        dictionarySectionsView(sections: content.visibleDictionarySections)
-                    }
                 }
             }
         }
@@ -455,7 +435,7 @@ struct OverlayView: View {
                 Image(systemName: "character.book.closed.fill")
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(Color.accentColor)
-                Text(L("Yomitan"))
+                Text(L("Dictionnaire"))
                     .font(.system(size: 12, weight: .semibold))
                 Spacer()
                 if case .results(let results) = state, !results.isEmpty {
@@ -480,14 +460,14 @@ struct OverlayView: View {
                 .padding(.bottom, 14)
             case .notConnected:
                 HStack(spacing: 6) {
-                    Image(systemName: "circle.slash")
+                    Image(systemName: "exclamationmark.circle")
                         .font(.system(size: 11))
-                        .foregroundStyle(.secondary)
-                    Text(L("Yomitan offline — Showing macOS System Dictionary"))
+                        .foregroundStyle(.orange)
+                    Text(L("Base de données locale introuvable"))
                         .font(.system(size: 11, weight: .medium))
                         .foregroundStyle(.secondary)
                     Spacer()
-                    Button(L("Retry")) {
+                    Button(L("Réessayer")) {
                         Task { await model.retryYomitanLookup() }
                     }
                     .controlSize(.mini)

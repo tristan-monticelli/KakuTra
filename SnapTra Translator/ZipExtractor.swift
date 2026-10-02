@@ -70,6 +70,52 @@ enum ZipExtractor {
         throw ZipExtractError.fileNotFound(suffix)
     }
 
+    /// Extracts all entries whose filenames match the given predicate.
+    nonisolated static func extractEntries(where matches: (String) -> Bool, from data: Data) throws -> [(filename: String, data: Data)] {
+        guard let eocdOffset = findEOCD(in: data) else {
+            throw ZipExtractError.invalidFormat
+        }
+
+        let cdOffset = Int(data.readLE32(at: eocdOffset + 16))
+        let cdCount  = Int(data.readLE16(at: eocdOffset + 10))
+
+        var pos = cdOffset
+        var entries: [(filename: String, data: Data)] = []
+
+        for _ in 0..<cdCount {
+            guard pos + 46 <= data.count,
+                  data.readLE32(at: pos) == 0x02014b50 else { break }
+
+            let method      = data.readLE16(at: pos + 10)
+            let compSize    = Int(data.readLE32(at: pos + 20))
+            let uncompSize  = Int(data.readLE32(at: pos + 24))
+            let nameLen     = Int(data.readLE16(at: pos + 28))
+            let extraLen    = Int(data.readLE16(at: pos + 30))
+            let commentLen  = Int(data.readLE16(at: pos + 32))
+            let localOffset = Int(data.readLE32(at: pos + 42))
+
+            let nameEnd = pos + 46 + nameLen
+            guard nameEnd <= data.count else { break }
+            let name = String(data: data.subdata(in: (pos + 46)..<nameEnd), encoding: .utf8)
+                ?? String(data: data.subdata(in: (pos + 46)..<nameEnd), encoding: .isoLatin1)
+                ?? ""
+
+            if matches(name) {
+                if let decompressed = try? extractLocalEntry(
+                    from: data,
+                    at: localOffset,
+                    method: method,
+                    compSize: compSize,
+                    uncompSize: uncompSize
+                ) {
+                    entries.append((filename: name, data: decompressed))
+                }
+            }
+            pos += 46 + nameLen + extraLen + commentLen
+        }
+        return entries
+    }
+
     // MARK: - Private
 
     nonisolated private static func extractLocalEntry(

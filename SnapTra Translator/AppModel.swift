@@ -539,6 +539,7 @@ final class AppModel: ObservableObject {
     private let ocrService = OCRService()
     private let selectedTextService = SelectedTextService()
     private let dictionaryService = DictionaryService()
+    let japaneseDictionaryService = JapaneseDictionaryService.shared
     private let yomitanClient = YomitanClient()
     private let ankiConnectClient = AnkiConnectClient()
     private let speechService = SpeechService()
@@ -681,13 +682,11 @@ final class AppModel: ObservableObject {
     }
 
     func refreshYomitanStatus() async {
-        yomitanConnectionState = .checking
-        do {
-            let status = try await yomitanClient.status()
-            yomitanConnectionState = .connected(status)
-        } catch is CancellationError {
-            return
-        } catch {
+        japaneseDictionaryService.refreshStats()
+        if japaneseDictionaryService.isDatabaseInstalled {
+            yomitanConnectionState = .connected(YomitanStatus(serverVersion: 1, extensionVersion: "SQLite Local"))
+            detectedYomitanDictionaries = japaneseDictionaryService.installedDictionaries
+        } else {
             yomitanConnectionState = .notConnected
         }
     }
@@ -1700,58 +1699,29 @@ final class AppModel: ObservableObject {
     ) async {
         guard !Task.isCancelled, activeLookupID == lookupID else { return }
 
-        // Query offline Apple System Dictionary in parallel as guaranteed instant fallback
-        let systemEntry = dictionaryService.lookup(word, sources: settings.dictionarySources)
-        var initialSections: [OverlayDictionarySection] = []
-        if let systemEntry {
-            initialSections.append(
-                OverlayDictionarySection(
-                    sourceType: .system,
-                    state: .ready(systemEntry)
-                )
-            )
-        }
+        // Local Japanese SQLite lookup (<0.3ms)
+        let entries = japaneseDictionaryService.lookup(
+            word,
+            preferredGlossaryLanguage: settings.yomitanPreferredGlossaryLanguage
+        )
 
         let initialContent = OverlayContent(
             word: word,
-            phonetic: systemEntry?.phonetic,
+            phonetic: entries.first?.reading,
             primaryTranslationState: .empty,
             usesCompactPrimaryTranslationStyle: false,
-            dictionarySections: initialSections,
+            dictionarySections: [],
             sourceLanguageIdentifier: "ja",
-            yomitanLookupState: .loading,
+            yomitanLookupState: entries.isEmpty ? .noResults : .results(entries),
             contextSentence: contextSentence
         )
         updateOverlay(state: .result(initialContent), anchor: mouseLocation)
+
         if recordsLookup {
             await learningService.recordLookup(word: word, sourceLanguageIdentifier: "ja")
-        }
-        guard !Task.isCancelled, activeLookupID == lookupID else { return }
-
-        do {
-            let entries = try await yomitanClient.lookup(term: word)
-            guard !Task.isCancelled, activeLookupID == lookupID else { return }
-            let dictionaries = Array(Set(entries.map(\.dictionary))).sorted()
-            detectedYomitanDictionaries = Array(Set(detectedYomitanDictionaries).union(dictionaries)).sorted()
-            yomitanConnectionState = .connected(YomitanStatus(serverVersion: 1, extensionVersion: nil))
-            updateOverlayContent(for: lookupID, anchor: mouseLocation) { content in
-                content.yomitanLookupState = entries.isEmpty ? .noResults : .results(entries)
-                if content.contextSentence == nil {
-                    content.contextSentence = contextSentence
-                }
-            }
             let definition = entries.flatMap(\.glosses).joined(separator: "; ")
             if !definition.isEmpty {
                 _ = await learningService.updateDefinition(word: word, definitionText: definition)
-            }
-        } catch is CancellationError {
-            return
-        } catch {
-            guard !Task.isCancelled, activeLookupID == lookupID else { return }
-            yomitanConnectionState = .notConnected
-            updateOverlayContent(for: lookupID, anchor: mouseLocation) {
-                $0.yomitanLookupState = .notConnected
-                if $0.contextSentence == nil { $0.contextSentence = contextSentence }
             }
         }
 
