@@ -322,12 +322,6 @@ final class SettingsStore: ObservableObject {
     @Published var playSentencePronunciation: Bool {
         didSet { defaults.set(playSentencePronunciation, forKey: AppSettingKey.playSentencePronunciation) }
     }
-    @Published var copyWord: Bool {
-        didSet { defaults.set(copyWord, forKey: AppSettingKey.copyWord) }
-    }
-    @Published var copySentence: Bool {
-        didSet { defaults.set(copySentence, forKey: AppSettingKey.copySentence) }
-    }
     @Published var launchAtLogin: Bool {
         didSet { defaults.set(launchAtLogin, forKey: AppSettingKey.launchAtLogin) }
     }
@@ -416,9 +410,6 @@ final class SettingsStore: ObservableObject {
     @Published var selectedTextTranslationEnabled: Bool {
         didSet { defaults.set(selectedTextTranslationEnabled, forKey: AppSettingKey.selectedTextTranslationEnabled) }
     }
-    @Published var selectedTextClipboardFallback: Bool {
-        didSet { defaults.set(selectedTextClipboardFallback, forKey: AppSettingKey.selectedTextClipboardFallback) }
-    }
     @Published var hideOriginalTextInSentenceOverlay: Bool {
         didSet { defaults.set(hideOriginalTextInSentenceOverlay, forKey: AppSettingKey.hideOriginalTextInSentenceOverlay) }
     }
@@ -486,11 +477,6 @@ final class SettingsStore: ObservableObject {
             playWordPronunciation = playWordPronunciationValue ?? true
             playSentencePronunciation = playSentencePronunciationValue ?? false
         }
-
-        let copyWordValue = defaults.object(forKey: AppSettingKey.copyWord) as? Bool
-        let copySentenceValue = defaults.object(forKey: AppSettingKey.copySentence) as? Bool
-        copyWord = copyWordValue ?? false
-        copySentence = copySentenceValue ?? false
 
         let launchAtLoginValue = defaults.object(forKey: AppSettingKey.launchAtLogin) as? Bool
         let loginStatus = loginItemStatus ?? LoginItemManager.isEnabled()
@@ -561,8 +547,6 @@ final class SettingsStore: ObservableObject {
             rawValue: doubleTapModeValue ?? ""
         ) ?? .manualRegion
         selectedTextTranslationEnabled = sentenceTranslationSettings.selectedTextTranslationEnabled
-        let clipboardFallbackValue = defaults.object(forKey: AppSettingKey.selectedTextClipboardFallback) as? Bool
-        selectedTextClipboardFallback = clipboardFallbackValue ?? true
         let hideOriginalTextValue = defaults.object(forKey: AppSettingKey.hideOriginalTextInSentenceOverlay) as? Bool
         hideOriginalTextInSentenceOverlay = hideOriginalTextValue ?? true
         let sentencePresentationModeValue = defaults.string(forKey: AppSettingKey.sentenceTranslationPresentationMode)
@@ -600,8 +584,6 @@ final class SettingsStore: ObservableObject {
     private func persistAllSettings() {
         defaults.set(playWordPronunciation, forKey: AppSettingKey.playWordPronunciation)
         defaults.set(playSentencePronunciation, forKey: AppSettingKey.playSentencePronunciation)
-        defaults.set(copyWord, forKey: AppSettingKey.copyWord)
-        defaults.set(copySentence, forKey: AppSettingKey.copySentence)
         defaults.set(launchAtLogin, forKey: AppSettingKey.launchAtLogin)
         defaults.set(showMenuBarIcon, forKey: AppSettingKey.showMenuBarIcon)
         defaults.set(menuBarIconStyle.rawValue, forKey: AppSettingKey.menuBarIconStyle)
@@ -623,7 +605,6 @@ final class SettingsStore: ObservableObject {
             forKey: AppSettingKey.doubleTapSentenceTranslationMode
         )
         defaults.set(selectedTextTranslationEnabled, forKey: AppSettingKey.selectedTextTranslationEnabled)
-        defaults.set(selectedTextClipboardFallback, forKey: AppSettingKey.selectedTextClipboardFallback)
         defaults.set(hideOriginalTextInSentenceOverlay, forKey: AppSettingKey.hideOriginalTextInSentenceOverlay)
         defaults.set(
             sentenceTranslationPresentationMode.rawValue,

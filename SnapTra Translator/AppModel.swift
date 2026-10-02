@@ -1041,7 +1041,6 @@ final class AppModel: ObservableObject {
             mouseLocation: mouseLocation,
             supportsSelectedText: supportsSelectedTextTranslation,
             selectedTextEnabled: selectedTextEnabled,
-            clipboardFallbackEnabled: settings.selectedTextClipboardFallback,
             hasAccessibilityPermission: hasAccessibilityPermission,
             selectedTextProbeRequest: selectedTextProbeRequest
         )
@@ -1114,14 +1113,12 @@ final class AppModel: ObservableObject {
             accessibilityProbe: { [weak self] probeRequest in
                 guard let self else {
                     return SinglePressLookupResolution(
-                        intent: .ocrWord,
-                        shouldTryClipboardFallback: false
+                        intent: .ocrWord
                     )
                 }
                 guard let selectedTextProbeRequest else {
                     return SinglePressLookupResolution(
-                        intent: .ocrWord,
-                        shouldTryClipboardFallback: false
+                        intent: .ocrWord
                     )
                 }
                 performance?.begin(.accessibilityProbe)
@@ -1137,27 +1134,6 @@ final class AppModel: ObservableObject {
                 )
                 return resolution
             },
-            clipboardProbe: { [weak self] probeRequest in
-                guard let self else { return nil }
-                performance?.begin(.clipboardFallback)
-                let snapshot = await self.selectedTextService.clipboardFallbackSnapshot(
-                    isEnabled: probeRequest.clipboardFallbackEnabled
-                )
-                let remainsActive = !Task.isCancelled
-                    && self.activeLookupID == probeRequest.lookupID
-                performance?.end(
-                    .clipboardFallback,
-                    outcome: remainsActive
-                        ? (snapshot == nil ? .failed : .succeeded)
-                        : .cancelled
-                )
-                if let snapshot {
-                    self.debugSelectedTextRoute(
-                        "clipboard fallback succeeded text=\"\(self.truncate(snapshot.text))\""
-                    )
-                }
-                return snapshot
-            },
             loadOCRCandidate: { [weak self] candidateRequest in
                 guard let self else { return OcrWordCandidateLoadResult.cancelled }
                 return await self.loadOcrWordCandidate(request: candidateRequest)
@@ -1167,11 +1143,9 @@ final class AppModel: ObservableObject {
                 performance?.end(.routeResolution, outcome: .succeeded)
                 guard let trace = performance?.trace else { return }
                 switch route {
-                case .selectedText(let source):
+                case .selectedText:
                     self.lookupPerformanceReporter.recordRoute(
-                        source == .clipboard
-                            ? .clipboardSelection
-                            : .accessibilitySelection,
+                        .accessibilitySelection,
                         trace: trace
                     )
                 case .ocr:
@@ -1363,11 +1337,6 @@ final class AppModel: ObservableObject {
             )
         }
 
-        if settings.copyWord {
-            let pasteboard = NSPasteboard.general
-            pasteboard.clearContents()
-            pasteboard.setString(word, forType: .string)
-        }
         guard !Task.isCancelled, activeLookupID == lookupID else { return }
 
         let initialContent = makeInitialOverlayContent(
@@ -1482,17 +1451,17 @@ final class AppModel: ObservableObject {
 
         guard request.supportsSelectedText else {
             debugSelectedTextRoute("decision=ocrWord reason=unsupportedChannel")
-            return SinglePressLookupResolution(intent: .ocrWord, shouldTryClipboardFallback: false)
+            return SinglePressLookupResolution(intent: .ocrWord)
         }
 
         guard request.selectedTextEnabled else {
             debugSelectedTextRoute("decision=ocrWord reason=featureDisabled")
-            return SinglePressLookupResolution(intent: .ocrWord, shouldTryClipboardFallback: false)
+            return SinglePressLookupResolution(intent: .ocrWord)
         }
 
         guard request.hasAccessibilityPermission else {
             debugSelectedTextRoute("decision=ocrWord reason=missingAccessibility")
-            return SinglePressLookupResolution(intent: .ocrWord, shouldTryClipboardFallback: false)
+            return SinglePressLookupResolution(intent: .ocrWord)
         }
 
         let selectionSnapshot = await selectedTextService.currentSelectionSnapshot(
@@ -1527,11 +1496,7 @@ final class AppModel: ObservableObject {
         case .ocrWord:
             debugSelectedTextRoute("decision=ocrWord")
         }
-        return SinglePressLookupResolution(
-            intent: intent,
-            shouldTryClipboardFallback: selectionSnapshot == nil
-                || ClipboardFallbackPolicy.shouldTryAfterAccessibilityRejection(selectionRejectionReason)
-        )
+        return SinglePressLookupResolution(intent: intent)
     }
 
     private func performSelectedTextSentenceLookup(
@@ -1555,12 +1520,6 @@ final class AppModel: ObservableObject {
                 provider: settings.sentenceTTSProvider,
                 useAmericanAccent: settings.englishAccent.isAmerican
             )
-        }
-
-        if settings.copySentence {
-            let pasteboard = NSPasteboard.general
-            pasteboard.clearContents()
-            pasteboard.setString(snapshot.text, forType: .string)
         }
 
         let isNativeTranslationEnabled = SentenceTranslationServiceSelection.isNativeTranslationEnabled(
@@ -1690,12 +1649,6 @@ final class AppModel: ObservableObject {
                     )
                 }
 
-                if settings.copySentence {
-                    let pasteboard = NSPasteboard.general
-                    pasteboard.clearContents()
-                    pasteboard.setString(text, forType: .string)
-                }
-
                 if usesImageSentenceTranslation {
                     guard let imageData = pngData(from: capture.image, normalizedRect: line.boundingBox) else {
                         showInPlaceImageTranslation(
@@ -1799,12 +1752,6 @@ final class AppModel: ObservableObject {
                         provider: settings.sentenceTTSProvider,
                         useAmericanAccent: settings.englishAccent.isAmerican
                     )
-                }
-
-                if settings.copySentence {
-                    let pasteboard = NSPasteboard.general
-                    pasteboard.clearContents()
-                    pasteboard.setString(paragraph.text, forType: .string)
                 }
 
                 if usesImageSentenceTranslation {
@@ -1983,12 +1930,6 @@ final class AppModel: ObservableObject {
                     provider: settings.sentenceTTSProvider,
                     useAmericanAccent: settings.englishAccent.isAmerican
                 )
-            }
-
-            if settings.copySentence {
-                let pasteboard = NSPasteboard.general
-                pasteboard.clearContents()
-                pasteboard.setString(text, forType: .string)
             }
 
             let isNativeTranslationEnabled = SentenceTranslationServiceSelection.isNativeTranslationEnabled(

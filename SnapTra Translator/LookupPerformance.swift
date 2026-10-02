@@ -6,13 +6,11 @@ nonisolated enum LookupPerformanceRoute: String, Sendable {
     case appStoreOCR
     case directOCR
     case accessibilitySelection
-    case clipboardSelection
 }
 
 nonisolated enum LookupPerformanceStage: String, Sendable {
     case routeResolution
     case accessibilityProbe
-    case clipboardFallback
     case captureMetadata
     case screenshot
     case ocr

@@ -27,8 +27,6 @@ final class SettingsStoreMigrationTests: XCTestCase {
         AppSettingKey.playPronunciation,
         AppSettingKey.playWordPronunciation,
         AppSettingKey.playSentencePronunciation,
-        AppSettingKey.copyWord,
-        AppSettingKey.copySentence,
         AppSettingKey.launchAtLogin,
         AppSettingKey.showMenuBarIcon,
         AppSettingKey.menuBarIconStyle,
@@ -665,48 +663,6 @@ final class SelectedTextLookupRoutingTests: XCTestCase {
         )
 
         XCTAssertEqual(intent, .selectedTextSentence(snapshot))
-    }
-
-    func testClipboardSnapshotWithoutBoundsRoutesToSelectedTextTranslation() {
-        let snapshot = SelectedTextSnapshot(
-            text: "Hello world",
-            selectedRange: NSRange(location: NSNotFound, length: 11),
-            bounds: nil,
-            sourceAppIdentifier: "com.tencent.xinWeChat",
-            source: .clipboard
-        )
-
-        let intent = SinglePressLookupRouter.resolve(
-            mouseLocation: CGPoint(x: 260, y: 200),
-            isSelectedTextTranslationSupported: true,
-            isSelectedTextTranslationEnabled: true,
-            hasAccessibilityPermission: true,
-            selectionSnapshot: snapshot
-        )
-
-        XCTAssertEqual(intent, .selectedTextSentence(snapshot))
-    }
-
-    func testClipboardFallbackRequiresPasteboardChange() {
-        XCTAssertFalse(
-            ClipboardFallbackPolicy.shouldReadCopiedText(
-                originalChangeCount: 12,
-                currentChangeCount: 12
-            )
-        )
-        XCTAssertTrue(
-            ClipboardFallbackPolicy.shouldReadCopiedText(
-                originalChangeCount: 12,
-                currentChangeCount: 13
-            )
-        )
-    }
-
-    func testClipboardFallbackCanRecoverGeometricallyRejectedAccessibilitySnapshots() {
-        XCTAssertTrue(ClipboardFallbackPolicy.shouldTryAfterAccessibilityRejection("missingBounds"))
-        XCTAssertTrue(ClipboardFallbackPolicy.shouldTryAfterAccessibilityRejection("untrustedBounds"))
-        XCTAssertTrue(ClipboardFallbackPolicy.shouldTryAfterAccessibilityRejection("mouseOutsideSelection"))
-        XCTAssertFalse(ClipboardFallbackPolicy.shouldTryAfterAccessibilityRejection("nonMeaningfulText"))
     }
 
     func testInvisibleSelectedTextFallsBackToOcrWord() {

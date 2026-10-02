@@ -304,11 +304,7 @@ struct OverlayView: View {
 
         VStack(alignment: .leading, spacing: 0) {
             if originalVisibility.showsOriginalTextRegion {
-                paragraphOriginalTopBar(
-                    copyText: originalText,
-                    originalVisibility: originalVisibility,
-                    content: content
-                )
+                paragraphOriginalTopBar(originalVisibility: originalVisibility, content: content)
             } else {
                 paragraphTopBar(
                     originalVisibility: originalVisibility,
@@ -373,8 +369,6 @@ struct OverlayView: View {
                                             .controlSize(.small)
                                             .scaleEffect(0.7)
                                     }
-
-                                    CopyButton(text: translatedText)
                                 }
 
                                 paragraphTextContent(
@@ -565,7 +559,7 @@ struct OverlayView: View {
         switch result.state {
         case .loading:
             VStack(alignment: .leading, spacing: 8) {
-                paragraphServiceResultHeader(result: result, copyText: nil)
+                paragraphServiceResultHeader(result: result)
 
                 HStack(spacing: 8) {
                     ProgressView()
@@ -581,7 +575,7 @@ struct OverlayView: View {
 
         case .ready(let translatedText):
             VStack(alignment: .leading, spacing: 8) {
-                paragraphServiceResultHeader(result: result, copyText: translatedText)
+                paragraphServiceResultHeader(result: result)
 
                 paragraphTextContent(
                     text: translatedText,
@@ -595,7 +589,7 @@ struct OverlayView: View {
 
         case .failed(let message):
             VStack(alignment: .leading, spacing: 8) {
-                paragraphServiceResultHeader(result: result, copyText: nil)
+                paragraphServiceResultHeader(result: result)
 
                 paragraphErrorContent(message: message)
             }
@@ -606,12 +600,9 @@ struct OverlayView: View {
 
     /// Header row shared by all paragraph service result states: provider name,
     /// optional model name for LLM providers, elapsed translation time on the
-    /// right, and the copy button (ready state only).
+    /// right.
     @ViewBuilder
-    private func paragraphServiceResultHeader(
-        result: ServiceTranslationResult,
-        copyText: String?
-    ) -> some View {
+    private func paragraphServiceResultHeader(result: ServiceTranslationResult) -> some View {
         HStack(alignment: .center, spacing: 8) {
             HStack(alignment: .center, spacing: 4) {
                 Text(result.sourceType.displayName)
@@ -641,11 +632,6 @@ struct OverlayView: View {
                     .monospacedDigit()
                     .layoutPriority(1)
                     .help(L("Translation time"))
-            }
-
-            if let copyText, !copyText.isEmpty {
-                CopyButton(text: copyText)
-                    .layoutPriority(1)
             }
         }
     }
@@ -688,13 +674,11 @@ struct OverlayView: View {
     @ViewBuilder
     private func paragraphSectionCard<Content: View>(
         title: String?,
-        copyText: String? = nil,
         emphasis: Bool = false,
         @ViewBuilder content: () -> Content
     ) -> some View {
         ParagraphOverlaySectionCard(
             title: title,
-            copyText: copyText,
             emphasis: emphasis,
             content: content
         )
@@ -826,7 +810,6 @@ struct OverlayView: View {
 
     @ViewBuilder
     private func paragraphOriginalTopBar(
-        copyText: String,
         originalVisibility: ParagraphOriginalVisibilityPolicy.Decision,
         content: ParagraphOverlayContent
     ) -> some View {
@@ -836,13 +819,9 @@ struct OverlayView: View {
                 fillsWidth: false
             )
 
-            if !copyText.isEmpty {
-                CopyButton(text: copyText)
-            }
-
             pronunciationControl(
                 kind: .sentence,
-                hasText: !copyText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                hasText: !content.originalText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             )
 
             if originalVisibility.showsOriginalEditorToggle {
@@ -1313,8 +1292,6 @@ struct OverlayView: View {
                 hasText: !content.word.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             )
 
-            CopyButton(text: content.word)
-
             Button {
                 model.dismissOverlay()
             } label: {
@@ -1387,10 +1364,6 @@ struct OverlayView: View {
                                         )
                                         .tracking(0.3)
                                 }
-
-                                if showsWordOverlayControls {
-                                    CopyButton(text: translation)
-                                }
                             } else {
                                 if useSelectableWordText {
                                     wordSelectableText(
@@ -1403,10 +1376,6 @@ struct OverlayView: View {
                                         .font(.system(size: 24, weight: .bold, design: .rounded))
                                         .foregroundStyle(.primary)
                                         .tracking(0.2)
-                                }
-
-                                if showsWordOverlayControls {
-                                    CopyButton(text: translation)
                                 }
                             }
 
@@ -1996,45 +1965,6 @@ enum ParagraphFontSizing {
     }
 }
 
-// MARK: - Copy Button
-
-struct CopyButton: View {
-    let text: String
-    @State private var copied = false
-
-    var body: some View {
-        Button {
-            copyToClipboard(text)
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                copied = true
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                withAnimation(.easeInOut(duration: 0.25)) {
-                    copied = false
-                }
-            }
-        } label: {
-            Image(systemName: copied ? "checkmark" : "doc.on.doc")
-                .font(.system(size: 10, weight: .medium))
-                .foregroundStyle(copied ? Color(red: 0.2, green: 0.78, blue: 0.35) : .secondary)
-                .frame(width: 18, height: 18)
-                .background(
-                    RoundedRectangle(cornerRadius: 5, style: .continuous)
-                        .fill(copied ? Color(red: 0.2, green: 0.78, blue: 0.35).opacity(0.12) : Color.secondary.opacity(0.08))
-                )
-                .scaleEffect(copied ? 1.1 : 1.0)
-        }
-        .buttonStyle(.plain)
-        .help(L("Copy to clipboard"))
-    }
-
-    private func copyToClipboard(_ text: String) {
-        let pasteboard = NSPasteboard.general
-        pasteboard.clearContents()
-        pasteboard.setString(text, forType: .string)
-    }
-}
-
 private struct SelectableTextView: NSViewRepresentable {
     let text: String
     let font: NSFont
@@ -2618,41 +2548,25 @@ private struct ParagraphOverlaySectionCard<Content: View>: View {
     @Environment(\.colorScheme) private var colorScheme
 
     let title: String?
-    let copyText: String?
     let emphasis: Bool
     let content: Content
 
-    @State private var isHovered = false
-
     init(
         title: String?,
-        copyText: String?,
         emphasis: Bool,
         @ViewBuilder content: () -> Content
     ) {
         self.title = title
-        self.copyText = copyText
         self.emphasis = emphasis
         self.content = content()
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .firstTextBaseline, spacing: 12) {
-                if let title, !title.isEmpty {
-                    Text(title)
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(.secondary)
-                }
-
-                Spacer(minLength: 8)
-
-                if let copyText, !copyText.isEmpty {
-                    ParagraphSectionCopyButton(
-                        text: copyText,
-                        isVisible: isHovered
-                    )
-                }
+            if let title, !title.isEmpty {
+                Text(title)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(.secondary)
             }
 
             content
@@ -2669,9 +2583,6 @@ private struct ParagraphOverlaySectionCard<Content: View>: View {
         }
         .shadow(color: shadowColor, radius: 2, x: 0, y: 1)
         .contentShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
-        .onHover { hovering in
-            isHovered = hovering
-        }
     }
 
     private var fillColor: Color {
@@ -2696,47 +2607,6 @@ private struct ParagraphOverlaySectionCard<Content: View>: View {
         }
 
         return .black.opacity(emphasis ? 0.05 : 0.03)
-    }
-}
-
-private struct ParagraphSectionCopyButton: View {
-    let text: String
-    let isVisible: Bool
-    @State private var copied = false
-
-    var body: some View {
-        Button {
-            copyToClipboard(text)
-            withAnimation(.spring(response: 0.28, dampingFraction: 0.8)) {
-                copied = true
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    copied = false
-                }
-            }
-        } label: {
-            Image(systemName: copied ? "checkmark" : "doc.on.doc")
-                .font(.system(size: 11, weight: .semibold))
-                .foregroundStyle(copied ? Color(red: 0.2, green: 0.7, blue: 0.35) : .secondary)
-                .frame(width: 16, height: 16)
-                .padding(4)
-                .background(
-                    RoundedRectangle(cornerRadius: 7, style: .continuous)
-                        .fill(copied ? Color(red: 0.2, green: 0.7, blue: 0.35).opacity(0.12) : Color.secondary.opacity(0.08))
-                )
-                .opacity(isVisible || copied ? 1 : 0)
-        }
-        .buttonStyle(.plain)
-        .allowsHitTesting(isVisible || copied)
-        .animation(.easeInOut(duration: 0.16), value: isVisible)
-        .help(copied ? L("Copied") : L("Copy to clipboard"))
-    }
-
-    private func copyToClipboard(_ text: String) {
-        let pasteboard = NSPasteboard.general
-        pasteboard.clearContents()
-        pasteboard.setString(text, forType: .string)
     }
 }
 

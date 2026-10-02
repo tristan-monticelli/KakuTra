@@ -47,10 +47,6 @@ nonisolated enum SinglePressLookupRouter {
             return "nonMeaningfulText"
         }
 
-        guard selectionSnapshot.source != .clipboard else {
-            return nil
-        }
-
         guard !hasKnownSelectedRange(selectionSnapshot.selectedRange) else {
             return nil
         }
