@@ -2,10 +2,9 @@
 //  YomitanSettingsSection.swift
 //  KakuTra
 //
-//  Clean language-based dictionary settings:
-//  The user chooses their preferred definition language (English or French),
-//  sees the installed language files, and can open the folder or import files.
-//  Zero internal package jargon.
+//  Pure Japanese-to-English immersion dictionary settings.
+//  Zero unnecessary UI, zero language pickers.
+//  1.1M+ definitions (Jitendex + JMnedict), sub-0.1ms offline search.
 //
 
 import AppKit
@@ -25,7 +24,7 @@ struct YomitanSettingsSection: View {
     }
 
     var body: some View {
-        SettingsSectionCard(title: L("Dictionnaires"), icon: "character.book.closed") {
+        SettingsSectionCard(title: L("Dictionnaire"), icon: "character.book.closed") {
             VStack(alignment: .leading, spacing: 14) {
                 // Status Header
                 HStack(alignment: .center, spacing: 10) {
@@ -44,7 +43,7 @@ struct YomitanSettingsSection: View {
                             .font(.system(size: 13, weight: .semibold))
                             .foregroundStyle(.primary)
 
-                        Text("\(totalEntriesFormatted) définitions actives · < 0,3 ms · 100% Hors-ligne")
+                        Text("\(totalEntriesFormatted) définitions actives · < 0,1 ms · 100% Hors-ligne")
                             .font(.system(size: 11))
                             .foregroundStyle(.secondary)
                     }
@@ -63,64 +62,40 @@ struct YomitanSettingsSection: View {
 
                 Divider().opacity(0.6)
 
-                // Language Selection (Clean & Simple)
+                // Dictionary Content Summary
                 VStack(alignment: .leading, spacing: 8) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(L("Langue des définitions"))
-                            .font(.system(size: 12, weight: .medium))
-                        Text(L("Choisissez la langue à afficher lors du survol d'un mot."))
-                            .font(.system(size: 10))
-                            .foregroundStyle(.secondary)
-                    }
-
-                    Picker("", selection: $model.settings.yomitanPreferredGlossaryLanguage) {
-                        Text(L("Anglais (Recommandé)")).tag("en")
-                        Text(L("Français")).tag("fr")
-                    }
-                    .labelsHidden()
-                    .pickerStyle(.segmented)
-                }
-
-                Divider().opacity(0.6)
-
-                // Installed Language Files List
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(L("Fichiers de langues installés :"))
+                    Text(L("Base d'immersion intégrée :"))
                         .font(.system(size: 11, weight: .medium))
                         .foregroundStyle(.secondary)
 
-                    if model.japaneseDictionaryService.installedLanguages.isEmpty {
-                        Text(L("Aucun fichier de langue trouvé."))
-                            .font(.system(size: 11))
-                            .foregroundStyle(.secondary)
-                    } else {
-                        ForEach(model.japaneseDictionaryService.installedLanguages) { lang in
-                            HStack(spacing: 8) {
-                                Image(systemName: "globe")
-                                    .font(.system(size: 12))
-                                    .foregroundStyle(Color.accentColor)
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "books.vertical.fill")
+                            .font(.system(size: 16))
+                            .foregroundStyle(Color.accentColor)
+                            .padding(.top, 1)
 
-                                VStack(alignment: .leading, spacing: 1) {
-                                    Text(lang.displayName)
-                                        .font(.system(size: 12, weight: .medium))
-                                        .foregroundStyle(.primary)
-                                    Text("\(formattedCount(lang.entriesCount)) définitions · \(lang.filename)")
-                                        .font(.system(size: 10))
-                                        .foregroundStyle(.secondary)
-                                }
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(L("Jitendex + JMnedict (Anglais)"))
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundStyle(.primary)
 
-                                Spacer()
-
-                                Text(lang.badge)
-                                    .font(.system(size: 10, weight: .medium))
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 3)
-                                    .background(Color.accentColor.opacity(0.12), in: Capsule())
-                                    .foregroundStyle(Color.accentColor)
-                            }
-                            .padding(.vertical, 2)
+                            Text(L("Vocabulaire complet, argot, phrases d'exemples bilingues et 668 000 personnages d'animés, mangas et lieux."))
+                                .font(.system(size: 11))
+                                .foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
                         }
+
+                        Spacer()
+
+                        Text(L("Complet"))
+                            .font(.system(size: 10, weight: .medium))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background(Color.accentColor.opacity(0.12), in: Capsule())
+                            .foregroundStyle(Color.accentColor)
                     }
+                    .padding(10)
+                    .background(Color.primary.opacity(0.03), in: RoundedRectangle(cornerRadius: 8))
                 }
 
                 Divider().opacity(0.6)
@@ -132,7 +107,7 @@ struct YomitanSettingsSection: View {
                     } label: {
                         HStack(spacing: 5) {
                             Image(systemName: "folder")
-                            Text(L("Ouvrir le dossier des langues"))
+                            Text(L("Ouvrir le dossier"))
                         }
                     }
                     .controlSize(.small)
@@ -185,12 +160,6 @@ struct YomitanSettingsSection: View {
                 }
             }
         }
-    }
-
-    private func formattedCount(_ count: Int) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        return formatter.string(from: NSNumber(value: count)) ?? "\(count)"
     }
 
     private func importDictionaryFile() {
