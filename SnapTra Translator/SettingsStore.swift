@@ -728,14 +728,17 @@ final class SettingsStore: ObservableObject {
     }
 
     static func migrateDictionarySources(_ sources: [DictionarySource]) -> [DictionarySource] {
-        var migrated = sources.map {
-            DictionarySource(
-                id: $0.id,
-                name: $0.type.displayName,
-                type: $0.type,
-                isEnabled: $0.isEnabled
-            )
-        }
+        // Closed circuit: filter out external web dictionary APIs (youdao, google, freeDictionaryAPI)
+        var migrated = sources
+            .filter { $0.type == .system || $0.type == .ecdict }
+            .map {
+                DictionarySource(
+                    id: $0.id,
+                    name: $0.type.displayName,
+                    type: $0.type,
+                    isEnabled: $0.isEnabled
+                )
+            }
 
         let existingTypes = Set(migrated.map(\.type))
         for definition in defaultDictionarySourceDefinitions(ecdictInstalled: isECDICTInstalled)
@@ -761,9 +764,6 @@ final class SettingsStore: ObservableObject {
         [
             (.system, true),
             (.ecdict, ecdictInstalled),
-            (.youdao, false),
-            (.google, false),
-            (.freeDictionaryAPI, false),
         ]
     }
 

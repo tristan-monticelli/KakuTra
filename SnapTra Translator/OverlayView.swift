@@ -239,8 +239,10 @@ struct OverlayView: View {
 
                 if content.yomitanLookupState != .notRequested {
                     yomitanResultsSection(state: content.yomitanLookupState)
+                    if !content.visibleDictionarySections.isEmpty {
+                        dictionarySectionsView(sections: content.visibleDictionarySections)
+                    }
                 } else {
-                    primaryTranslationSection(content: content)
                     if !content.visibleDictionarySections.isEmpty {
                         dictionarySectionsView(sections: content.visibleDictionarySections)
                     }
@@ -464,21 +466,21 @@ struct OverlayView: View {
                 .padding(.horizontal, 18)
                 .padding(.bottom, 14)
             case .notConnected:
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(L("Yomitan not connected"))
-                        .font(.system(size: 12, weight: .medium))
-                    Text(L("Open Yomitan in your browser and enable its local API."))
+                HStack(spacing: 6) {
+                    Image(systemName: "circle.slash")
                         .font(.system(size: 11))
                         .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                    Button(L("Try again")) {
+                    Text(L("Yomitan offline — Showing macOS System Dictionary"))
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Button(L("Retry")) {
                         Task { await model.retryYomitanLookup() }
                     }
-                    .controlSize(.small)
-                    .padding(.top, 3)
+                    .controlSize(.mini)
                 }
                 .padding(.horizontal, 18)
-                .padding(.bottom, 14)
+                .padding(.bottom, 8)
             case .noResults:
                 dictionaryStatusRow(text: L("No Japanese dictionary results."))
             case .failed(let message):
@@ -1477,6 +1479,32 @@ struct OverlayView: View {
                 .font(.system(size: 11, weight: .semibold))
             Text(config.title)
                 .font(.system(size: 11, weight: .semibold))
+            Spacer()
+            if case .result(let content) = model.overlayState {
+                if let section = content.visibleDictionarySections.first(where: { $0.sourceType == sourceType }),
+                   case .ready(let entry) = section.state {
+                    Button {
+                        let defText = entry.definitions.map { $0.translation ?? $0.meaning }.joined(separator: "\n")
+                        model.prepareAnkiNote(
+                            term: content.word,
+                            reading: content.phonetic ?? entry.phonetic,
+                            definition: defText,
+                            source: config.title,
+                            contextSentence: content.contextSentence
+                        )
+                    } label: {
+                        HStack(spacing: 3) {
+                            Image(systemName: "rectangle.stack.badge.plus")
+                            Text(L("Add to Anki"))
+                        }
+                        .font(.system(size: 10, weight: .medium))
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.mini)
+                }
+            }
         }
         .foregroundStyle(config.color)
         .padding(.horizontal, 18)

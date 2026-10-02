@@ -677,9 +677,7 @@ final class AppModel: ObservableObject {
         resolvedPermissions.refreshStatus()
         Task { await refreshYomitanStatus() }
         Task { await refreshAnkiConfiguration() }
-        Task {
-            await checkLanguageAvailability(notifyUser: false)
-        }
+        setListening(true)
     }
 
     func refreshYomitanStatus() async {
@@ -766,7 +764,13 @@ final class AppModel: ObservableObject {
         await performYomitanWordLookup(content.word, lookupID: lookupID, mouseLocation: overlayAnchor, contextSentence: content.contextSentence, recordsLookup: false)
     }
 
-    func prepareAnkiNote(for result: YomitanTermResult, contextSentence: String?) {
+    func prepareAnkiNote(
+        term: String,
+        reading: String?,
+        definition: String,
+        source: String,
+        contextSentence: String?
+    ) {
         overlayWindowController.setInteractive(true)
 
         var configError: String? = nil
@@ -788,13 +792,12 @@ final class AppModel: ObservableObject {
             configError = L("AnkiConnect is not connected. Open Anki and enable the AnkiConnect add-on.")
         }
 
-        let glossesText = result.glosses.joined(separator: "\n")
         let draft = AnkiCardConfirmationDraft(
-            term: result.term,
-            reading: result.reading ?? "",
-            definition: glossesText,
+            term: term,
+            reading: reading ?? "",
+            definition: definition,
             contextSentence: contextSentence ?? "",
-            sourceDictionary: result.dictionary,
+            sourceDictionary: source,
             tags: settings.ankiTags,
             deckName: settings.ankiDeckName,
             modelName: settings.ankiModelName,
@@ -825,6 +828,16 @@ final class AppModel: ObservableObject {
                 self.ankiConfirmationDraft?.isCheckingDuplicate = false
             }
         }
+    }
+
+    func prepareAnkiNote(for result: YomitanTermResult, contextSentence: String?) {
+        prepareAnkiNote(
+            term: result.term,
+            reading: result.reading,
+            definition: result.glosses.joined(separator: "\n"),
+            source: result.dictionary,
+            contextSentence: contextSentence
+        )
     }
 
     private func makeAnkiNoteDraft(from draft: AnkiCardConfirmationDraft) -> AnkiNoteDraft {
@@ -1662,15 +1675,15 @@ final class AppModel: ObservableObject {
                 mouseLocation: mouseLocation,
                 contextSentence: contextSentence
             )
-            return
+        } else {
+            await performGeneralWordLookup(
+                word,
+                lookupID: lookupID,
+                mouseLocation: mouseLocation,
+                contextSentence: contextSentence
+            )
         }
-
-        // KakuTra is dedicated exclusively to Japanese immersion via Yomitan.
-        // Ignore non-Japanese text completely without invoking legacy translation services.
-        hideOverlay()
-        return
     }
-
 
     private func performYomitanWordLookup(
         _ word: String,
@@ -1680,11 +1693,25 @@ final class AppModel: ObservableObject {
         recordsLookup: Bool = true
     ) async {
         guard !Task.isCancelled, activeLookupID == lookupID else { return }
+
+        // Query offline Apple System Dictionary in parallel as guaranteed instant fallback
+        let systemEntry = dictionaryService.lookup(word, sources: settings.dictionarySources)
+        var initialSections: [OverlayDictionarySection] = []
+        if let systemEntry {
+            initialSections.append(
+                OverlayDictionarySection(
+                    sourceType: .system,
+                    state: .ready(systemEntry)
+                )
+            )
+        }
+
         let initialContent = OverlayContent(
             word: word,
-            phonetic: nil,
+            phonetic: systemEntry?.phonetic,
             primaryTranslationState: .empty,
             usesCompactPrimaryTranslationStyle: false,
+            dictionarySections: initialSections,
             sourceLanguageIdentifier: "ja",
             yomitanLookupState: .loading,
             contextSentence: contextSentence
@@ -1715,19 +1742,62 @@ final class AppModel: ObservableObject {
             return
         } catch {
             guard !Task.isCancelled, activeLookupID == lookupID else { return }
-            if let yomitanError = error as? YomitanClientError,
-               case .unavailable = yomitanError {
-                yomitanConnectionState = .notConnected
-                updateOverlayContent(for: lookupID, anchor: mouseLocation) {
-                    $0.yomitanLookupState = .notConnected
-                    if $0.contextSentence == nil { $0.contextSentence = contextSentence }
-                }
-            } else {
-                updateOverlayContent(for: lookupID, anchor: mouseLocation) {
-                    $0.yomitanLookupState = .failed(error.localizedDescription)
-                    if $0.contextSentence == nil { $0.contextSentence = contextSentence }
-                }
+            yomitanConnectionState = .notConnected
+            updateOverlayContent(for: lookupID, anchor: mouseLocation) {
+                $0.yomitanLookupState = .notConnected
+                if $0.contextSentence == nil { $0.contextSentence = contextSentence }
             }
+        }
+    }
+
+    private func performGeneralWordLookup(
+        _ word: String,
+        lookupID: UUID,
+        mouseLocation: CGPoint,
+        contextSentence: String? = nil,
+        recordsLookup: Bool = true
+    ) async {
+        guard !Task.isCancelled, activeLookupID == lookupID else { return }
+
+        guard let entry = dictionaryService.lookup(word, sources: settings.dictionarySources) else {
+            hideOverlay()
+            return
+        }
+
+        let section = OverlayDictionarySection(
+            sourceType: .system,
+            state: .ready(entry)
+        )
+
+        let content = OverlayContent(
+            word: word,
+            phonetic: entry.phonetic,
+            primaryTranslationState: .empty,
+            usesCompactPrimaryTranslationStyle: false,
+            dictionarySections: [section],
+            sourceLanguageIdentifier: nil,
+            yomitanLookupState: .notRequested,
+            contextSentence: contextSentence
+        )
+
+        updateOverlay(state: .result(content), anchor: mouseLocation)
+
+        if recordsLookup {
+            await learningService.recordLookup(word: word, sourceLanguageIdentifier: "auto")
+            let definition = entry.definitions.map { $0.translation ?? $0.meaning }.joined(separator: "; ")
+            if !definition.isEmpty {
+                _ = await learningService.updateDefinition(word: word, definitionText: definition)
+            }
+        }
+
+        if settings.playWordPronunciation {
+            speechService.speak(
+                word,
+                language: nil,
+                provider: .apple,
+                useAmericanAccent: settings.englishAccent.isAmerican,
+                performance: nil
+            )
         }
     }
 

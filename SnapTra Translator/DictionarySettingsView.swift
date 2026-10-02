@@ -300,28 +300,22 @@ struct DictionarySettingsView: View {
 
     enum DictionaryTab: String, CaseIterable {
         case dictionary
-        case sentence
         case wordPronunciation
-        case sentencePronunciation
         case learning
 
         var title: String {
             switch self {
-            case .dictionary: return L("Word")
-            case .sentence: return L("Sentence")
+            case .dictionary: return L("Dictionary")
+            case .wordPronunciation: return L("Pronunciation")
             case .learning: return L("Learning")
-            case .wordPronunciation: return L("Word Pronunciation")
-            case .sentencePronunciation: return L("Sentence Pronunciation")
             }
         }
 
         var icon: String {
             switch self {
             case .dictionary: return "books.vertical"
-            case .sentence: return "text.bubble"
-            case .learning: return "graduationcap"
             case .wordPronunciation: return "speaker.wave.2"
-            case .sentencePronunciation: return "megaphone"
+            case .learning: return "graduationcap"
             }
         }
     }
@@ -339,31 +333,13 @@ struct DictionarySettingsView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .onAppear {
             loadSources()
-            loadSentenceSources()
-            if !hasTestedTTS {
-                hasTestedTTS = true
-                Task { await ttsTester.testAllProviders() }
-            }
-            if !hasTestedSentence {
-                hasTestedSentence = true
-                Task {
-                    await sentenceLatencyTester.testAll(
-                        sources: sentenceSources,
-                        configurations: model.settings.llmProviderConfigurations
-                    )
-                }
-            }
         }
     }
 
     private var leftSidebar: some View {
         VStack(alignment: .leading, spacing: 4) {
             sidebarButton(for: .dictionary)
-            sidebarButton(for: .sentence)
-            Divider()
-                .padding(.vertical, 4)
             sidebarButton(for: .wordPronunciation)
-            sidebarButton(for: .sentencePronunciation)
             Divider()
                 .padding(.vertical, 4)
             sidebarButton(for: .learning)
@@ -430,14 +406,10 @@ struct DictionarySettingsView: View {
         switch selectedTab {
         case .dictionary:
             dictionarySection
-        case .sentence:
-            sentenceTranslationSection
         case .learning:
             EmptyView()
         case .wordPronunciation:
             wordPronunciationSection
-        case .sentencePronunciation:
-            sentencePronunciationSection
         }
     }
     
@@ -495,7 +467,7 @@ struct DictionarySettingsView: View {
             .padding(.top)
 
             VStack(spacing: 6) {
-                ForEach(TTSProvider.allCases) { provider in
+                ForEach(TTSProvider.allCases.filter { $0 == .apple }) { provider in
                     TTSServiceRow(
                         provider: provider,
                         isSelected: model.settings.wordTTSProvider == provider,
