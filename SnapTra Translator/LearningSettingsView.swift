@@ -406,7 +406,7 @@ struct LearningSettingsView: View {
             Text(L("No words yet"))
                 .font(.headline)
                 .foregroundStyle(.secondary)
-            Text(L("Words you look up will appear here. Hold the hotkey and move your cursor over English words to start learning."))
+            Text(L("Words you look up will appear here. Hold the hotkey and move your cursor over Japanese words to start learning."))
                 .font(.caption)
                 .foregroundStyle(.tertiary)
                 .multilineTextAlignment(.center)

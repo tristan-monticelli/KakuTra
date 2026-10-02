@@ -30,9 +30,6 @@ struct SettingsView: View {
                     }
                 }
 
-                YomitanSettingsSection()
-                AnkiSettingsSection()
-
                 // MARK: - Shortcuts
                 SettingsSectionCard(
                     title: L("Shortcuts"),
@@ -129,13 +126,6 @@ Text(L("Word"))
                     }
                 }
 
-                // MARK: - Dictionary
-                SettingsSectionCard(
-                    title: L("Dictionary"),
-                    icon: "books.vertical"
-                ) {
-                    ECDICTDictionaryRow(manager: model.dictionaryDownload)
-                }
 
                 // MARK: - Permissions
                 SettingsSectionCard(
@@ -449,163 +439,6 @@ struct PermissionRow: View {
     }
 }
 
-// MARK: - Dictionary Section
-
-struct ECDICTDictionaryRow: View {
-    @ObservedObject var manager: DictionaryDownloadManager
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .top, spacing: 12) {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack(spacing: 6) {
-                        Text(L("Advanced English Dictionary"))
-                            .font(.system(size: 13, weight: .medium))
-                            .foregroundStyle(.primary)
-                        Text(L("Powered by ECDICT"))
-                            .font(.system(size: 10, weight: .medium))
-                            .foregroundStyle(.secondary)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 3)
-                            .background(
-                                Capsule()
-                                    .fill(Color.secondary.opacity(0.08))
-                            )
-                    }
-                    Text(statusLine)
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                    Text(L("Used first for English word lookups. Translation still uses Apple Translation."))
-                        .font(.system(size: 11))
-                        .foregroundStyle(.tertiary)
-                        .fixedSize(horizontal: false, vertical: true)
-                    HStack(spacing: 6) {
-                        DictionaryBenefitPill(title: L("Fuller definitions"))
-                        DictionaryBenefitPill(title: L("Tech terms"))
-                        DictionaryBenefitPill(title: L("Works offline"))
-                    }
-                }
-                Spacer()
-                actionView
-            }
-
-            if case .downloading(let progress) = manager.state {
-                VStack(alignment: .leading, spacing: 4) {
-                    ProgressView(value: progress)
-                        .progressViewStyle(.linear)
-                    HStack {
-                        Text("\(Int(progress * 100))%")
-                            .font(.system(size: 10))
-                            .foregroundStyle(.secondary)
-                        Spacer()
-                        Button(L("Cancel")) { manager.cancelDownload() }
-                            .font(.system(size: 11))
-                            .buttonStyle(.plain)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
-
-            if case .error(let message) = manager.state {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(message)
-                        .font(.system(size: 11))
-                        .foregroundStyle(.orange)
-                        .fixedSize(horizontal: false, vertical: true)
-                    HStack(spacing: 8) {
-                        Button(L("Retry")) { manager.retry() }
-                            .font(.system(size: 11, weight: .medium))
-                            .buttonStyle(.borderedProminent)
-                            .controlSize(.small)
-
-                        Button(L("Choose file…")) { manager.selectManually() }
-                            .font(.system(size: 11, weight: .medium))
-                            .buttonStyle(.bordered)
-                            .controlSize(.small)
-                    }
-                }
-            }
-        }
-    }
-
-    private var statusLine: String {
-        switch manager.state {
-        case .notInstalled:
-            return L("Get a larger offline dictionary for fuller meanings and better technical terms.")
-        case .downloading:
-            return L("Downloading the advanced dictionary…")
-        case .installing:
-            return L("Installing the advanced dictionary…")
-        case .installed(let sizeMB):
-            return String(
-                format: L("Enabled · %.0f MB stored offline"),
-                sizeMB
-            )
-        case .error:
-            return L("Advanced dictionary installation failed")
-        }
-    }
-
-    @ViewBuilder
-    private var actionView: some View {
-        switch manager.state {
-        case .notInstalled:
-            Button(L("Install")) { manager.startDownload() }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.small)
-
-        case .downloading:
-            EmptyView()
-
-        case .installing:
-            HStack(spacing: 6) {
-                ProgressView()
-                    .scaleEffect(0.7)
-                    .controlSize(.small)
-                Text(L("Installing"))
-                    .font(.system(size: 11))
-                    .foregroundStyle(.secondary)
-            }
-
-        case .installed:
-            HStack(spacing: 8) {
-                Text(L("Enabled"))
-                    .font(.system(size: 10, weight: .semibold))
-                    .foregroundStyle(.green)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(
-                        Capsule()
-                            .fill(Color.green.opacity(0.12))
-                    )
-                Button(L("Remove")) { manager.delete() }
-                    .font(.system(size: 11, weight: .medium))
-                    .buttonStyle(.bordered)
-                    .controlSize(.small)
-            }
-
-        case .error:
-            EmptyView()
-        }
-    }
-}
-
-private struct DictionaryBenefitPill: View {
-    let title: String
-
-    var body: some View {
-        Text(title)
-            .font(.system(size: 10, weight: .medium))
-            .foregroundStyle(.secondary)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(
-                Capsule()
-                    .fill(Color.secondary.opacity(0.08))
-            )
-    }
-}
 
 // MARK: - Language Selector Row
 

@@ -87,8 +87,8 @@ struct YomitanSettingsSection: View {
 
                                 Text(dictBadge(for: dictName))
                                     .font(.system(size: 10, weight: .medium))
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 3)
                                     .background(Color.accentColor.opacity(0.12), in: Capsule())
                                     .foregroundStyle(Color.accentColor)
                             }
@@ -99,8 +99,8 @@ struct YomitanSettingsSection: View {
 
                 Divider().opacity(0.6)
 
-                // Preferred Language
-                HStack {
+                // Preferred Language (Clean vertical layout with Segmented Picker)
+                VStack(alignment: .leading, spacing: 8) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(L("Affichage des définitions"))
                             .font(.system(size: 12, weight: .medium))
@@ -109,15 +109,13 @@ struct YomitanSettingsSection: View {
                             .foregroundStyle(.secondary)
                     }
 
-                    Spacer()
-
                     Picker("", selection: $model.settings.yomitanPreferredGlossaryLanguage) {
-                        Text(L("Tous (Français prioritaire puis Anglais / Argot)")).tag("all")
-                        Text(L("Français uniquement")).tag("fr")
-                        Text(L("Anglais / Argot uniquement")).tag("en")
+                        Text(L("Tous (FR prioritaire)")).tag("all")
+                        Text(L("Français seul")).tag("fr")
+                        Text(L("Anglais / Argot seul")).tag("en")
                     }
                     .labelsHidden()
-                    .frame(width: 280)
+                    .pickerStyle(.segmented)
                 }
 
                 Divider().opacity(0.6)

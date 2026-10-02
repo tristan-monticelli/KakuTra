@@ -605,7 +605,7 @@ struct OverlayView: View {
                             .foregroundStyle(.primary)
                     }
 
-                    Text(L("正在执行全屏 OCR 与段落定位"))
+                    Text(L("Détection du texte japonais en cours…"))
                         .font(.system(size: 12, weight: .medium, design: .rounded))
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
