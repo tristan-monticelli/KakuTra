@@ -216,7 +216,7 @@ struct OverlayView: View {
                 ProgressView()
                     .controlSize(.small)
                     .scaleEffect(0.85)
-                Text(L("Translating"))
+                Text(L("Searching…"))
                     .font(.system(size: 13, weight: .medium, design: .rounded))
                     .foregroundStyle(.secondary)
                 LoadingDotsView()
@@ -239,8 +239,21 @@ struct OverlayView: View {
 
                 if content.yomitanLookupState != .notRequested {
                     yomitanResultsSection(state: content.yomitanLookupState)
-                    if !content.visibleDictionarySections.isEmpty {
-                        dictionarySectionsView(sections: content.visibleDictionarySections)
+                    switch content.yomitanLookupState {
+                    case .notConnected, .noResults, .failed:
+                        if !content.visibleDictionarySections.isEmpty {
+                            dictionarySectionsView(sections: content.visibleDictionarySections)
+                        }
+                    case .results(let results):
+                        let language = model.settings.yomitanPreferredGlossaryLanguage
+                        let visible = results.filter { result in
+                            language == "all" || model.settings.yomitanDictionaryLanguages[result.dictionary] == language
+                        }
+                        if visible.isEmpty && !content.visibleDictionarySections.isEmpty {
+                            dictionarySectionsView(sections: content.visibleDictionarySections)
+                        }
+                    default:
+                        EmptyView()
                     }
                 } else {
                     if !content.visibleDictionarySections.isEmpty {
@@ -1458,7 +1471,7 @@ struct OverlayView: View {
         switch section.state {
         case .loading:
             dictionaryStatusRow(
-                text: L("Translating"),
+                text: L("Searching…"),
                 showsSpinner: true
             )
         case .ready(let entry):

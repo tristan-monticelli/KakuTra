@@ -1668,16 +1668,19 @@ final class AppModel: ObservableObject {
 
         guard !Task.isCancelled, activeLookupID == lookupID else { return }
 
-        if Self.containsJapaneseText(word) {
+        let trimmedWord = word.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedWord.isEmpty else { return }
+
+        if Self.containsJapaneseText(trimmedWord) {
             await performYomitanWordLookup(
-                word,
+                trimmedWord,
                 lookupID: lookupID,
                 mouseLocation: mouseLocation,
                 contextSentence: contextSentence
             )
         } else {
             await performGeneralWordLookup(
-                word,
+                trimmedWord,
                 lookupID: lookupID,
                 mouseLocation: mouseLocation,
                 contextSentence: contextSentence
