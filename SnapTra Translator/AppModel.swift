@@ -1680,9 +1680,32 @@ final class AppModel: ObservableObject {
                 mouseLocation: mouseLocation,
                 contextSentence: contextSentence
             )
+        } else if classification.script == .simplifiedChinese || classification.script == .traditionalChinese {
+            // Check if this Han ideograph exists in our Japanese dictionary first (e.g. isolated Kanji like 本, 雨, 車, 猫)
+            let jpEntries = japaneseDictionaryService.lookup(
+                trimmedWord,
+                preferredGlossaryLanguage: settings.yomitanPreferredGlossaryLanguage
+            )
+            if !jpEntries.isEmpty {
+                await performYomitanWordLookup(
+                    trimmedWord,
+                    lookupID: lookupID,
+                    mouseLocation: mouseLocation,
+                    contextSentence: contextSentence
+                )
+            } else {
+                await performGeneralWordLookup(
+                    trimmedWord,
+                    classification: classification,
+                    lookupID: lookupID,
+                    mouseLocation: mouseLocation,
+                    contextSentence: contextSentence
+                )
+            }
         } else {
             await performGeneralWordLookup(
                 trimmedWord,
+                classification: classification,
                 lookupID: lookupID,
                 mouseLocation: mouseLocation,
                 contextSentence: contextSentence
@@ -1739,6 +1762,7 @@ final class AppModel: ObservableObject {
 
     private func performGeneralWordLookup(
         _ word: String,
+        classification: LanguageClassification,
         lookupID: UUID,
         mouseLocation: CGPoint,
         contextSentence: String? = nil,
@@ -1746,7 +1770,11 @@ final class AppModel: ObservableObject {
     ) async {
         guard !Task.isCancelled, activeLookupID == lookupID else { return }
 
-        guard let entry = dictionaryService.lookup(word, sources: settings.dictionarySources) else {
+        guard let entry = dictionaryService.lookup(
+            word,
+            sources: settings.dictionarySources,
+            sourceLanguage: classification.bcp47Code
+        ) else {
             hideOverlay()
             return
         }
@@ -1762,7 +1790,7 @@ final class AppModel: ObservableObject {
             primaryTranslationState: .empty,
             usesCompactPrimaryTranslationStyle: false,
             dictionarySections: [section],
-            sourceLanguageIdentifier: nil,
+            sourceLanguageIdentifier: classification.bcp47Code,
             yomitanLookupState: .notRequested,
             contextSentence: contextSentence
         )
@@ -1770,7 +1798,7 @@ final class AppModel: ObservableObject {
         updateOverlay(state: .result(content), anchor: mouseLocation)
 
         if recordsLookup {
-            await learningService.recordLookup(word: word, sourceLanguageIdentifier: "auto")
+            await learningService.recordLookup(word: word, sourceLanguageIdentifier: classification.bcp47Code)
             let definition = entry.definitions.map { $0.translation ?? $0.meaning }.joined(separator: "; ")
             if !definition.isEmpty {
                 _ = await learningService.updateDefinition(word: word, definitionText: definition)
@@ -1778,7 +1806,6 @@ final class AppModel: ObservableObject {
         }
 
         if settings.playWordPronunciation {
-            let classification = LanguageClassificationService.classify(word, context: contextSentence)
             speechService.speak(
                 word,
                 language: classification.bcp47Code,

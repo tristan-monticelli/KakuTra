@@ -10,9 +10,15 @@ final class DictionaryService {
     /// - Parameters:
     ///   - word: The word to look up
     ///   - sources: Array of dictionary sources to query (in priority order)
+    ///   - sourceLanguage: Optional source language code (e.g. "en", "zh", "ko")
     ///   - preferEnglish: Whether to prefer English definitions
     /// - Returns: The first matching dictionary entry, or nil if not found
-    func lookup(_ word: String, sources: [DictionarySource], preferEnglish: Bool = false) -> DictionaryEntry? {
+    func lookup(
+        _ word: String,
+        sources: [DictionarySource],
+        sourceLanguage: String? = nil,
+        preferEnglish: Bool = false
+    ) -> DictionaryEntry? {
         guard let normalized = normalizeWord(word) else { return nil }
 
         // Query each enabled source in order
@@ -20,7 +26,7 @@ final class DictionaryService {
             if let entry = Self.lookupFromLocalSource(
                 source,
                 word: normalized,
-                sourceLanguage: nil,
+                sourceLanguage: sourceLanguage,
                 targetLanguage: nil,
                 preferEnglish: preferEnglish,
                 offlineService: offlineService
