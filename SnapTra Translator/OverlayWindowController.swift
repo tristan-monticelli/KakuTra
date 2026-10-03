@@ -1217,7 +1217,7 @@ final class OverlayWindowController: NSWindowController {
         panel.isOpaque = false
         panel.backgroundColor = .clear
         panel.hasShadow = false
-        panel.level = .screenSaver
+        panel.level = .statusBar
         panel.collectionBehavior = Self.allSpacesCollectionBehavior
         panel.ignoresMouseEvents = true
         panel.isMovableByWindowBackground = false

@@ -1287,6 +1287,7 @@ final class AppModel: ObservableObject {
             return
         }
         if overlayWindowController.isMouseInside(point: NSEvent.mouseLocation) {
+            overlayWindowController.setInteractive(true)
             return
         }
         if isTapKeptOverlayPresented {

@@ -425,6 +425,7 @@ struct OverlayView: View {
 
     struct DuolingoTagView: View {
         let tag: String
+        @State private var isHovered = false
 
         var tagDescription: String {
             switch tag.lowercased() {
@@ -437,7 +438,7 @@ struct OverlayView: View {
             case "verb", "verbe":
                 return "Verbe"
             case "common":
-                return "Mot fréquent dans la langue courante (vocabulaire prioritaire)"
+                return "Mot fréquent dans la langue courante (prioritaire)"
             case "adjective", "adjectif", "adj-i", "adj-na":
                 return "Adjectif"
             case "adverb", "adverbe":
@@ -542,11 +543,30 @@ struct OverlayView: View {
                             .foregroundStyle(.secondary)
                             .underline(true, pattern: .dot, color: .secondary.opacity(0.6))
                             .help(parsed.tooltip ?? hint)
-                            .contentShape(Rectangle())
                     }
                 }
                 .fixedSize(horizontal: false, vertical: true)
             }
+        }
+    }
+
+    struct DuolingoVariantsHintView: View {
+        let count: Int
+        let details: String
+
+        var body: some View {
+            HStack(spacing: 4) {
+                Image(systemName: "character.book.closed")
+                    .font(.system(size: 9.5))
+                    .foregroundStyle(.secondary)
+
+                Text("\(count) autre\(count > 1 ? "s" : "") lecture\(count > 1 ? "s" : "")")
+                    .font(.system(size: 10.5, weight: .medium))
+                    .foregroundStyle(.secondary)
+                    .underline(true, pattern: .dot, color: .secondary.opacity(0.6))
+            }
+            .padding(.top, 3)
+            .help("Lectures ou formes secondaires :\n\(details)")
         }
     }
 
@@ -700,18 +720,7 @@ struct OverlayView: View {
                             return "• \(r)\(t)\(g)"
                         }.joined(separator: "\n")
 
-                        HStack(spacing: 4) {
-                            Image(systemName: "character.book.closed")
-                                .font(.system(size: 9.5))
-                                .foregroundStyle(.secondary)
-
-                            Text("\(otherEntries.count) autre\(otherEntries.count > 1 ? "s" : "") lecture\(otherEntries.count > 1 ? "s" : "")")
-                                .font(.system(size: 10.5, weight: .medium))
-                                .foregroundStyle(.secondary)
-                                .underline(true, pattern: .dot, color: .secondary.opacity(0.6))
-                        }
-                        .padding(.top, 3)
-                        .help("Lectures ou formes secondaires :\n\(variantsDetail)")
+                        DuolingoVariantsHintView(count: otherEntries.count, details: variantsDetail)
                     }
                 }
                 .padding(.horizontal, 16)
