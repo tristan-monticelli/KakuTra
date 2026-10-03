@@ -18,15 +18,8 @@ struct Snap_TranslateApp: App {
 
     var body: some Scene {
         Settings {
-            EmptyView()
-        }
-        .commands {
-            CommandGroup(replacing: .appSettings) {
-                Button("Settings...") {
-                    NSApp.sendAction(#selector(AppDelegate.openSettingsWindow), to: nil, from: nil)
-                }
-                .keyboardShortcut(",", modifiers: .command)
-            }
+            SettingsWindowView()
+                .environmentObject(appDelegate.model)
         }
     }
 }
@@ -37,17 +30,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
     private let modelContainer: ModelContainer
     private let modelContainerDidFallBackToMemory: Bool
     private var backgroundActivityToken: NSObjectProtocol?
-    @MainActor private lazy var model: AppModel = {
+    @MainActor lazy var model: AppModel = {
         AppModel(modelContext: modelContainer.mainContext)
     }()
     private var cancellables = Set<AnyCancellable>()
     private var statusItem: NSStatusItem?
-    private var settingsWindowController: SettingsWindowController?
     private var visibilityTask: Task<Void, Never>?
     private var isManualWindowOpen = false
-    private var shouldShowWindowAfterPermissionGrant = false
     private var hasCompletedInitialLanguageAvailabilityCheck = false
-    private var hasCompletedInitialSetup = false
+    private var hasCompletedInitialSetup = UserDefaults.standard.bool(forKey: AppSettingKey.hasCompletedInitialSetup)
 
     override init() {
         let schema = Schema([WordRecord.self])
@@ -84,8 +75,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         super.init()
     }
 
-    private var settingsWindow: NSWindow? {
-        settingsWindowController?.window
+    var settingsWindow: NSWindow? {
+        NSApp.windows.first { window in
+            !(window is NSPanel) &&
+            !String(describing: type(of: window)).contains("StatusBar") &&
+            (window.contentView is NSHostingView<SettingsWindowView> ||
+             window.identifier?.rawValue.contains("Settings") == true ||
+             window.title.contains("Settings") ||
+             window.title == L("Settings"))
+        }
     }
 
     // Store menu items that need state updates
@@ -98,8 +96,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
     private weak var debugShowChannelMenuItem: NSMenuItem?
     #endif
 
+    func applicationSupportsSecureRestorableState(_ app: NSApplication) -> Bool {
+        false
+    }
+
+    func application(_ app: NSApplication, shouldSaveApplicationState coder: NSCoder) -> Bool {
+        false
+    }
+
+    func application(_ app: NSApplication, shouldRestoreApplicationState coder: NSCoder) -> Bool {
+        false
+    }
+
     func applicationWillFinishLaunching(_ notification: Notification) {
         guard !isRunningTests else { return }
+        UserDefaults.standard.register(defaults: ["NSQuitAlwaysKeepsWindows": false])
+        UserDefaults.standard.removeObject(forKey: "NSWindow Frame com_apple_SwiftUI_Settings_window")
         if model.settings.showDockIcon {
             NSApp.setActivationPolicy(.regular)
         } else {
@@ -223,6 +235,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         // Load initial setup state from UserDefaults
         hasCompletedInitialSetup = UserDefaults.standard.bool(forKey: AppSettingKey.hasCompletedInitialSetup)
 
+        NotificationCenter.default.addObserver(
+            forName: NSWindow.willCloseNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            guard let self = self else { return }
+            guard let window = notification.object as? NSWindow else { return }
+            if window == self.settingsWindow {
+                Task { @MainActor in
+                    self.hideDockIcon()
+                }
+            }
+        }
+
         Task {
             await refreshAndUpdateVisibility()
         }
@@ -240,14 +266,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
     }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        isManualWindowOpen = true
-        NSApp.setActivationPolicy(.regular)
-        if let window = settingsWindow, window.isVisible {
-            window.makeKeyAndOrderFront(nil)
-            NSApp.activate(ignoringOtherApps: true)
-        } else {
-            showSettingsWindow()
-        }
+        openSettings(initialTab: .general)
         return true
     }
 
@@ -499,19 +518,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
     }
 
     @MainActor
-    func openSettings(initialTab: SettingsTab) {
+    func openSettings(initialTab: SettingsTab = .general) {
         isManualWindowOpen = true
         NSApp.setActivationPolicy(.regular)
+        NSApp.activate(ignoringOtherApps: true)
+        NotificationCenter.default.post(name: .switchSettingsTab, object: initialTab)
         if let window = settingsWindow, window.isVisible {
-            NotificationCenter.default.post(name: .switchSettingsTab, object: initialTab)
-            // Defer activation to after the status bar menu fully closes,
-            // otherwise makeKeyAndOrderFront may fail while the menu is dismissing.
             DispatchQueue.main.async {
                 window.makeKeyAndOrderFront(nil)
                 NSApp.activate(ignoringOtherApps: true)
             }
         } else {
-            showSettingsWindow(initialTab: initialTab)
+            DispatchQueue.main.async {
+                NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+                DispatchQueue.main.async {
+                    NSApp.activate(ignoringOtherApps: true)
+                    self.settingsWindow?.makeKeyAndOrderFront(nil)
+                }
+            }
         }
     }
 
@@ -548,13 +572,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
     }
 
     private func checkPermissionGrantRestart() {
-        let lastStatus = UserDefaults.standard.bool(forKey: AppSettingKey.lastScreenRecordingStatus)
         let currentStatus = CGPreflightScreenCaptureAccess()
-        
-        if !lastStatus && currentStatus {
-            shouldShowWindowAfterPermissionGrant = true
-        }
-        
         UserDefaults.standard.set(currentStatus, forKey: AppSettingKey.lastScreenRecordingStatus)
     }
 
@@ -576,39 +594,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
             return
         }
 
-        var needsSettings = !model.permissions.status.screenRecording
+        let needsScreenRecording = !model.permissions.status.screenRecording
 
-        if #available(macOS 15.0, *) {
-            let status = await model.refreshLanguageAvailabilityStatusForCurrentSettings(
-                retryTransientStatus: !hasCompletedInitialLanguageAvailabilityCheck
-            )
-            hasCompletedInitialLanguageAvailabilityCheck = true
-            needsSettings = needsSettings || status != .installed
-        }
-
-        if needsSettings {
-            showSettingsWindow()
-        } else if shouldShowWindowAfterPermissionGrant {
-            shouldShowWindowAfterPermissionGrant = false
-            isManualWindowOpen = true
-            showSettingsWindow()
-        } else if !isManualWindowOpen {
-            hideDockIcon()
+        if needsScreenRecording {
+            openSettings(initialTab: .general)
+        } else {
+            hasCompletedInitialSetup = true
+            UserDefaults.standard.set(true, forKey: AppSettingKey.hasCompletedInitialSetup)
+            if !isManualWindowOpen {
+                hideDockIcon()
+            }
         }
     }
 
-    @MainActor
-    private func showSettingsWindow(initialTab: SettingsTab = .general) {
-        let windowController = settingsWindowController ?? SettingsWindowController(model: model, initialTab: initialTab)
-        settingsWindowController = windowController
-        settingsWindow?.delegate = self
-        NSApp.setActivationPolicy(.regular)
-        windowController.showWindow(nil)
-        settingsWindow?.makeKeyAndOrderFront(nil)
-        NSApp.activate(ignoringOtherApps: true)
-    }
-
-    @MainActor private func hideDockIcon() {
+    @MainActor func hideDockIcon() {
         isManualWindowOpen = false
         settingsWindow?.orderOut(nil)
         if !model.settings.showDockIcon {
@@ -639,45 +638,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
     @MainActor
     private func refreshSettingsWindowSize() {
         guard let window = settingsWindow, window.isVisible else { return }
-        
-        if window.contentView is NSHostingView<SettingsWindowView> {
-            settingsWindowController?.close()
-            settingsWindowController = nil
-            showSettingsWindow(initialTab: .about)
-        }
+        NotificationCenter.default.post(name: .switchSettingsTab, object: SettingsTab.about)
     }
     #endif
-
-}
-
-@MainActor
-final class SettingsWindowController: NSWindowController {
-    init(model: AppModel, initialTab: SettingsTab = .general) {
-        let contentView = SettingsWindowView(initialTab: initialTab)
-            .environmentObject(model)
-        let hostingView = NSHostingView(rootView: contentView)
-        let initialContentSize = SettingsWindowLayout.windowContentSize(for: initialTab)
-        let initialContentRect = NSRect(origin: .zero, size: initialContentSize)
-        hostingView.frame = initialContentRect
-
-        let window = NSWindow(
-            contentRect: initialContentRect,
-            styleMask: [.titled, .closable, .miniaturizable],
-            backing: .buffered,
-            defer: false
-        )
-        window.contentView = hostingView
-        window.title = L("Settings")
-        window.isReleasedWhenClosed = false
-        window.center()
-
-        super.init(window: window)
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 }
 
 @available(macOS 15.0, *)

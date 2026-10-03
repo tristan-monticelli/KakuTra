@@ -64,38 +64,49 @@ struct YomitanSettingsSection: View {
 
                 // Dictionary Content Summary
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(L("Base d'immersion intégrée :"))
+                    Text(L("Bases d'immersion actives (routage automatique) :"))
                         .font(.system(size: 11, weight: .medium))
                         .foregroundStyle(.secondary)
 
-                    HStack(alignment: .top, spacing: 10) {
-                        Image(systemName: "books.vertical.fill")
-                            .font(.system(size: 16))
-                            .foregroundStyle(Color.accentColor)
-                            .padding(.top, 1)
+                    VStack(spacing: 6) {
+                        ForEach(model.japaneseDictionaryService.installedDictionaries, id: \.self) { dictName in
+                            HStack(alignment: .center, spacing: 8) {
+                                Image(systemName: "checkmark.seal.fill")
+                                    .font(.system(size: 12))
+                                    .foregroundStyle(Color.accentColor)
 
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text(L("Jitendex + JMnedict (Anglais)"))
-                                .font(.system(size: 12, weight: .semibold))
-                                .foregroundStyle(.primary)
+                                Text(dictName)
+                                    .font(.system(size: 11.5, weight: .medium))
+                                    .foregroundStyle(.primary)
 
-                            Text(L("Vocabulaire complet, argot, phrases d'exemples bilingues et 668 000 personnages d'animés, mangas et lieux."))
-                                .font(.system(size: 11))
-                                .foregroundStyle(.secondary)
-                                .fixedSize(horizontal: false, vertical: true)
+                                Spacer()
+
+                                Text(L("Actif"))
+                                    .font(.system(size: 9.5, weight: .medium))
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(Color.accentColor.opacity(0.12), in: Capsule())
+                                    .foregroundStyle(Color.accentColor)
+                            }
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(Color.primary.opacity(0.03), in: RoundedRectangle(cornerRadius: 6))
                         }
 
-                        Spacer()
+                        HStack(alignment: .center, spacing: 8) {
+                            Image(systemName: "apple.logo")
+                                .font(.system(size: 12))
+                                .foregroundStyle(.secondary)
 
-                        Text(L("Complet"))
-                            .font(.system(size: 10, weight: .medium))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 3)
-                            .background(Color.accentColor.opacity(0.12), in: Capsule())
-                            .foregroundStyle(Color.accentColor)
+                            Text(L("Dictionnaires Système Apple (Repli automatique autres langues)"))
+                                .font(.system(size: 11, weight: .regular))
+                                .foregroundStyle(.secondary)
+
+                            Spacer()
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
                     }
-                    .padding(10)
-                    .background(Color.primary.opacity(0.03), in: RoundedRectangle(cornerRadius: 8))
                 }
 
                 Divider().opacity(0.6)

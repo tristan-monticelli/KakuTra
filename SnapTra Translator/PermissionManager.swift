@@ -12,8 +12,8 @@ struct PermissionStatus: Equatable {
 @MainActor
 final class PermissionManager: ObservableObject {
     @Published private(set) var status: PermissionStatus = PermissionStatus(
-        screenRecording: false,
-        accessibility: false
+        screenRecording: CGPreflightScreenCaptureAccess(),
+        accessibility: AXIsProcessTrusted()
     )
 
     func refreshStatus() {

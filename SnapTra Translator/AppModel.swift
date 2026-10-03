@@ -1674,26 +1674,81 @@ final class AppModel: ObservableObject {
         let classification = LanguageClassificationService.classify(trimmedWord, context: contextSentence)
 
         if classification.isJapanese {
-            await performYomitanWordLookup(
-                trimmedWord,
-                lookupID: lookupID,
-                mouseLocation: mouseLocation,
-                contextSentence: contextSentence
-            )
-        } else if classification.script == .simplifiedChinese || classification.script == .traditionalChinese {
-            // Check if this Han ideograph exists in our Japanese dictionary first (e.g. isolated Kanji like 本, 雨, 車, 猫)
-            let jpEntries = japaneseDictionaryService.lookup(
+            let entries = japaneseDictionaryService.lookup(
                 trimmedWord,
                 preferredGlossaryLanguage: settings.yomitanPreferredGlossaryLanguage
             )
-            if !jpEntries.isEmpty {
-                await performYomitanWordLookup(
+            if !entries.isEmpty {
+                await performLocalDictionaryWordLookup(
                     trimmedWord,
+                    entries: entries,
+                    language: "ja",
                     lookupID: lookupID,
                     mouseLocation: mouseLocation,
                     contextSentence: contextSentence
                 )
             } else {
+                // Fallback to Apple System Dictionary
+                await performGeneralWordLookup(
+                    trimmedWord,
+                    classification: classification,
+                    lookupID: lookupID,
+                    mouseLocation: mouseLocation,
+                    contextSentence: contextSentence
+                )
+            }
+        } else if classification.script == .simplifiedChinese || classification.script == .traditionalChinese {
+            // 1. Search CC-CEDICT first (<0.5ms)
+            let zhEntries = japaneseDictionaryService.lookupChinese(trimmedWord)
+            if !zhEntries.isEmpty {
+                await performLocalDictionaryWordLookup(
+                    trimmedWord,
+                    entries: zhEntries,
+                    language: classification.bcp47Code,
+                    lookupID: lookupID,
+                    mouseLocation: mouseLocation,
+                    contextSentence: contextSentence
+                )
+            } else {
+                // 2. Check Japanese dictionary (isolated Kanji common in both, e.g. 本, 猫, 雨)
+                let jpEntries = japaneseDictionaryService.lookup(
+                    trimmedWord,
+                    preferredGlossaryLanguage: settings.yomitanPreferredGlossaryLanguage
+                )
+                if !jpEntries.isEmpty {
+                    await performLocalDictionaryWordLookup(
+                        trimmedWord,
+                        entries: jpEntries,
+                        language: "ja",
+                        lookupID: lookupID,
+                        mouseLocation: mouseLocation,
+                        contextSentence: contextSentence
+                    )
+                } else {
+                    // 3. Fallback to Apple System Dictionary
+                    await performGeneralWordLookup(
+                        trimmedWord,
+                        classification: classification,
+                        lookupID: lookupID,
+                        mouseLocation: mouseLocation,
+                        contextSentence: contextSentence
+                    )
+                }
+            }
+        } else if classification.script == .korean {
+            // 1. Search KRDICT first (<0.5ms)
+            let koEntries = japaneseDictionaryService.lookupKorean(trimmedWord)
+            if !koEntries.isEmpty {
+                await performLocalDictionaryWordLookup(
+                    trimmedWord,
+                    entries: koEntries,
+                    language: "ko",
+                    lookupID: lookupID,
+                    mouseLocation: mouseLocation,
+                    contextSentence: contextSentence
+                )
+            } else {
+                // 2. Fallback to Apple System Dictionary
                 await performGeneralWordLookup(
                     trimmedWord,
                     classification: classification,
@@ -1703,12 +1758,56 @@ final class AppModel: ObservableObject {
                 )
             }
         } else {
+            // Latin / Cyrillic / etc. -> ECDICT + Apple System Dictionary
             await performGeneralWordLookup(
                 trimmedWord,
                 classification: classification,
                 lookupID: lookupID,
                 mouseLocation: mouseLocation,
                 contextSentence: contextSentence
+            )
+        }
+    }
+
+    private func performLocalDictionaryWordLookup(
+        _ word: String,
+        entries: [JapaneseDictionaryEntry],
+        language: String = "ja",
+        lookupID: UUID,
+        mouseLocation: CGPoint,
+        contextSentence: String? = nil,
+        recordsLookup: Bool = true
+    ) async {
+        guard !Task.isCancelled, activeLookupID == lookupID else { return }
+
+        let initialContent = OverlayContent(
+            word: word,
+            phonetic: entries.first?.reading,
+            primaryTranslationState: .empty,
+            usesCompactPrimaryTranslationStyle: false,
+            dictionarySections: [],
+            sourceLanguageIdentifier: language,
+            yomitanLookupState: entries.isEmpty ? .noResults : .results(entries),
+            contextSentence: contextSentence
+        )
+        updateOverlay(state: .result(initialContent), anchor: mouseLocation)
+
+        if recordsLookup {
+            await learningService.recordLookup(word: word, sourceLanguageIdentifier: language)
+            let definition = entries.flatMap(\.glosses).joined(separator: "; ")
+            if !definition.isEmpty {
+                _ = await learningService.updateDefinition(word: word, definitionText: definition)
+            }
+        }
+
+        if settings.playWordPronunciation {
+            speechService.speak(
+                word,
+                language: language,
+                provider: .apple,
+                gender: settings.voiceGender,
+                useAmericanAccent: settings.englishAccent.isAmerican,
+                performance: nil
             )
         }
     }
@@ -1720,44 +1819,19 @@ final class AppModel: ObservableObject {
         contextSentence: String? = nil,
         recordsLookup: Bool = true
     ) async {
-        guard !Task.isCancelled, activeLookupID == lookupID else { return }
-
-        // Local Japanese SQLite lookup (<0.3ms)
         let entries = japaneseDictionaryService.lookup(
             word,
             preferredGlossaryLanguage: settings.yomitanPreferredGlossaryLanguage
         )
-
-        let initialContent = OverlayContent(
-            word: word,
-            phonetic: entries.first?.reading,
-            primaryTranslationState: .empty,
-            usesCompactPrimaryTranslationStyle: false,
-            dictionarySections: [],
-            sourceLanguageIdentifier: "ja",
-            yomitanLookupState: entries.isEmpty ? .noResults : .results(entries),
-            contextSentence: contextSentence
+        await performLocalDictionaryWordLookup(
+            word,
+            entries: entries,
+            language: "ja",
+            lookupID: lookupID,
+            mouseLocation: mouseLocation,
+            contextSentence: contextSentence,
+            recordsLookup: recordsLookup
         )
-        updateOverlay(state: .result(initialContent), anchor: mouseLocation)
-
-        if recordsLookup {
-            await learningService.recordLookup(word: word, sourceLanguageIdentifier: "ja")
-            let definition = entries.flatMap(\.glosses).joined(separator: "; ")
-            if !definition.isEmpty {
-                _ = await learningService.updateDefinition(word: word, definitionText: definition)
-            }
-        }
-
-        if settings.playWordPronunciation {
-            speechService.speak(
-                word,
-                language: "ja",
-                provider: .apple,
-                gender: settings.voiceGender,
-                useAmericanAccent: settings.englishAccent.isAmerican,
-                performance: nil
-            )
-        }
     }
 
     private func performGeneralWordLookup(
@@ -1770,9 +1844,14 @@ final class AppModel: ObservableObject {
     ) async {
         guard !Task.isCancelled, activeLookupID == lookupID else { return }
 
+        var lookupSources = settings.dictionarySources
+        if !lookupSources.contains(where: { $0.type == .system }) {
+            lookupSources.append(DictionarySource(id: UUID(), name: DictionarySource.SourceType.system.displayName, type: .system, isEnabled: true))
+        }
+
         guard let entry = dictionaryService.lookup(
             word,
-            sources: settings.dictionarySources,
+            sources: lookupSources,
             sourceLanguage: classification.bcp47Code
         ) else {
             hideOverlay()

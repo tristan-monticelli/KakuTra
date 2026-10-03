@@ -168,6 +168,13 @@ struct SettingsWindowView: View {
             }
         }
         #endif
+        .onReceive(NotificationCenter.default.publisher(for: NSWindow.willCloseNotification)) { notification in
+            guard let closedWindow = notification.object as? NSWindow,
+                  closedWindow == window else { return }
+            DispatchQueue.main.async {
+                (NSApp.delegate as? AppDelegate)?.hideDockIcon()
+            }
+        }
         .onDisappear {
             scrollIndicatorResetWorkItem?.cancel()
         }
@@ -527,6 +534,8 @@ struct SettingsWindowAccessor: NSViewRepresentable {
         let view = NSView()
         DispatchQueue.main.async {
             self.window = view.window
+            view.window?.isReleasedWhenClosed = false
+            view.window?.isRestorable = false
         }
         return view
     }
@@ -535,6 +544,8 @@ struct SettingsWindowAccessor: NSViewRepresentable {
         if window == nil {
             DispatchQueue.main.async {
                 self.window = nsView.window
+                nsView.window?.isReleasedWhenClosed = false
+                nsView.window?.isRestorable = false
             }
         }
     }

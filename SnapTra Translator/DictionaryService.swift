@@ -619,6 +619,19 @@ final class DictionaryService {
             }
         }
 
+        if definitions.isEmpty {
+            let stripped = stripHTML(html).trimmingCharacters(in: .whitespacesAndNewlines)
+            if !stripped.isEmpty {
+                definitions.append(DictionaryEntry.Definition(
+                    partOfSpeech: "",
+                    field: nil,
+                    meaning: stripped,
+                    translation: nil,
+                    examples: []
+                ))
+            }
+        }
+
         return definitions
     }
 

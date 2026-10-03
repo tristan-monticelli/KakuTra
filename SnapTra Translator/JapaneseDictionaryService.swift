@@ -30,12 +30,11 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
 
     @Published private(set) var isDatabaseInstalled: Bool = false
     @Published private(set) var totalEntriesCount: Int = 0
-
-    var installedDictionaries: [String] {
-        isDatabaseInstalled ? ["Jitendex + JMnedict (English)"] : []
-    }
+    @Published private(set) var installedDictionaries: [String] = []
 
     private var db: OpaquePointer?
+    private var chineseDb: OpaquePointer?
+    private var koreanDb: OpaquePointer?
     private let accessQueue = DispatchQueue(label: "com.kakutra.japanese-dictionary", qos: .userInitiated)
 
     init() {
@@ -66,12 +65,36 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
                 }
             }
         }
+
+        // Open Chinese database (CC-CEDICT)
+        let chinesePath = Self.databaseDirectory.appendingPathComponent("chinese.db").path
+        if FileManager.default.fileExists(atPath: chinesePath) {
+            if sqlite3_open_v2(chinesePath, &chineseDb, SQLITE_OPEN_READWRITE | SQLITE_OPEN_FULLMUTEX, nil) != SQLITE_OK {
+                chineseDb = nil
+            }
+        }
+
+        // Open Korean database (KRDICT)
+        let koreanPath = Self.databaseDirectory.appendingPathComponent("korean.db").path
+        if FileManager.default.fileExists(atPath: koreanPath) {
+            if sqlite3_open_v2(koreanPath, &koreanDb, SQLITE_OPEN_READWRITE | SQLITE_OPEN_FULLMUTEX, nil) != SQLITE_OK {
+                koreanDb = nil
+            }
+        }
     }
 
     func closeDatabase() {
         if let db {
             sqlite3_close(db)
             self.db = nil
+        }
+        if let chineseDb {
+            sqlite3_close(chineseDb)
+            self.chineseDb = nil
+        }
+        if let koreanDb {
+            sqlite3_close(koreanDb)
+            self.koreanDb = nil
         }
     }
 
@@ -87,34 +110,62 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
 
     func refreshStats() {
         accessQueue.async { [weak self] in
-            guard let self, let db = self.db else { return }
+            guard let self else { return }
             var count = 0
-            var stmt: OpaquePointer?
-            if sqlite3_prepare_v2(db, "SELECT count(*) FROM entries", -1, &stmt, nil) == SQLITE_OK {
-                if sqlite3_step(stmt) == SQLITE_ROW {
-                    count = Int(sqlite3_column_int64(stmt, 0))
+            var installed: [String] = []
+
+            func countEntries(in database: OpaquePointer?, label: String) {
+                guard let database else { return }
+                var stmt: OpaquePointer?
+                if sqlite3_prepare_v2(database, "SELECT count(*) FROM entries", -1, &stmt, nil) == SQLITE_OK {
+                    if sqlite3_step(stmt) == SQLITE_ROW {
+                        let c = Int(sqlite3_column_int64(stmt, 0))
+                        if c > 0 {
+                            count += c
+                            installed.append(label)
+                        }
+                    }
+                    sqlite3_finalize(stmt)
                 }
-                sqlite3_finalize(stmt)
             }
+
+            countEntries(in: self.db, label: "Jitendex + JMnedict (Japanese)")
+            countEntries(in: self.chineseDb, label: "CC-CEDICT (Chinese)")
+            countEntries(in: self.koreanDb, label: "KRDICT (Korean)")
 
             DispatchQueue.main.async {
                 self.isDatabaseInstalled = count > 0
                 self.totalEntriesCount = count
+                self.installedDictionaries = installed
             }
         }
+    }
+
+    // MARK: - Text Normalization Helper
+
+    private func cleanWord(_ text: String) -> String {
+        let punctuationAndWhitespace = CharacterSet.whitespacesAndNewlines.union(
+            CharacterSet(charactersIn: " \t\r\n.,;:!?()[]{}'\"“”‘’`~@#$%^&*-_=+|\\/<>~·！？。，、；：‘’“”（）《》【】…—「」『』〈〉〔〕")
+        )
+        return text.trimmingCharacters(in: punctuationAndWhitespace)
+    }
+
+    private func isKanji(_ character: Character) -> Bool {
+        guard let scalar = character.unicodeScalars.first else { return false }
+        return (0x4E00...0x9FFF).contains(scalar.value) || (0x3400...0x4DBF).contains(scalar.value)
     }
 
     // MARK: - Fast Lookup (<0.1 ms)
 
     func lookup(_ text: String, preferredGlossaryLanguage: String = "en") -> [JapaneseDictionaryEntry] {
-        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return [] }
+        let cleaned = cleanWord(text)
+        guard !cleaned.isEmpty else { return [] }
 
         return accessQueue.sync {
             guard let db else { return [] }
 
             // 1. Generate de-inflection candidates for the full query
-            let candidates = deinflect(trimmed)
+            let candidates = deinflect(cleaned)
             var results = queryCandidates(candidates, in: db)
 
             if !results.isEmpty {
@@ -123,8 +174,8 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
 
             // 2. Try trimming trailing sentence particles and re-evaluating
             let particles: [Character] = ["よ", "ね", "わ", "ぞ", "ぜ", "な", "さ", "か", "が", "は", "を", "に", "へ", "で", "と", "も", "の"]
-            if trimmed.count > 1, let lastChar = trimmed.last, particles.contains(lastChar) {
-                let stripped = String(trimmed.dropLast())
+            if cleaned.count > 1, let lastChar = cleaned.last, particles.contains(lastChar) {
+                let stripped = String(cleaned.dropLast())
                 let strippedCandidates = deinflect(stripped)
                 results = queryCandidates(strippedCandidates, in: db)
                 if !results.isEmpty {
@@ -132,10 +183,13 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
                 }
             }
 
-            // 3. Longest prefix matching (progressively drop trailing chars from length down to 2)
-            if trimmed.count > 2 {
-                for len in stride(from: trimmed.count - 1, through: 2, by: -1) {
-                    let sub = String(trimmed.prefix(len))
+            // 3. Longest prefix matching (down to 1 char if Kanji)
+            if cleaned.count > 1 {
+                for len in stride(from: cleaned.count - 1, through: 1, by: -1) {
+                    let sub = String(cleaned.prefix(len))
+                    if len == 1, let first = sub.first, !isKanji(first) {
+                        continue
+                    }
                     let subCandidates = deinflect(sub)
                     let subResults = queryCandidates(subCandidates, in: db)
                     if !subResults.isEmpty {
@@ -146,6 +200,244 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
 
             return []
         }
+    }
+
+    // MARK: - Chinese Fast Lookup (CC-CEDICT)
+
+    func lookupChinese(_ text: String) -> [JapaneseDictionaryEntry] {
+        let cleaned = cleanWord(text)
+        guard !cleaned.isEmpty else { return [] }
+
+        return accessQueue.sync {
+            guard let chineseDb else { return [] }
+
+            // 1. Direct query
+            var results = queryCandidates([cleaned], in: chineseDb)
+            if !results.isEmpty { return results }
+
+            // 2. Longest prefix matching (compound words / phrases down to 1 character)
+            if cleaned.count > 1 {
+                for len in stride(from: cleaned.count - 1, through: 1, by: -1) {
+                    let sub = String(cleaned.prefix(len))
+                    results = queryCandidates([sub], in: chineseDb)
+                    if !results.isEmpty { return results }
+                }
+            }
+
+            return []
+        }
+    }
+
+    // MARK: - Korean Fast Lookup (KRDICT)
+
+    func lookupKorean(_ text: String) -> [JapaneseDictionaryEntry] {
+        let cleaned = cleanWord(text)
+        guard !cleaned.isEmpty else { return [] }
+
+        return accessQueue.sync {
+            guard let koreanDb else { return [] }
+
+            // 1. Direct query
+            var results = queryCandidates([cleaned], in: koreanDb)
+            if !results.isEmpty { return results }
+
+            // 2. Korean verb de-inflection & particle stripping
+            let candidates = deinflectKorean(cleaned)
+            if !candidates.isEmpty {
+                results = queryCandidates(candidates, in: koreanDb)
+                if !results.isEmpty { return results }
+            }
+
+            // 3. Longest prefix matching
+            if cleaned.count > 1 {
+                for len in stride(from: cleaned.count - 1, through: 1, by: -1) {
+                    let sub = String(cleaned.prefix(len))
+                    results = queryCandidates([sub], in: koreanDb)
+                    if !results.isEmpty { return results }
+                }
+            }
+
+            return []
+        }
+    }
+
+    func deinflectKorean(_ text: String) -> [String] {
+        var candidates: [String] = []
+
+        func add(_ cand: String) {
+            let trimmedCand = cand.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !trimmedCand.isEmpty && !candidates.contains(trimmedCand) && trimmedCand != text {
+                candidates.append(trimmedCand)
+            }
+        }
+
+        // 1. Standard Past Tense Consonant Suffixes (-았습니다, -었습니다, -었다, etc.)
+        let pastConsonantSuffixes = [
+            "았습니다", "었습니다", "였습니다", "했습니다",
+            "았어요", "었어요", "였어요", "했어요",
+            "았다", "었다", "였다", "했다",
+            "았어", "었어", "였어", "했어",
+            "았고", "었고", "였고", "했고",
+            "았지만", "었지만", "였지만", "했지만",
+            "았으면", "었으면", "였으면", "했으면"
+        ]
+        for suf in pastConsonantSuffixes {
+            if text.hasSuffix(suf) && text.count > suf.count {
+                let stem = String(text.dropLast(suf.count))
+                if suf.hasPrefix("았") || suf.hasPrefix("었") || suf.hasPrefix("였") {
+                    add(stem + "다")
+                }
+                if suf.contains("했") {
+                    add(stem + "하다")
+                }
+            }
+        }
+
+        // 2. Contracted Past Tense with batchim ㅆ (e.g. 갔다 -> 가다, 봤다 -> 보다, 줬다 -> 주다, 썼다 -> 쓰다)
+        let pastEndingLengths: [(suffix: String, count: Int)] = [
+            ("습니다", 3), ("어요", 2), ("다", 1), ("어", 1), ("고", 1), ("지만", 2), ("으면", 2)
+        ]
+        for (suf, _) in pastEndingLengths {
+            if text.hasSuffix(suf) && text.count > suf.count {
+                let beforeEnding = String(text.dropLast(suf.count))
+                if let lastChar = beforeEnding.last {
+                    let scalar = lastChar.unicodeScalars.first!.value
+                    if scalar >= 0xAC00 && scalar <= 0xD7A3 {
+                        let base = scalar - 0xAC00
+                        let final = base % 28
+                        if final == 20 { // ㅆ (ssangsiot batchim)
+                            let strippedScalar = UnicodeScalar(scalar - 20)!
+                            let prefix = String(beforeEnding.dropLast())
+                            let baseSyllable = String(Character(strippedScalar))
+
+                            let medial = (base % (21 * 28)) / 28
+                            let initial = base / (21 * 28)
+
+                            if baseSyllable == "하" {
+                                add(prefix + "하다")
+                            } else if medial == 9 { // ㅘ (wa) -> ㅗ (o) => 보다, 오다
+                                let oScalar = UnicodeScalar(0xAC00 + (initial * 21 + 8) * 28)!
+                                add(prefix + String(Character(oScalar)) + "다")
+                            } else if medial == 14 { // ㅝ (wo) -> ㅜ (u) => 주다, 두다
+                                let uScalar = UnicodeScalar(0xAC00 + (initial * 21 + 13) * 28)!
+                                add(prefix + String(Character(uScalar)) + "다")
+                            } else if medial == 6 { // ㅕ (yeo) -> ㅣ (i) => 마시다, 켜다
+                                let iScalar = UnicodeScalar(0xAC00 + (initial * 21 + 20) * 28)!
+                                add(prefix + String(Character(iScalar)) + "다")
+                            } else if medial == 10 { // ㅙ (wae) -> ㅚ (oe) => 되다
+                                let oeScalar = UnicodeScalar(0xAC00 + (initial * 21 + 11) * 28)!
+                                add(prefix + String(Character(oeScalar)) + "다")
+                            } else if medial == 4 { // ㅓ (eo) -> ㅡ (eu) => 쓰다, 크다
+                                let euScalar = UnicodeScalar(0xAC00 + (initial * 21 + 18) * 28)!
+                                add(prefix + String(Character(euScalar)) + "다")
+                            }
+
+                            add(prefix + baseSyllable + "다")
+                        }
+                    }
+                }
+            }
+        }
+
+        // 3. Formal Present -습니다 / -ㅂ니다
+        if text.hasSuffix("습니다") && text.count > 3 {
+            add(String(text.dropLast(3)) + "다")
+        }
+        if text.hasSuffix("니다") && text.count > 2 {
+            let beforeEnding = String(text.dropLast(2))
+            if let lastChar = beforeEnding.last {
+                let scalar = lastChar.unicodeScalars.first!.value
+                if scalar >= 0xAC00 && scalar <= 0xD7A3 {
+                    let base = scalar - 0xAC00
+                    let final = base % 28
+                    if final == 17 { // ㅂ (pieup batchim) => 갑니다 -> 가다, 봅니다 -> 보다
+                        let strippedScalar = UnicodeScalar(scalar - 17)!
+                        let prefix = String(beforeEnding.dropLast())
+                        add(prefix + String(Character(strippedScalar)) + "다")
+                    }
+                }
+            }
+        }
+
+        // 4. Present Polite -아요, -어요, -여요, -해요, -세요
+        let presentPoliteSuffixes = ["하세요", "해요", "아요", "어요", "여요", "셔요"]
+        for suf in presentPoliteSuffixes {
+            if text.hasSuffix(suf) && text.count > suf.count {
+                let stem = String(text.dropLast(suf.count))
+                if suf.contains("하") {
+                    add(stem + "하다")
+                } else {
+                    add(stem + "다")
+                }
+            }
+        }
+        if text.hasSuffix("요") && text.count > 1 {
+            let stem = String(text.dropLast(1))
+            add(stem + "다")
+            if let last = stem.last {
+                let scalar = last.unicodeScalars.first!.value
+                if scalar >= 0xAC00 && scalar <= 0xD7A3 {
+                    let base = scalar - 0xAC00
+                    let medial = (base % (21 * 28)) / 28
+                    let initial = base / (21 * 28)
+                    let prefix = String(stem.dropLast())
+                    if medial == 9 { // ㅘ -> ㅗ => 봐요 -> 보다
+                        let oScalar = UnicodeScalar(0xAC00 + (initial * 21 + 8) * 28)!
+                        add(prefix + String(Character(oScalar)) + "다")
+                    } else if medial == 14 { // ㅝ -> ㅜ => 줘요 -> 주다
+                        let uScalar = UnicodeScalar(0xAC00 + (initial * 21 + 13) * 28)!
+                        add(prefix + String(Character(uScalar)) + "다")
+                    } else if medial == 6 { // ㅕ -> ㅣ => 마셔요 -> 마시다
+                        let iScalar = UnicodeScalar(0xAC00 + (initial * 21 + 20) * 28)!
+                        add(prefix + String(Character(iScalar)) + "다")
+                    } else if medial == 10 { // ㅙ -> ㅚ => 돼요 -> 되다
+                        let oeScalar = UnicodeScalar(0xAC00 + (initial * 21 + 11) * 28)!
+                        add(prefix + String(Character(oeScalar)) + "다")
+                    } else if medial == 4 { // ㅓ -> ㅡ => 써요 -> 쓰다, 커요 -> 크다, 예뻐요 -> 예쁘다
+                        let euScalar = UnicodeScalar(0xAC00 + (initial * 21 + 18) * 28)!
+                        add(prefix + String(Character(euScalar)) + "다")
+                    }
+                }
+            }
+        }
+
+        // 5. Connectives & Modifiers (-고, -으며, -으면, -아서, -어서, -지만, -는데, -은데, -으려고, -으면서, -거나, -게, -지, -기)
+        let connectiveSuffixes = [
+            "으려고", "려고", "으면서", "면서", "어서", "아서", "여서", "해서",
+            "으면", "면", "으며", "며", "지만", "는데", "은데", "거나", "도록", "게", "고", "지", "기"
+        ]
+        for suf in connectiveSuffixes {
+            if text.hasSuffix(suf) && text.count > suf.count {
+                let stem = String(text.dropLast(suf.count))
+                if suf == "해서" {
+                    add(stem + "하다")
+                } else {
+                    add(stem + "다")
+                }
+            }
+        }
+
+        // 6. Adnominal Endings (-는, -은, -을)
+        let adnominalSuffixes = ["는", "은", "을"]
+        for suf in adnominalSuffixes {
+            if text.hasSuffix(suf) && text.count > suf.count {
+                add(String(text.dropLast(suf.count)) + "다")
+            }
+        }
+
+        // 7. Particles & Postpositions
+        let particles = [
+            "에서는", "에게는", "에게서", "부터는", "까지는",
+            "에서", "에게", "한테", "으로", "부터", "까지", "처럼", "마저", "조차", "밖에",
+            "은", "는", "이", "가", "을", "를", "에", "로", "과", "와", "도", "만", "의"
+        ]
+        for p in particles {
+            if text.hasSuffix(p) && text.count > p.count {
+                add(String(text.dropLast(p.count)))
+            }
+        }
+
+        return candidates
     }
 
     private func queryCandidates(_ candidates: [String], in db: OpaquePointer) -> [JapaneseDictionaryEntry] {
@@ -339,7 +631,7 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
             throw NSError(domain: "JapaneseDictionaryService", code: 1, userInfo: [NSLocalizedDescriptionKey: "Archive invalide : index.json ou titre manquant"])
         }
 
-        guard let db else {
+        guard db != nil else {
             throw NSError(domain: "JapaneseDictionaryService", code: 2, userInfo: [NSLocalizedDescriptionKey: "Base non disponible"])
         }
 
@@ -347,7 +639,7 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
 
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             accessQueue.async { [weak self] in
-                guard let self else { return }
+                guard let self, let db = self.db else { return }
 
                 sqlite3_exec(db, "BEGIN TRANSACTION;", nil, nil, nil)
 
