@@ -641,13 +641,15 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty && $0.range(of: "[a-zA-Z]", options: .regularExpression) != nil }
 
-        for kw in kwList {
-            if !glosses.contains(kw) {
+        for (i, kw) in kwList.enumerated() {
+            if i == 0, let explanation = explanation, !explanation.isEmpty {
+                glosses.append("\(kw) (\(explanation))")
+            } else if !glosses.contains(kw) {
                 glosses.append(kw)
             }
         }
 
-        if let explanation = explanation, !explanation.isEmpty {
+        if glosses.isEmpty, let explanation = explanation {
             glosses.append(explanation)
         } else if glosses.isEmpty {
             glosses = [text]

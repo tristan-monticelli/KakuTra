@@ -423,6 +423,133 @@ struct OverlayView: View {
         .padding(14)
     }
 
+    struct DuolingoTagView: View {
+        let tag: String
+
+        var tagDescription: String {
+            switch tag.lowercased() {
+            case "noun", "nom", "substantif":
+                return "Nom / Substantif"
+            case "nom féminin":
+                return "Nom féminin"
+            case "nom masculin":
+                return "Nom masculin"
+            case "verb", "verbe":
+                return "Verbe"
+            case "common":
+                return "Mot fréquent dans la langue courante (vocabulaire prioritaire)"
+            case "adjective", "adjectif", "adj-i", "adj-na":
+                return "Adjectif"
+            case "adverb", "adverbe":
+                return "Adverbe"
+            case "1-dan", "ichidan":
+                return "Verbe ichidan (2e groupe en -ru)"
+            case "5-dan", "godan":
+                return "Verbe godan (1er groupe)"
+            case "suru", "suru verb":
+                return "Verbe avec auxiliaire suru"
+            case "transitive":
+                return "Verbe transitif (action directe)"
+            case "intransitive":
+                return "Verbe intransitif"
+            case "archaic":
+                return "Terme archaïque / ancien"
+            case "slang":
+                return "Terme d'argot ou familier"
+            default:
+                return tag
+            }
+        }
+
+        var body: some View {
+            Text(tag)
+                .font(.system(size: 10, weight: .medium))
+                .foregroundStyle(tag == "Common" ? Color.accentColor : Color.secondary)
+                .padding(.horizontal, 5)
+                .padding(.vertical, 2)
+                .background(
+                    (tag == "Common" ? Color.accentColor.opacity(0.12) : Color.primary.opacity(0.06)),
+                    in: RoundedRectangle(cornerRadius: 3.5, style: .continuous)
+                )
+                .underline(true, pattern: .dot, color: (tag == "Common" ? Color.accentColor.opacity(0.5) : Color.secondary.opacity(0.4)))
+                .help(tagDescription)
+        }
+    }
+
+    struct DuolingoSegmentedDefinitionView: View {
+        let index: Int?
+        let rawText: String
+
+        var parsed: (main: String, hint: String?, tooltip: String?) {
+            let text = rawText.trimmingCharacters(in: .whitespacesAndNewlines)
+
+            // 1. Parenthetical remarks, e.g. "cat (esp. the domestic cat, Felis catus)"
+            if let pStart = text.range(of: "("), let pEnd = text.range(of: ")", range: pStart.upperBound..<text.endIndex) {
+                let main = String(text[..<pStart.lowerBound]).trimmingCharacters(in: .whitespacesAndNewlines)
+                let inside = String(text[pStart.upperBound..<pEnd.lowerBound]).trimmingCharacters(in: .whitespacesAndNewlines)
+
+                if inside.count > 30 {
+                    return (main.isEmpty ? inside : main, "détails", inside)
+                }
+
+                if let comma = inside.range(of: ",") {
+                    let hint = String(inside[..<comma.lowerBound]).trimmingCharacters(in: .whitespaces)
+                    let extra = String(inside[comma.upperBound...]).trimmingCharacters(in: .whitespaces)
+                    return (main.isEmpty ? inside : main, hint, extra)
+                } else {
+                    return (main.isEmpty ? inside : main, inside, inside)
+                }
+            }
+
+            // 2. French gender notation, e.g. "ordinateur m"
+            if text.hasSuffix(" m") {
+                let main = String(text.dropLast(2)).trimmingCharacters(in: .whitespaces)
+                return (main, "masculin", "Nom masculin")
+            } else if text.hasSuffix(" f") {
+                let main = String(text.dropLast(2)).trimmingCharacters(in: .whitespaces)
+                return (main, "féminin", "Nom féminin")
+            }
+
+            // 3. Example sentence after period: e.g. "Bâtiment servant d'habitation. Une maison de campagne."
+            if let dot = text.range(of: ". ") {
+                let main = String(text[..<dot.lowerBound]).trimmingCharacters(in: .whitespaces)
+                let ex = String(text[dot.upperBound...]).trimmingCharacters(in: .whitespaces)
+                if !ex.isEmpty && ex.count > 3 {
+                    return (main, "exemple", ex)
+                }
+            }
+
+            return (text, nil, nil)
+        }
+
+        var body: some View {
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                if let index {
+                    Text("\(index).")
+                        .font(.system(size: 12, weight: .regular))
+                        .foregroundStyle(.secondary.opacity(0.65))
+                        .frame(width: 14, alignment: .trailing)
+                }
+
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Text(parsed.main)
+                        .font(.system(size: 13, weight: .regular))
+                        .foregroundStyle(.primary)
+
+                    if let hint = parsed.hint {
+                        Text(hint)
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundStyle(.secondary)
+                            .underline(true, pattern: .dot, color: .secondary.opacity(0.6))
+                            .help(parsed.tooltip ?? hint)
+                            .contentShape(Rectangle())
+                    }
+                }
+                .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+
     @ViewBuilder
     private func cleanWordHeader(content: OverlayContent) -> some View {
         let firstEntry: YomitanTermResult? = {
@@ -540,76 +667,56 @@ struct OverlayView: View {
             .padding(.bottom, 14)
 
         case .results(let entries):
-            VStack(alignment: .leading, spacing: 8) {
-                ForEach(Array(entries.prefix(3).enumerated()), id: \.element.id) { index, entry in
-                    VStack(alignment: .leading, spacing: 6) {
-                        // For secondary entries (index > 0): clean separator & title
-                        if index > 0 {
-                            Divider().opacity(0.3).padding(.vertical, 2)
-                            HStack(spacing: 6) {
-                                Text(entry.reading ?? entry.term)
-                                    .font(.system(size: 12.5, weight: .medium))
-                                    .foregroundStyle(.secondary)
-
-                                ForEach(entry.tags, id: \.self) { tag in
-                                    Text(tag)
-                                        .font(.system(size: 9.5, weight: .medium))
-                                        .foregroundStyle(.secondary)
-                                        .padding(.horizontal, 4)
-                                        .padding(.vertical, 1.5)
-                                        .background(Color.primary.opacity(0.05), in: RoundedRectangle(cornerRadius: 3, style: .continuous))
-                                }
+            if let primary = entries.first {
+                VStack(alignment: .leading, spacing: 7) {
+                    // 1. Grammatical & Frequency Tags with Duolingo-style dotted tooltips
+                    if !primary.tags.isEmpty {
+                        HStack(spacing: 5) {
+                            ForEach(primary.tags, id: \.self) { tag in
+                                DuolingoTagView(tag: tag)
                             }
-                        } else if !entry.tags.isEmpty {
-                            // Primary entry metadata tags (e.g. [Common], [Noun])
-                            HStack(spacing: 5) {
-                                ForEach(entry.tags, id: \.self) { tag in
-                                    Text(tag)
-                                        .font(.system(size: 10, weight: .medium))
-                                        .foregroundStyle(tag == "Common" ? Color.accentColor : Color.secondary)
-                                        .padding(.horizontal, 5)
-                                        .padding(.vertical, 2)
-                                        .background(
-                                            (tag == "Common" ? Color.accentColor.opacity(0.12) : Color.primary.opacity(0.06)),
-                                            in: RoundedRectangle(cornerRadius: 3.5, style: .continuous)
-                                        )
-                                }
-                            }
-                            .padding(.bottom, 2)
                         }
+                        .padding(.bottom, 1)
+                    }
 
-                        // Definition list: clean unnumbered text for single definition, aligned numbers for multi
-                        if entry.glosses.count == 1 {
-                            Text(entry.glosses[0])
-                                .font(.system(size: 13, weight: .regular))
-                                .foregroundStyle(index == 0 ? .primary : .secondary)
-                                .lineSpacing(3)
-                                .fixedSize(horizontal: false, vertical: true)
-                                .padding(.leading, index > 0 ? 4 : 0)
-                        } else {
-                            VStack(alignment: .leading, spacing: 5) {
-                                ForEach(Array(entry.glosses.prefix(4).enumerated()), id: \.offset) { idx, gloss in
-                                    HStack(alignment: .top, spacing: 6) {
-                                        Text("\(idx + 1).")
-                                            .font(.system(size: 12, weight: .regular))
-                                            .foregroundStyle(.secondary.opacity(0.7))
-                                            .frame(width: 14, alignment: .trailing)
-
-                                        Text(gloss)
-                                            .font(.system(size: 13, weight: .regular))
-                                            .foregroundStyle(index == 0 ? .primary : .secondary)
-                                            .lineSpacing(3)
-                                            .fixedSize(horizontal: false, vertical: true)
-                                    }
-                                }
+                    // 2. Interactive segmented definitions (clear keywords + dotted hover hints)
+                    if primary.glosses.count == 1 {
+                        DuolingoSegmentedDefinitionView(index: nil, rawText: primary.glosses[0])
+                    } else {
+                        VStack(alignment: .leading, spacing: 5) {
+                            ForEach(Array(primary.glosses.prefix(4).enumerated()), id: \.offset) { idx, gloss in
+                                DuolingoSegmentedDefinitionView(index: idx + 1, rawText: gloss)
                             }
-                            .padding(.leading, index > 0 ? 4 : 0)
                         }
                     }
+
+                    // 3. Variant readings / other forms (strictly NO Japanese in translation body!)
+                    let otherEntries = entries.dropFirst().filter { $0.term != primary.term || $0.reading != primary.reading }
+                    if !otherEntries.isEmpty {
+                        let variantsDetail = otherEntries.compactMap { e -> String in
+                            let r = e.reading ?? e.term
+                            let t = e.tags.isEmpty ? "" : " (\(e.tags.joined(separator: ", ")))"
+                            let g = e.glosses.isEmpty ? "" : " : \(e.glosses.joined(separator: ", "))"
+                            return "• \(r)\(t)\(g)"
+                        }.joined(separator: "\n")
+
+                        HStack(spacing: 4) {
+                            Image(systemName: "character.book.closed")
+                                .font(.system(size: 9.5))
+                                .foregroundStyle(.secondary)
+
+                            Text("\(otherEntries.count) autre\(otherEntries.count > 1 ? "s" : "") lecture\(otherEntries.count > 1 ? "s" : "")")
+                                .font(.system(size: 10.5, weight: .medium))
+                                .foregroundStyle(.secondary)
+                                .underline(true, pattern: .dot, color: .secondary.opacity(0.6))
+                        }
+                        .padding(.top, 3)
+                        .help("Lectures ou formes secondaires :\n\(variantsDetail)")
+                    }
                 }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 14)
             }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 14)
         }
     }
 
