@@ -356,17 +356,6 @@ final class SettingsStore: ObservableObject {
     @Published var keepWordOverlayAfterTap: Bool {
         didSet { defaults.set(keepWordOverlayAfterTap, forKey: AppSettingKey.keepWordOverlayAfterTap) }
     }
-    @Published var dictionarySources: [DictionarySource] {
-        didSet {
-            saveDictionarySources()
-        }
-    }
-    @Published var yomitanDictionaryLanguages: [String: String] {
-        didSet { defaults.set(yomitanDictionaryLanguages, forKey: AppSettingKey.yomitanDictionaryLanguages) }
-    }
-    @Published var yomitanPreferredGlossaryLanguage: String {
-        didSet { defaults.set(yomitanPreferredGlossaryLanguage, forKey: AppSettingKey.yomitanPreferredGlossaryLanguage) }
-    }
     @Published var ankiDeckName: String {
         didSet { defaults.set(ankiDeckName, forKey: AppSettingKey.ankiDeckName) }
     }
@@ -474,7 +463,6 @@ final class SettingsStore: ObservableObject {
     }
 
     private let defaults: UserDefaults
-    private static let dictionarySourcesKey = "dictionarySources"
     private static let sentenceTranslationSourcesKey = "sentenceTranslationSources"
     private static let llmProviderConfigurationsKey = "llmProviderConfigurations"
     private static let imageTranslationProviderConfigurationsKey = "imageTranslationProviderConfigurations"
@@ -508,8 +496,6 @@ final class SettingsStore: ObservableObject {
         let debugShowOcrRegionValue = defaults.object(forKey: AppSettingKey.debugShowOcrRegion) as? Bool
         let continuousTranslationValue = defaults.object(forKey: AppSettingKey.continuousTranslation) as? Bool
         let keepWordOverlayAfterTapValue = defaults.object(forKey: AppSettingKey.keepWordOverlayAfterTap) as? Bool
-        let savedYomitanDictionaryLanguages = defaults.dictionary(forKey: AppSettingKey.yomitanDictionaryLanguages) as? [String: String] ?? [:]
-        let savedYomitanPreferredGlossaryLanguage = defaults.string(forKey: AppSettingKey.yomitanPreferredGlossaryLanguage)
         let savedAnkiDeckName = defaults.string(forKey: AppSettingKey.ankiDeckName)
         let savedAnkiModelName = defaults.string(forKey: AppSettingKey.ankiModelName)
         let savedAnkiFieldMappings = defaults.dictionary(forKey: AppSettingKey.ankiFieldMappings) as? [String: String] ?? [:]
@@ -527,15 +513,12 @@ final class SettingsStore: ObservableObject {
         debugShowOcrRegion = debugShowOcrRegionValue ?? false
         continuousTranslation = continuousTranslationValue ?? true
         keepWordOverlayAfterTap = keepWordOverlayAfterTapValue ?? true
-        yomitanDictionaryLanguages = savedYomitanDictionaryLanguages
-        yomitanPreferredGlossaryLanguage = savedYomitanPreferredGlossaryLanguage ?? "all"
         ankiDeckName = savedAnkiDeckName ?? ""
         ankiModelName = savedAnkiModelName ?? ""
         ankiFieldMappings = savedAnkiFieldMappings
         ankiTags = savedAnkiTags ?? "kakutra"
 
         // Load or migrate dictionary sources
-        dictionarySources = Self.loadOrMigrateDictionarySources(defaults: defaults)
 
         // Load sentence translation sources
         sentenceTranslationSources = Self.loadOrMigrateSentenceTranslationSources(defaults: defaults)
@@ -632,8 +615,6 @@ final class SettingsStore: ObservableObject {
         defaults.set(debugShowOcrRegion, forKey: AppSettingKey.debugShowOcrRegion)
         defaults.set(continuousTranslation, forKey: AppSettingKey.continuousTranslation)
         defaults.set(keepWordOverlayAfterTap, forKey: AppSettingKey.keepWordOverlayAfterTap)
-        defaults.set(yomitanDictionaryLanguages, forKey: AppSettingKey.yomitanDictionaryLanguages)
-        defaults.set(yomitanPreferredGlossaryLanguage, forKey: AppSettingKey.yomitanPreferredGlossaryLanguage)
         defaults.set(ankiDeckName, forKey: AppSettingKey.ankiDeckName)
         defaults.set(ankiModelName, forKey: AppSettingKey.ankiModelName)
         defaults.set(ankiFieldMappings, forKey: AppSettingKey.ankiFieldMappings)
@@ -663,28 +644,9 @@ final class SettingsStore: ObservableObject {
         defaults.set(learningMaxRecords, forKey: AppSettingKey.learningMaxRecords)
         defaults.set(learningCleanupDays, forKey: AppSettingKey.learningCleanupDays)
         defaults.set(learningAutoCleanup, forKey: AppSettingKey.learningAutoCleanup)
-        saveDictionarySources()
         saveSentenceTranslationSources()
         saveLLMProviderConfigurations()
         saveImageTranslationProviderConfigurations()
-    }
-
-    private static func loadOrMigrateDictionarySources(defaults: UserDefaults) -> [DictionarySource] {
-        // Try to load existing sources
-        if let data = defaults.data(forKey: dictionarySourcesKey),
-           let sources = try? JSONDecoder().decode([DictionarySource].self, from: data) {
-            let migrated = migrateDictionarySources(sources)
-            persistDictionarySources(migrated, defaults: defaults)
-            return migrated
-        }
-
-        let sources = defaultDictionarySources()
-        persistDictionarySources(sources, defaults: defaults)
-        return sources
-    }
-
-    private func saveDictionarySources() {
-        Self.persistDictionarySources(dictionarySources, defaults: defaults)
     }
 
     var hotkeyDisplayText: String {
@@ -729,24 +691,6 @@ final class SettingsStore: ObservableObject {
         return "zh-Hans"
     }
 
-    static func defaultDictionarySources(ecdictInstalled: Bool) -> [DictionarySource] {
-        [makeDictionarySource(type: .system, isEnabled: true)]
-    }
-
-    static func migrateDictionarySources(_ sources: [DictionarySource]) -> [DictionarySource] {
-        [makeDictionarySource(type: .system, isEnabled: true)]
-    }
-
-    private static func defaultDictionarySources() -> [DictionarySource] {
-        [makeDictionarySource(type: .system, isEnabled: true)]
-    }
-
-    private static func defaultDictionarySourceDefinitions(
-        ecdictInstalled: Bool
-    ) -> [(type: DictionarySource.SourceType, isEnabled: Bool)] {
-        [(.system, true)]
-    }
-
     static func loadSentenceTranslationSettings(
         defaults: UserDefaults
     ) -> (ocrSentenceTranslationEnabled: Bool, selectedTextTranslationEnabled: Bool) {
@@ -778,31 +722,6 @@ final class SettingsStore: ObservableObject {
 
     static func loadBidirectionalTranslationEnabled(defaults: UserDefaults) -> Bool {
         defaults.object(forKey: AppSettingKey.bidirectionalTranslationEnabled) as? Bool ?? true
-    }
-
-    private static func makeDictionarySource(
-        type: DictionarySource.SourceType,
-        isEnabled: Bool
-    ) -> DictionarySource {
-        DictionarySource(
-            id: UUID(),
-            name: type.displayName,
-            type: type,
-            isEnabled: isEnabled
-        )
-    }
-
-    private static func persistDictionarySources(
-        _ sources: [DictionarySource],
-        defaults: UserDefaults
-    ) {
-        if let data = try? JSONEncoder().encode(sources) {
-            defaults.set(data, forKey: dictionarySourcesKey)
-        }
-    }
-
-    private static var isECDICTInstalled: Bool {
-        FileManager.default.fileExists(atPath: OfflineDictionaryService.databaseURL.path)
     }
 
     // MARK: - Sentence Translation Sources

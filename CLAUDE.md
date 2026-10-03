@@ -40,7 +40,7 @@ xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "KakuTra" test
 3. OCR extracts words from capture (`OCRService` using Vision framework)
 4. Word closest to cursor is selected (distance-based algorithm)
 5. Translation happens via macOS 15 Translation framework (`TranslationBridge`)
-6. Dictionary lookup provides definitions and phonetics (`DictionaryService`)
+6. Local dictionary lookup provides Japanese, Chinese, and Korean entries (`LocalDictionaryService`)
 7. Results show in floating overlay bubble near cursor (`OverlayWindowController`)
 8. Release hotkey to dismiss (or click to dismiss if continuous mode is off)
 
@@ -123,19 +123,8 @@ When disabled:
 #### Translation Service Warmup
 On macOS 15+, `warmupServices()` performs a dummy translation at launch ("hello") to initialize the Translation framework. This prevents first-translation delays but means the app briefly activates translation services on startup.
 
-#### Offline Dictionary (ECDICT)
-`OfflineDictionaryService`: SQLite-based lookup against ECDICT database (~3.4M entries).
-- Database path: `~/Library/Application Support/KakuTra/Dictionaries/stardict.db`
-- Uses `SQLite3` framework (system, no external deps)
-- `DictionaryService` tries offline lookup first, falls back to system `DCSCopyTextDefinition`
-- Includes basic inflection stemming: -ing/-ed/-s/-ies variants tried in sequence
-
-`DictionaryDownloadManager`: `@MainActor ObservableObject` managing download lifecycle.
-- States: `.notInstalled` → `.downloading(progress)` → `.installing` → `.installed(sizeMB)` / `.error`
-- Downloads ECDICT zip from GitHub releases, extracts via `/usr/bin/ditto`
-- Sandboxed apps (App Store): `ditto` may fail — `selectManually()` opens `NSOpenPanel` as fallback
-- ECDICT download URL is a constant in `DictionaryDownloadManager` — update when new version releases
-- Exposed on `AppModel` as `let dictionaryDownload: DictionaryDownloadManager`
+#### Local dictionaries
+`LocalDictionaryService` reads Japanese, Chinese, and Korean SQLite databases from `~/Library/Application Support/KakuTra/Dictionaries`. It supports local lookup and importing compatible dictionary archives. The lookup pipeline has no operating-system or network dictionary fallback.
 
 #### Entitlement System (Currently Disabled)
 The entitlement system was designed but is currently not active in the codebase. `PaywallView.swift` exists but is not integrated into the main flow. `EntitlementManager` and `StoreKitManager` are referenced in comments but do not exist as source files. Debug builds bypass all checks.
@@ -236,18 +225,16 @@ All frameworks are system frameworks (no external dependencies):
 SnapTra Translator/
 ├── Snap_TranslateApp.swift          # App entry + AppDelegate + window controllers
 ├── AppModel.swift                   # Central controller/coordinator
-├── ContentView.swift                # Settings UI (main container)
-├── SettingsView.swift               # Language/hotkey pickers
+├── SettingsWindowView.swift         # Tabbed settings window
+├── SettingsComponents.swift         # Shared settings controls
 ├── PaywallView.swift                # Purchase UI (not currently active)
 ├── OverlayView.swift                # Translation result bubble UI
 ├── OverlayWindowController.swift    # Floating overlay window
 ├── TranslationService.swift         # TranslationBridge + TranslationBridgeView
 ├── OCRService.swift                 # Vision-based word recognition
 ├── ScreenCaptureService.swift       # Screen capture around cursor
-├── DictionaryService.swift          # Dictionary lookups (offline-first, system fallback)
-├── OfflineDictionaryService.swift   # SQLite ECDICT offline dictionary
-├── DictionaryDownloadManager.swift  # Download/install/delete ECDICT database
-├── DictionaryEntry.swift            # Dictionary models
+├── LocalDictionaryService.swift     # Offline Japanese, Chinese, and Korean lookup
+├── DictionaryLookupModels.swift     # Local dictionary result model
 ├── PhoneticService.swift            # Phonetic notation
 ├── SpeechService.swift              # Text-to-speech
 ├── HotkeyManager.swift              # Global hotkey registration

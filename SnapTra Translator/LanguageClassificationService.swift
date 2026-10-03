@@ -32,6 +32,32 @@ public struct LanguageClassification: Sendable {
 
 public enum LanguageClassificationService {
 
+    /// The embedded OCR dictionaries currently cover Japanese, Chinese, and Korean.
+    /// Script cues take priority over language guessing so short OCR fragments do not
+    /// get misrouted as English or another Latin-script language.
+    public nonisolated static func supportedOCRLanguage(for text: String) -> String? {
+        var hasKana = false
+        var hasHangul = false
+        var hasHan = false
+
+        for scalar in text.unicodeScalars {
+            let value = scalar.value
+            hasKana = hasKana || (0x3040...0x30FF).contains(value) || (0xFF66...0xFF9D).contains(value)
+            hasHangul = hasHangul || (0x1100...0x11FF).contains(value) || (0x3130...0x318F).contains(value) || (0xAC00...0xD7AF).contains(value)
+            hasHan = hasHan || scalar.properties.isIdeographic
+        }
+
+        if hasKana { return "ja" }
+        if hasHangul { return "ko" }
+        guard hasHan else { return nil }
+
+        let recognizer = NLLanguageRecognizer()
+        recognizer.processString(text)
+        if recognizer.dominantLanguage == .japanese { return "ja" }
+        if recognizer.dominantLanguage == .korean { return "ko" }
+        return "zh"
+    }
+
     /// Classifies any text universally with zero hardcoded magic numbers.
     ///
     /// - Parameters:
@@ -90,23 +116,9 @@ public enum LanguageClassificationService {
             }
         } else if wordScript == .latin {
             resolvedScript = .latin
-            if let contextLanguage {
-                resolvedLanguage = contextLanguage
-            } else {
-                let recognizer = NLLanguageRecognizer()
-                recognizer.processString(trimmed)
-                let hypotheses = recognizer.languageHypotheses(withMaximum: 5)
-                if let frProb = hypotheses[.french], frProb > 0.15 {
-                    resolvedLanguage = .french
-                } else if let enProb = hypotheses[.english], enProb > 0.04 {
-                    resolvedLanguage = .english
-                } else if let dominant = recognizer.dominantLanguage,
-                          dominant == .german || dominant == .spanish || dominant == .italian || dominant == .french {
-                    resolvedLanguage = dominant
-                } else {
-                    resolvedLanguage = .english
-                }
-            }
+            // Short OCR fragments are often impossible to identify reliably. Keep
+            // an unknown language unknown instead of silently routing it as English.
+            resolvedLanguage = wordLang ?? contextLanguage
             isJapanese = false
         } else if wordScript == .korean {
             resolvedScript = .korean

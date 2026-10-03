@@ -87,11 +87,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
     }
 
     // Store menu items that need state updates
-    private weak var pronunciationMenuItem: NSMenuItem?
     private weak var wordPronunciationMenuItem: NSMenuItem?
-    private weak var sentencePronunciationMenuItem: NSMenuItem?
     private weak var listeningMenuItem: NSMenuItem?
-    private weak var providerInfoMenuItem: NSMenuItem?
     #if DEBUG
     private weak var debugShowChannelMenuItem: NSMenuItem?
     #endif
@@ -163,9 +160,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
             .store(in: &cancellables)
 
         model.settings.$playWordPronunciation
-            .combineLatest(model.settings.$playSentencePronunciation)
-            .combineLatest(model.settings.$wordTTSProvider)
-            .combineLatest(model.settings.$sentenceTTSProvider)
             .sink { [weak self] _ in
                 Task { @MainActor in
                     self?.updateDynamicMenuItems()
@@ -349,46 +343,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         menu.addItem(listeningItem)
         self.listeningMenuItem = listeningItem
 
-        // Pronunciation submenu
-        let pronunciationSubmenu = NSMenu()
-        
-        let wordPronunciationItem = NSMenuItem(
-            title: L("Word"),
+        // Pronunciation toggle
+        let pronunciationItem = NSMenuItem(
+            title: L("Play Pronunciation"),
             action: #selector(toggleWordPronunciation),
             keyEquivalent: ""
         )
-        wordPronunciationItem.target = self
-        pronunciationSubmenu.addItem(wordPronunciationItem)
-        self.wordPronunciationMenuItem = wordPronunciationItem
-        
-        let sentencePronunciationItem = NSMenuItem(
-            title: L("Sentence"),
-            action: #selector(toggleSentencePronunciation),
-            keyEquivalent: ""
-        )
-        sentencePronunciationItem.target = self
-        pronunciationSubmenu.addItem(sentencePronunciationItem)
-        self.sentencePronunciationMenuItem = sentencePronunciationItem
-        
-        // Provider info in submenu
-        let providerItem = NSMenuItem(
-            title: "",
-            action: nil,
-            keyEquivalent: ""
-        )
-        providerItem.isEnabled = false
-        providerItem.indentationLevel = 1
-        pronunciationSubmenu.addItem(providerItem)
-        self.providerInfoMenuItem = providerItem
-        
-        let pronunciationMenuItem = NSMenuItem(
-            title: L("Pronunciation"),
-            action: nil,
-            keyEquivalent: ""
-        )
-        pronunciationMenuItem.submenu = pronunciationSubmenu
-        menu.addItem(pronunciationMenuItem)
-        self.pronunciationMenuItem = pronunciationMenuItem
+        pronunciationItem.target = self
+        menu.addItem(pronunciationItem)
+        self.wordPronunciationMenuItem = pronunciationItem
 
         // Actions section
         // Settings
@@ -455,30 +418,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
     }
 
     @MainActor private func updateDynamicMenuItems() {
-        // Update pronunciation submenu item states
         wordPronunciationMenuItem?.state = model.settings.playWordPronunciation ? .on : .off
-        sentencePronunciationMenuItem?.state = model.settings.playSentencePronunciation ? .on : .off
 
         listeningMenuItem?.title = L(model.isListening ? "Pause Listening" : "Resume Listening")
         listeningMenuItem?.state = model.isListening ? .on : .off
         statusItem?.button?.toolTip = L(model.isListening ? "KakuTra · Listening" : "KakuTra · Paused")
-        
-        // Update provider info item to show both Word and Sentence providers
-        let wordProvider = model.settings.wordTTSProvider
-        let sentenceProvider = model.settings.sentenceTTSProvider
-        let wordName = wordProvider == .apple ? L("System") : wordProvider.displayName
-        let sentenceName = sentenceProvider == .apple ? L("System") : sentenceProvider.displayName
-        let providerTitle = "\(L("Word")): \(wordName)  ·  \(L("Sentence")): \(sentenceName)"
-        
-        // Style the provider info with secondary color
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: NSFont.systemFont(ofSize: 12),
-            .foregroundColor: NSColor.secondaryLabelColor
-        ]
-        providerInfoMenuItem?.attributedTitle = NSAttributedString(
-            string: providerTitle,
-            attributes: attributes
-        )
         
         #if DEBUG
         // Update debug menu item state
@@ -507,10 +451,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
 
     @MainActor @objc private func toggleWordPronunciation() {
         model.settings.playWordPronunciation.toggle()
-    }
-
-    @MainActor @objc private func toggleSentencePronunciation() {
-        model.settings.playSentencePronunciation.toggle()
     }
 
     @MainActor @objc private func toggleListening() {

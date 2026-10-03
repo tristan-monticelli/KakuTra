@@ -38,7 +38,7 @@ final class OCRService {
         return OCRService.groupParagraphs(from: lines)
     }
 
-    /// Returns both grouped English paragraphs and raw text lines for language detection
+    /// Returns grouped paragraphs and raw text lines for language detection.
     func recognizeParagraphsWithRawLines(in image: CGImage, language: String) async throws -> (
         paragraphs: [RecognizedParagraph],
         lines: [RecognizedTextLine]
@@ -138,26 +138,8 @@ final class OCRService {
         return normalizedImage
     }
 
-    private static func preferredRecognitionLanguages(for language: String) -> [String] {
-        let identifier = language.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !identifier.isEmpty else { return ["en-US"] }
-
-        let locale = Locale(identifier: identifier)
-        let languageCode = locale.language.languageCode?.identifier
-        var result = [identifier]
-
-        if let languageCode, languageCode != identifier {
-            result.append(languageCode)
-        }
-
-        if languageCode != "en" {
-            result.append("en-US")
-        }
-        var unique: [String] = []
-        for value in result where !unique.contains(value) {
-            unique.append(value)
-        }
-        return unique
+    private static func preferredRecognitionLanguages(for _: String) -> [String] {
+        ["ja-JP", "zh-Hans", "zh-Hant", "ko-KR"]
     }
 
     nonisolated private static func extractWords(
@@ -175,7 +157,8 @@ final class OCRService {
                 continue
             }
             let text = candidate.string
-            let refinedRanges = tokenRanges(in: text, language: language)
+            let detectedLanguage = LanguageClassificationService.supportedOCRLanguage(for: text) ?? language
+            let refinedRanges = tokenRanges(in: text, language: detectedLanguage)
 
             #if DEBUG
             print("[OCR] Observation \(obsIndex): '\(text)', tokenized into \(refinedRanges.count) parts")
@@ -317,7 +300,7 @@ final class OCRService {
             let paragraphs: [RecognizedParagraph] = grouped.compactMap { groupLines in
                 guard let firstLine = groupLines.first else { return nil }
                 let text = normalizedParagraphText(from: groupLines)
-                guard isLikelyEnglishParagraph(text) else { return nil }
+                guard !text.isEmpty else { return nil }
 
                 let boundingBox = groupLines.dropFirst().reduce(firstLine.boundingBox) { acc, l in
                     acc.union(l.boundingBox)
@@ -362,16 +345,15 @@ final class OCRService {
     /// Result type for paragraph selection with language detection
     enum ParagraphSelectionResult {
         /// Found a paragraph at the cursor position
-        case english(RecognizedParagraph)
+        case paragraph(RecognizedParagraph)
         /// Found OCR text at the cursor position that did not pass paragraph grouping
         case textLine(RecognizedTextLine)
         /// No text found at cursor position
         case noText
     }
 
-    /// Selects paragraph with language-aware detection.
-    /// First checks if cursor is on any text (including Chinese), then determines if it's English.
-    nonisolated static func selectParagraphWithLanguageCheck(
+    /// Selects the paragraph or line nearest the cursor, regardless of language.
+    nonisolated static func selectParagraphOrLine(
         from paragraphs: [RecognizedParagraph],
         lines: [RecognizedTextLine],
         normalizedPoint: CGPoint
@@ -382,7 +364,7 @@ final class OCRService {
         if let paragraph = paragraphs.first(where: { paragraph in
             paragraph.boundingBox.insetBy(dx: -tolerance, dy: -tolerance).contains(normalizedPoint)
         }) {
-            return .english(paragraph)
+            return .paragraph(paragraph)
         }
 
         // Cursor is not on any paragraph - find nearest one with reduced search radius
@@ -400,7 +382,7 @@ final class OCRService {
             .0
 
         if let paragraph = closestParagraph {
-            return .english(paragraph)
+            return .paragraph(paragraph)
         }
 
         if let line = selectLine(from: lines, normalizedPoint: normalizedPoint) {
@@ -428,7 +410,7 @@ final class OCRService {
         }
     }
 
-    // 只包含英语字母，数字和其他符号都作为分隔符
+    // Latin runs are split into letter groups; script-aware handling below preserves CJK tokens.
     nonisolated private static let tokenCharacterSet = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
     nonisolated private static let letterSet = CharacterSet.letters
 
@@ -991,25 +973,6 @@ final class OCRService {
 
     nonisolated private static func containsLikelyParagraphContent(_ text: String) -> Bool {
         text.unicodeScalars.contains { letterSet.contains($0) || $0.properties.isIdeographic }
-    }
-
-    nonisolated private static func isLikelyEnglishParagraph(_ text: String) -> Bool {
-        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        let letters = trimmed.unicodeScalars.filter { letterSet.contains($0) }
-        guard letters.count >= 3 else {
-            return false
-        }
-
-        if trimmed.contains("\n") {
-            return true
-        }
-
-        let wordCount = trimmed.split(whereSeparator: { !$0.isLetter }).count
-        if wordCount >= 2 {
-            return true
-        }
-
-        return letters.count >= 10
     }
 
     /// Estimates the display font size for a paragraph based on its line heights

@@ -269,7 +269,7 @@ final class OCRParagraphGroupingTests: XCTestCase {
             ),
         ]
 
-        let result = OCRService.selectParagraphWithLanguageCheck(
+        let result = OCRService.selectParagraphOrLine(
             from: [],
             lines: lines,
             normalizedPoint: CGPoint(x: 0.18, y: 0.44)

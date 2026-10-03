@@ -194,12 +194,12 @@
 
         <div class="content">
             <div class="highlight">
-                <p><strong>Privacy First & Zero-Clipboard:</strong> KakuTra is designed for local Japanese immersion. All OCR is processed on-device via Apple Vision, your system clipboard is never touched, and external connections are restricted strictly to local loopback APIs (Yomitan at <code>127.0.0.1:19633</code> and AnkiConnect at <code>127.0.0.1:8765</code>).</p>
+                <p><strong>Privacy First & Zero-Clipboard:</strong> KakuTra recognizes Japanese, Chinese, and Korean text with Apple Vision on this Mac. Captured images are processed in memory, and the system clipboard is not used.</p>
             </div>
 
             <div class="section">
                 <h2>Overview</h2>
-                <p>KakuTra ("the App") is an open-source macOS application that provides instant Japanese character recognition and immersion lookup. It extracts Japanese text directly from screen pixels using Apple Vision OCR without simulating clipboard keys. This privacy policy explains how data is handled.</p>
+                <p>KakuTra ("the App") is an open-source macOS application that provides instant OCR translation and offline dictionary lookup for Japanese, Chinese, and Korean. It extracts Japanese text directly from screen pixels using Apple Vision OCR without simulating clipboard keys. This privacy policy explains how data is handled.</p>
             </div>
 
             <div class="section">
@@ -284,7 +284,7 @@
                 <p>Data handling depends on the feature and providers you enable:</p>
                 <ul>
                     <li>OCR uses Apple Vision on this Mac. Captured images are processed in memory and discarded.</li>
-                    <li>Japanese word lookup sends only the recognized Japanese term to the Yomitan API at <code>127.0.0.1:19633</code>, a local service on your Mac. It does not send the image, page title, or URL.</li>
+                    <li>Word lookup uses the local dictionary databases installed in the App. Images are not sent to dictionary lookup.</li>
                     <li>Apple Translation runs on-device when the required language assets are available.</li>
                     <li>If you enable an online translation, dictionary, or speech provider, the text needed for that feature is sent to that provider. KakuTra does not operate those provider servers.</li>
                     <li>Lookup history and any saved definitions remain in local App storage.</li>
@@ -293,7 +293,7 @@
 
             <div class="section">
                 <h2>Third-Party Services</h2>
-                <p>KakuTra does not use analytics or advertising networks. Yomitan is contacted only through its local loopback API. Some optional dictionary, translation, and speech providers use their own network services when enabled in Settings.</p>
+                <p>KakuTra does not use analytics or advertising networks. Optional translation and speech providers may use network services when enabled in Settings.</p>
             </div>
 
             <div class="section">
@@ -301,7 +301,7 @@
                 <ul>
                     <li>All data stored by the App is kept locally on your device</li>
                     <li>The App uses macOS sandboxing for additional security</li>
-                    <li>Yomitan requests are restricted to the local loopback service; optional online providers make network requests only for their enabled feature</li>
+                    <li>Optional online providers make network requests only for their enabled feature</li>
                     <li>Your data is protected by your Mac's built-in security features</li>
                 </ul>
             </div>

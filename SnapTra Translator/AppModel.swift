@@ -9,81 +9,32 @@ import UserNotifications
 struct OverlayContent: Equatable {
     var word: String
     var phonetic: String?
-    var primaryTranslationState: OverlayPrimaryTranslationState
-    var usesCompactPrimaryTranslationStyle: Bool
-    var dictionarySections: [OverlayDictionarySection]
     var sourceLanguageIdentifier: String?
-    var yomitanLookupState: YomitanLookupState
+    var dictionaryLookupState: DictionaryLookupState
     var contextSentence: String?
 
     init(
         word: String,
         phonetic: String?,
-        primaryTranslationState: OverlayPrimaryTranslationState,
-        usesCompactPrimaryTranslationStyle: Bool,
-        dictionarySections: [OverlayDictionarySection] = [],
         sourceLanguageIdentifier: String? = nil,
-        yomitanLookupState: YomitanLookupState = .notRequested,
+        dictionaryLookupState: DictionaryLookupState = .notRequested,
         contextSentence: String? = nil
     ) {
         self.word = word
         self.phonetic = phonetic
-        self.primaryTranslationState = primaryTranslationState
-        self.usesCompactPrimaryTranslationStyle = usesCompactPrimaryTranslationStyle
-        self.dictionarySections = dictionarySections
         self.sourceLanguageIdentifier = sourceLanguageIdentifier
-        self.yomitanLookupState = yomitanLookupState
+        self.dictionaryLookupState = dictionaryLookupState
         self.contextSentence = contextSentence
     }
 
-    nonisolated var translation: String {
-        if case .ready(let text, _) = primaryTranslationState {
-            return text
-        }
-        return word
-    }
 
-    nonisolated var dictionaryEntries: [DictionaryEntry] {
-        dictionarySections.compactMap(\.entry)
-    }
-
-    nonisolated var visibleDictionarySections: [OverlayDictionarySection] {
-        dictionarySections.filter { section in
-            guard sourceLanguageIdentifier.map(Self.isChineseLanguageIdentifier) == true,
-                  section.sourceType == .system,
-                  case .empty = section.state else {
-                return true
-            }
-
-            return false
-        }
-    }
-
-    nonisolated var hasReadyDictionaryEntries: Bool {
-        !dictionaryEntries.isEmpty
-    }
-
-    /// Backward compatibility: returns definitions from first dictionary entry
-    nonisolated var definitions: [DictionaryEntry.Definition] {
-        dictionaryEntries.first?.definitions ?? []
-    }
-
-    /// Backward compatibility: returns source from first dictionary entry
-    nonisolated var dictionarySource: DictionaryEntry.Source? {
-        dictionaryEntries.first?.source
-    }
-
-    nonisolated private static func isChineseLanguageIdentifier(_ identifier: String) -> Bool {
-        Locale.Language(identifier: identifier).minimalIdentifier == "zh"
-    }
 }
 
-enum YomitanLookupState: Equatable {
+enum DictionaryLookupState: Equatable {
     case notRequested
     case loading
-    case notConnected
     case noResults
-    case results([YomitanTermResult])
+    case results([DictionaryTermResult])
     case failed(String)
 }
 
@@ -164,34 +115,6 @@ enum LearningLookupPersistenceCoordinator {
 
         await updateDefinition(commit)
     }
-}
-
-enum OverlayPrimaryTranslationState: Equatable {
-    case loading
-    case ready(String, isFallback: Bool)
-    case empty
-    case failed(String)
-}
-
-struct OverlayDictionarySection: Equatable, Identifiable {
-    let sourceType: DictionarySource.SourceType
-    var state: OverlayDictionarySectionState
-
-    var id: String {
-        sourceType.rawValue
-    }
-
-    var entry: DictionaryEntry? {
-        guard case .ready(let entry) = state else { return nil }
-        return entry
-    }
-}
-
-enum OverlayDictionarySectionState: Equatable {
-    case loading
-    case ready(DictionaryEntry)
-    case empty
-    case failed(String)
 }
 
 struct ParagraphTranslationLanguageOption: Equatable, Identifiable {
@@ -324,12 +247,7 @@ private enum CachedLanguageAvailabilityStatus: String {
     }
 }
 
-private struct DictionarySectionResult {
-    let sourceType: DictionarySource.SourceType
-    let state: OverlayDictionarySectionState
-    let phonetic: String?
-    let fallbackTranslation: String?
-}
+
 
 private enum ActiveLookupMode {
     case word
@@ -512,8 +430,6 @@ final class AppModel: ObservableObject {
     @Published var isTapKeptOverlayPresented: Bool = false
     @Published private(set) var isListening = false
     @Published private(set) var speechPlaybackState: SpeechPlaybackState = .idle
-    @Published private(set) var yomitanConnectionState: YomitanConnectionState = .checking
-    @Published private(set) var detectedYomitanDictionaries: [String] = []
     @Published private(set) var ankiConnectionState: AnkiConnectionState = .checking
     @Published private(set) var ankiDeckNames: [String] = []
     @Published private(set) var ankiModelNames: [String] = []
@@ -538,15 +454,12 @@ final class AppModel: ObservableObject {
     private let captureService = ScreenCaptureService()
     private let ocrService = OCRService()
     private let selectedTextService = SelectedTextService()
-    private let dictionaryService = DictionaryService()
-    let japaneseDictionaryService = JapaneseDictionaryService.shared
-    private let yomitanClient = YomitanClient()
+    let localDictionaryService = LocalDictionaryService.shared
     private let ankiConnectClient = AnkiConnectClient()
     private let speechService = SpeechService()
     private let sentenceTranslationService = SentenceTranslationService()
     private let imageTranslationService = ImageTranslationService()
     private let lookupPerformanceReporter: any LookupPerformanceReporting = LookupPerformanceReporter()
-    let dictionaryDownload: DictionaryDownloadManager
     private var cancellables = Set<AnyCancellable>()
     private var lookupTask: Task<Void, Never>?
     private var activeLookupID: UUID?
@@ -603,7 +516,6 @@ final class AppModel: ObservableObject {
         self.permissions = resolvedPermissions
         self.translationBridge = TranslationBridge()
         self.modelContext = modelContext
-        self.dictionaryDownload = DictionaryDownloadManager(offlineService: dictionaryService.offlineService)
 
         // Forward SettingsStore changes to AppModel so SwiftUI redraws
         resolvedSettings.objectWillChange
@@ -618,13 +530,6 @@ final class AppModel: ObservableObject {
                 if case .idle = state {
                     self?.activePronunciationRequest = nil
                 }
-            }
-            .store(in: &cancellables)
-
-        // Forward DictionaryDownloadManager changes to AppModel so SwiftUI redraws
-        self.dictionaryDownload.objectWillChange
-            .sink { [weak self] _ in
-                self?.objectWillChange.send()
             }
             .store(in: &cancellables)
 
@@ -676,29 +581,13 @@ final class AppModel: ObservableObject {
             }
         }
         resolvedPermissions.refreshStatus()
-        Task { await refreshYomitanStatus() }
+        refreshDictionaryStats()
         Task { await refreshAnkiConfiguration() }
         setListening(true)
     }
 
-    func refreshYomitanStatus() async {
-        japaneseDictionaryService.refreshStats()
-        if japaneseDictionaryService.isDatabaseInstalled {
-            yomitanConnectionState = .connected(YomitanStatus(serverVersion: 1, extensionVersion: "SQLite Local"))
-            detectedYomitanDictionaries = japaneseDictionaryService.installedDictionaries
-        } else {
-            yomitanConnectionState = .notConnected
-        }
-    }
-
-    func setYomitanGlossaryLanguage(_ language: String, for dictionary: String) {
-        var mappings = settings.yomitanDictionaryLanguages
-        if language.isEmpty {
-            mappings.removeValue(forKey: dictionary)
-        } else {
-            mappings[dictionary] = language
-        }
-        settings.yomitanDictionaryLanguages = mappings
+    func refreshDictionaryStats() {
+        localDictionaryService.refreshStats()
     }
 
     func refreshAnkiConfiguration() async {
@@ -754,13 +643,6 @@ final class AppModel: ObservableObject {
             mappings[role.rawValue] = fieldName
         }
         settings.ankiFieldMappings = mappings
-    }
-
-    func retryYomitanLookup() async {
-        guard case .result(let content) = overlayState,
-              case .notConnected = content.yomitanLookupState,
-              let lookupID = activeLookupID else { return }
-        await performYomitanWordLookup(content.word, lookupID: lookupID, mouseLocation: overlayAnchor, contextSentence: content.contextSentence, recordsLookup: false)
     }
 
     func prepareAnkiNote(
@@ -829,7 +711,7 @@ final class AppModel: ObservableObject {
         }
     }
 
-    func prepareAnkiNote(for result: YomitanTermResult, contextSentence: String?) {
+    func prepareAnkiNote(for result: DictionaryTermResult, contextSentence: String?) {
         prepareAnkiNote(
             term: result.term,
             reading: result.reading,
@@ -1065,7 +947,17 @@ final class AppModel: ObservableObject {
         switch kind {
         case .word:
             guard case .result(let content) = overlayState else { return }
-            let text = content.word.trimmingCharacters(in: .whitespacesAndNewlines)
+            let text: String = {
+                if case .results(let entries) = content.dictionaryLookupState,
+                   let first = entries.first {
+                    if let reading = first.reading?.trimmingCharacters(in: .whitespacesAndNewlines), !reading.isEmpty {
+                        return reading
+                    }
+                    let term = first.term.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if !term.isEmpty { return term }
+                }
+                return content.word.trimmingCharacters(in: .whitespacesAndNewlines)
+            }()
             guard !text.isEmpty else { return }
             request = OverlayPronunciationRequest(
                 id: UUID(),
@@ -1718,10 +1610,7 @@ final class AppModel: ObservableObject {
         let classification = LanguageClassificationService.classify(trimmedWord, context: contextSentence)
 
         if classification.isJapanese {
-            let entries = japaneseDictionaryService.lookup(
-                trimmedWord,
-                preferredGlossaryLanguage: settings.yomitanPreferredGlossaryLanguage
-            )
+            let entries = localDictionaryService.lookup(trimmedWord)
             if !entries.isEmpty {
                 await performLocalDictionaryWordLookup(
                     trimmedWord,
@@ -1732,18 +1621,11 @@ final class AppModel: ObservableObject {
                     contextSentence: contextSentence
                 )
             } else {
-                // Fallback to Apple System Dictionary
-                await performGeneralWordLookup(
-                    trimmedWord,
-                    classification: classification,
-                    lookupID: lookupID,
-                    mouseLocation: mouseLocation,
-                    contextSentence: contextSentence
-                )
+                hideOverlay()
             }
         } else if classification.script == .simplifiedChinese || classification.script == .traditionalChinese {
             // 1. Search CC-CEDICT first (<0.5ms)
-            let zhEntries = japaneseDictionaryService.lookupChinese(trimmedWord)
+            let zhEntries = localDictionaryService.lookupChinese(trimmedWord)
             if !zhEntries.isEmpty {
                 await performLocalDictionaryWordLookup(
                     trimmedWord,
@@ -1754,34 +1636,11 @@ final class AppModel: ObservableObject {
                     contextSentence: contextSentence
                 )
             } else {
-                // 2. Check Japanese dictionary (isolated Kanji common in both, e.g. 本, 猫, 雨)
-                let jpEntries = japaneseDictionaryService.lookup(
-                    trimmedWord,
-                    preferredGlossaryLanguage: settings.yomitanPreferredGlossaryLanguage
-                )
-                if !jpEntries.isEmpty {
-                    await performLocalDictionaryWordLookup(
-                        trimmedWord,
-                        entries: jpEntries,
-                        language: "ja",
-                        lookupID: lookupID,
-                        mouseLocation: mouseLocation,
-                        contextSentence: contextSentence
-                    )
-                } else {
-                    // 3. Fallback to Apple System Dictionary
-                    await performGeneralWordLookup(
-                        trimmedWord,
-                        classification: classification,
-                        lookupID: lookupID,
-                        mouseLocation: mouseLocation,
-                        contextSentence: contextSentence
-                    )
-                }
+                hideOverlay()
             }
         } else if classification.script == .korean {
             // 1. Search KRDICT first (<0.5ms)
-            let koEntries = japaneseDictionaryService.lookupKorean(trimmedWord)
+            let koEntries = localDictionaryService.lookupKorean(trimmedWord)
             if !koEntries.isEmpty {
                 await performLocalDictionaryWordLookup(
                     trimmedWord,
@@ -1792,30 +1651,17 @@ final class AppModel: ObservableObject {
                     contextSentence: contextSentence
                 )
             } else {
-                // 2. Fallback to Apple System Dictionary
-                await performGeneralWordLookup(
-                    trimmedWord,
-                    classification: classification,
-                    lookupID: lookupID,
-                    mouseLocation: mouseLocation,
-                    contextSentence: contextSentence
-                )
+                hideOverlay()
             }
         } else {
-            // Latin / Cyrillic / etc. -> ECDICT + Apple System Dictionary
-            await performGeneralWordLookup(
-                trimmedWord,
-                classification: classification,
-                lookupID: lookupID,
-                mouseLocation: mouseLocation,
-                contextSentence: contextSentence
-            )
+            // Only query the installed Japanese, Chinese, and Korean dictionaries.
+            hideOverlay()
         }
     }
 
     private func performLocalDictionaryWordLookup(
         _ word: String,
-        entries: [JapaneseDictionaryEntry],
+        entries: [DictionaryTermResult],
         language: String = "ja",
         lookupID: UUID,
         mouseLocation: CGPoint,
@@ -1827,11 +1673,8 @@ final class AppModel: ObservableObject {
         let initialContent = OverlayContent(
             word: word,
             phonetic: entries.first?.reading,
-            primaryTranslationState: .empty,
-            usesCompactPrimaryTranslationStyle: false,
-            dictionarySections: [],
             sourceLanguageIdentifier: language,
-            yomitanLookupState: entries.isEmpty ? .noResults : .results(entries),
+            dictionaryLookupState: entries.isEmpty ? .noResults : .results(entries),
             contextSentence: contextSentence
         )
         updateOverlay(state: .result(initialContent), anchor: mouseLocation)
@@ -1845,8 +1688,14 @@ final class AppModel: ObservableObject {
         }
 
         if settings.playWordPronunciation {
+            let speakText: String = {
+                if let reading = entries.first?.reading, !reading.isEmpty {
+                    return reading
+                }
+                return word
+            }()
             speechService.speak(
-                word,
+                speakText,
                 language: language,
                 provider: .apple,
                 gender: settings.voiceGender,
@@ -1854,96 +1703,6 @@ final class AppModel: ObservableObject {
                 performance: nil
             )
         }
-    }
-
-    private func performYomitanWordLookup(
-        _ word: String,
-        lookupID: UUID,
-        mouseLocation: CGPoint,
-        contextSentence: String? = nil,
-        recordsLookup: Bool = true
-    ) async {
-        let entries = japaneseDictionaryService.lookup(
-            word,
-            preferredGlossaryLanguage: settings.yomitanPreferredGlossaryLanguage
-        )
-        await performLocalDictionaryWordLookup(
-            word,
-            entries: entries,
-            language: "ja",
-            lookupID: lookupID,
-            mouseLocation: mouseLocation,
-            contextSentence: contextSentence,
-            recordsLookup: recordsLookup
-        )
-    }
-
-    private func performGeneralWordLookup(
-        _ word: String,
-        classification: LanguageClassification,
-        lookupID: UUID,
-        mouseLocation: CGPoint,
-        contextSentence: String? = nil,
-        recordsLookup: Bool = true
-    ) async {
-        guard !Task.isCancelled, activeLookupID == lookupID else { return }
-
-        // 1. Try Apple System Dictionary with clean definition parser
-        if let appleResult = dictionaryService.lookupAppleSystemClean(word) {
-            let result = YomitanTermResult(
-                term: word,
-                reading: appleResult.reading,
-                dictionary: "",
-                glosses: appleResult.glosses,
-                tags: appleResult.tags
-            )
-            await performLocalDictionaryWordLookup(
-                word,
-                entries: [result],
-                language: classification.bcp47Code,
-                lookupID: lookupID,
-                mouseLocation: mouseLocation,
-                contextSentence: contextSentence,
-                recordsLookup: recordsLookup
-            )
-            return
-        }
-
-        // 2. Fallback to general dictionary service sources (ECDICT / system)
-        var lookupSources = settings.dictionarySources
-        if !lookupSources.contains(where: { $0.type == .system }) {
-            lookupSources.append(DictionarySource(id: UUID(), name: DictionarySource.SourceType.system.displayName, type: .system, isEnabled: true))
-        }
-
-        if let entry = dictionaryService.lookup(
-            word,
-            sources: lookupSources,
-            sourceLanguage: classification.bcp47Code
-        ) {
-            let glosses = entry.definitions.map { $0.translation ?? $0.meaning }.filter { !$0.isEmpty }
-            if !glosses.isEmpty {
-                let tags = entry.definitions.compactMap { $0.partOfSpeech }.filter { !$0.isEmpty }
-                let result = YomitanTermResult(
-                    term: word,
-                    reading: entry.phonetic,
-                    dictionary: "",
-                    glosses: glosses,
-                    tags: tags
-                )
-                await performLocalDictionaryWordLookup(
-                    word,
-                    entries: [result],
-                    language: classification.bcp47Code,
-                    lookupID: lookupID,
-                    mouseLocation: mouseLocation,
-                    contextSentence: contextSentence,
-                    recordsLookup: recordsLookup
-                )
-                return
-            }
-        }
-
-        hideOverlay()
     }
 
     private nonisolated static func containsJapaneseText(_ text: String) -> Bool {
@@ -2023,6 +1782,10 @@ final class AppModel: ObservableObject {
         lookupID: UUID,
         mouseLocation: CGPoint
     ) async {
+        guard LanguageClassificationService.supportedOCRLanguage(for: snapshot.text) != nil else {
+            hideOverlay()
+            return
+        }
         activeParagraphRect = nil
         overlayPreferredWidth = nil
         paragraphHighlightWindowController.hide()
@@ -2129,7 +1892,7 @@ final class AppModel: ObservableObject {
             )
             guard !Task.isCancelled, activeLookupID == lookupID else { return }
 
-            let selectionResult = OCRService.selectParagraphWithLanguageCheck(
+            let selectionResult = OCRService.selectParagraphOrLine(
                 from: paragraphs,
                 lines: lines,
                 normalizedPoint: normalizedPoint
@@ -2156,6 +1919,10 @@ final class AppModel: ObservableObject {
                         isManualInputFallback: true
                     )
                     updateOverlay(state: .paragraphResult(content), anchor: mouseLocation)
+                    return
+                }
+                guard LanguageClassificationService.supportedOCRLanguage(for: text) != nil else {
+                    hideOverlay()
                     return
                 }
 
@@ -2189,6 +1956,7 @@ final class AppModel: ObservableObject {
                         imageData: imageData,
                         sourceRect: lineRect,
                         languagePair: languagePair,
+                        sourceText: text,
                         lookupID: lookupID
                     )
                     return
@@ -2256,8 +2024,12 @@ final class AppModel: ObservableObject {
                     )
                 }
                 return
-            case .english(let paragraph):
-                // Found paragraph - continue with translation
+            case .paragraph(let paragraph):
+                // Translate only text detected as Japanese, Chinese, or Korean.
+                guard LanguageClassificationService.supportedOCRLanguage(for: paragraph.text) != nil else {
+                    hideOverlay()
+                    return
+                }
                 let paragraphRect = screenRect(for: paragraph.boundingBox, in: capture.region.rect)
                 let bodyFontSize = OCRService.estimatedDisplayFontSize(
                     for: paragraph,
@@ -2294,6 +2066,7 @@ final class AppModel: ObservableObject {
                         imageData: imageData,
                         sourceRect: paragraphRect,
                         languagePair: languagePair,
+                        sourceText: paragraph.text,
                         lookupID: lookupID
                     )
                     return
@@ -2413,12 +2186,16 @@ final class AppModel: ObservableObject {
 
             activeParagraphRect = capture.region.rect
             overlayPreferredWidth = max(320, capture.region.rect.width)
-            let languagePair = await resolveManualImageTranslationLanguagePair(from: capture.image)
+            guard let resolved = await resolveManualImageTranslationContext(from: capture.image) else {
+                hideOverlay()
+                return
+            }
 
             await performImageSentenceTranslation(
                 imageData: imageData,
                 sourceRect: capture.region.rect,
-                languagePair: languagePair,
+                languagePair: resolved.pair,
+                sourceText: resolved.text,
                 lookupID: lookupID
             )
             return
@@ -2439,6 +2216,10 @@ final class AppModel: ObservableObject {
                     isManualInputFallback: true
                 )
                 updateOverlay(state: .paragraphResult(content), anchor: anchor)
+                return
+            }
+            guard LanguageClassificationService.supportedOCRLanguage(for: text) != nil else {
+                hideOverlay()
                 return
             }
 
@@ -2534,57 +2315,6 @@ final class AppModel: ObservableObject {
         }
     }
 
-    private func makeInitialOverlayContent(
-        word: String,
-        sources: [DictionarySource],
-        primaryTranslationState: OverlayPrimaryTranslationState,
-        sourceLanguageIdentifier: String
-    ) -> OverlayContent {
-        let enabledSources = sources.filter(\.isEnabled)
-
-        return OverlayContent(
-            word: word,
-            phonetic: nil,
-            primaryTranslationState: primaryTranslationState,
-            usesCompactPrimaryTranslationStyle: !enabledSources.isEmpty,
-            dictionarySections: enabledSources.map {
-                OverlayDictionarySection(sourceType: $0.type, state: .loading)
-            },
-            sourceLanguageIdentifier: sourceLanguageIdentifier
-        )
-    }
-
-    private func loadPrimaryTranslationState(
-        word: String,
-        languagePair: LookupLanguagePair,
-        sourceLanguage: Locale.Language,
-        targetLanguage: Locale.Language,
-        translationBridge: TranslationBridge
-    ) async -> OverlayPrimaryTranslationState {
-        if #available(macOS 15.0, *) {
-            let status = await languageAvailabilityStatus(for: languagePair)
-            guard status == .installed else {
-                return .failed(message(for: status))
-            }
-
-            do {
-                let translated = try await translationBridge.translate(
-                    text: word,
-                    source: sourceLanguage,
-                    target: targetLanguage
-                ).trimmingCharacters(in: .whitespacesAndNewlines)
-
-                return translated.isEmpty ? .empty : .ready(translated, isFallback: false)
-            } catch TranslationError.timeout {
-                return .failed("Translation timeout. Please try again.")
-            } catch {
-                return .failed("Translation failed: \(error.localizedDescription)")
-            }
-        } else {
-            return .failed("Translation requires macOS 15")
-        }
-    }
-
     private func loadParagraphTranslationState(
         paragraph: RecognizedParagraph,
         languagePair: LookupLanguagePair,
@@ -2645,51 +2375,6 @@ final class AppModel: ObservableObject {
             }
         } else {
             return .failed("Translation requires macOS 15")
-        }
-    }
-
-    private func applyPrimaryTranslationState(
-        _ state: OverlayPrimaryTranslationState,
-        lookupID: UUID,
-        anchor: CGPoint
-    ) {
-        var updatedContent: OverlayContent?
-        updateOverlayContent(for: lookupID, anchor: anchor) { content in
-            switch state {
-            case .ready:
-                content.primaryTranslationState = state
-            case .loading:
-                content.primaryTranslationState = .loading
-            case .empty, .failed:
-                content.primaryTranslationState = Self.primaryTranslationStateAfterPrimaryTranslationUpdate(
-                    incomingState: state,
-                    currentState: content.primaryTranslationState,
-                    dictionarySections: content.dictionarySections
-                )
-            }
-            updatedContent = content
-        }
-
-        if updatedContent != nil {
-            if case .ready = state {
-                lookupPerformanceContext(for: lookupID)?.mark(.translationFirstReady)
-            }
-        }
-    }
-
-    nonisolated static func primaryTranslationStateAfterPrimaryTranslationUpdate(
-        incomingState: OverlayPrimaryTranslationState,
-        currentState: OverlayPrimaryTranslationState,
-        dictionarySections: [OverlayDictionarySection]
-    ) -> OverlayPrimaryTranslationState {
-        switch incomingState {
-        case .ready, .loading:
-            return incomingState
-        case .empty, .failed:
-            if case .ready(_, let isFallback) = currentState, isFallback {
-                return currentState
-            }
-            return fallbackPrimaryTranslationState(from: dictionarySections) ?? incomingState
         }
     }
 
@@ -2788,7 +2473,8 @@ final class AppModel: ObservableObject {
         selectedTargetLanguageIdentifier: String
     ) {
         let originalText = originalText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !originalText.isEmpty else { return }
+        guard !originalText.isEmpty,
+              LanguageClassificationService.supportedOCRLanguage(for: originalText) != nil else { return }
 
         paragraphTranslationTask?.cancel()
         let lookupID = UUID()
@@ -2869,7 +2555,8 @@ final class AppModel: ObservableObject {
         lookupID: UUID,
         anchor: CGPoint
     ) async {
-        guard !enabledServices.isEmpty else { return }
+        guard !enabledServices.isEmpty,
+              LanguageClassificationService.supportedOCRLanguage(for: text) != nil else { return }
 
         await withTaskGroup(of: (SentenceTranslationSource.SourceType, TranslationResultState, TimeInterval).self) { group in
             for service in enabledServices {
@@ -2989,8 +2676,10 @@ final class AppModel: ObservableObject {
         imageData: Data,
         sourceRect: CGRect,
         languagePair: LookupLanguagePair,
+        sourceText: String,
         lookupID: UUID
     ) async {
+        guard LanguageClassificationService.supportedOCRLanguage(for: sourceText) != nil else { return }
         let source = settings.imageTranslationSource
         let configuration = settings.imageTranslationProviderConfiguration(for: source.provider)
         let initialState: InPlaceImageTranslationState = source.isEnabled
@@ -3044,26 +2733,20 @@ final class AppModel: ObservableObject {
         return Data(base64Encoded: base64Payload, options: .ignoreUnknownCharacters)
     }
 
-    private func resolveManualImageTranslationLanguagePair(from image: CGImage) async -> LookupLanguagePair {
-        let configuredPair = configuredLanguagePair()
-        guard settings.bidirectionalTranslationEnabled,
-              LookupLanguagePairResolver.supportsBidirectionalDetection(for: configuredPair) else {
-            return configuredPair
-        }
-
+    private func resolveManualImageTranslationContext(from image: CGImage) async -> (pair: LookupLanguagePair, text: String)? {
         do {
             let (_, lines) = try await ocrService.recognizeParagraphsWithRawLines(
                 in: image,
                 language: settings.sourceLanguage
             )
             let recognizedText = OCRService.recognizedText(from: lines)
-            return ImageSentenceTranslationLanguagePairResolver.resolveManualRegionPair(
-                recognizedText: recognizedText,
-                configuredPair: configuredPair,
-                bidirectionalEnabled: settings.bidirectionalTranslationEnabled
-            )
+            guard LanguageClassificationService.supportedOCRLanguage(for: recognizedText) != nil else {
+                return nil
+            }
+            let pair = resolveParagraphLanguagePair(for: recognizedText)
+            return (pair, recognizedText)
         } catch {
-            return configuredPair
+            return nil
         }
     }
 
@@ -3075,7 +2758,8 @@ final class AppModel: ObservableObject {
         translationBridge: TranslationBridge
     ) async -> ParagraphOverlayTranslationState {
         let sourceText = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !sourceText.isEmpty else {
+        guard !sourceText.isEmpty,
+              LanguageClassificationService.supportedOCRLanguage(for: sourceText) != nil else {
             return .failed("No text selected")
         }
 
@@ -3105,116 +2789,6 @@ final class AppModel: ObservableObject {
         } else {
             return .failed("Translation requires macOS 15")
         }
-    }
-
-    private func applyDictionarySectionResult(
-        _ result: DictionarySectionResult,
-        lookupID: UUID,
-        anchor: CGPoint
-    ) {
-        var updatedContent: OverlayContent?
-        updateOverlayContent(for: lookupID, anchor: anchor) { content in
-            guard let index = content.dictionarySections.firstIndex(where: { $0.sourceType == result.sourceType }) else {
-                return
-            }
-
-            content.dictionarySections[index].state = result.state
-
-            if let phonetic = result.phonetic?.trimmingCharacters(in: .whitespacesAndNewlines),
-               !phonetic.isEmpty,
-               (content.phonetic?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true) {
-                content.phonetic = phonetic
-            }
-
-            content.primaryTranslationState = Self.primaryTranslationStateAfterDictionaryUpdate(
-                currentState: content.primaryTranslationState,
-                dictionarySections: content.dictionarySections
-            )
-            updatedContent = content
-        }
-
-        if updatedContent != nil {
-            if case .ready = result.state {
-                lookupPerformanceContext(for: lookupID)?.mark(.dictionaryFirstReady)
-            }
-        }
-    }
-
-    nonisolated static func learningDefinitionText(from content: OverlayContent) -> String? {
-        var lines: [String] = []
-
-        if case .ready(let translation, _) = content.primaryTranslationState {
-            appendUniqueLine(translation, to: &lines)
-        }
-
-        for entry in content.dictionaryEntries {
-            for definition in entry.definitions.prefix(3) {
-                let meaning = definition.translation ?? definition.meaning
-                var line = meaning.trimmingCharacters(in: .whitespacesAndNewlines)
-                let partOfSpeech = definition.partOfSpeech.trimmingCharacters(in: .whitespacesAndNewlines)
-                if !partOfSpeech.isEmpty, !line.isEmpty {
-                    line = "\(partOfSpeech). \(line)"
-                }
-                appendUniqueLine(line, to: &lines)
-            }
-        }
-
-        let text = lines.joined(separator: "\n")
-        return text.isEmpty ? nil : text
-    }
-
-    nonisolated private static func appendUniqueLine(_ line: String, to lines: inout [String]) {
-        let normalized = line.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !normalized.isEmpty, !lines.contains(normalized) else { return }
-        lines.append(normalized)
-    }
-
-    private func updateOverlayContent(
-        for lookupID: UUID,
-        anchor: CGPoint,
-        mutate: (inout OverlayContent) -> Void
-    ) {
-        guard activeLookupID == lookupID,
-              case .result(var content) = overlayState else {
-            return
-        }
-
-        let previousContent = content
-        mutate(&content)
-        guard content != previousContent else { return }
-        updateOverlay(state: .result(content), anchor: anchor)
-    }
-
-    nonisolated static func primaryTranslationStateAfterDictionaryUpdate(
-        currentState: OverlayPrimaryTranslationState,
-        dictionarySections: [OverlayDictionarySection]
-    ) -> OverlayPrimaryTranslationState {
-        switch currentState {
-        case .loading:
-            return .loading
-        case .ready(_, let isFallback):
-            guard isFallback else { return currentState }
-            return fallbackPrimaryTranslationState(from: dictionarySections) ?? currentState
-        case .empty, .failed:
-            return fallbackPrimaryTranslationState(from: dictionarySections) ?? currentState
-        }
-    }
-
-    nonisolated private static func fallbackPrimaryTranslationState(
-        from dictionarySections: [OverlayDictionarySection]
-    ) -> OverlayPrimaryTranslationState? {
-        for section in dictionarySections {
-            guard case .ready(let entry) = section.state,
-                  let primaryTranslation = entry.definitions.first?.translation else {
-                continue
-            }
-
-            let fallback = primaryTranslation.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !fallback.isEmpty else { continue }
-            return .ready(fallback, isFallback: true)
-        }
-
-        return nil
     }
 
     private func updateParagraphOverlayContent(
@@ -3520,15 +3094,6 @@ final class AppModel: ObservableObject {
             hideOverlay()
         }
 
-        Task {
-            await checkLanguageAvailability()
-        }
-    }
-
-    private func checkLanguageAvailability(notifyUser: Bool = true) async {
-        // In KakuTra, immersion dictionary queries are handled strictly by Yomitan loopback.
-        // Apple Translation language packs are not needed or requested.
-        return
     }
 
     private func configuredLanguagePair() -> LookupLanguagePair {
@@ -3539,18 +3104,21 @@ final class AppModel: ObservableObject {
     }
 
     private func resolveLookupLanguagePair(for observedText: String) -> LookupLanguagePair {
-        LookupLanguagePairResolver.resolve(
-            configuredPair: configuredLanguagePair(),
-            observedText: observedText,
-            bidirectionalEnabled: settings.bidirectionalTranslationEnabled
-        )
-    }
+        let configuredPair = configuredLanguagePair()
+        guard let detectedSource = LanguageClassificationService.supportedOCRLanguage(for: observedText) else {
+            return configuredPair
+        }
 
-    private func shouldPerformLookup(for observedText: String) -> Bool {
-        LookupLanguagePairResolver.shouldLookup(
-            configuredPair: configuredLanguagePair(),
-            observedText: observedText,
-            bidirectionalEnabled: settings.bidirectionalTranslationEnabled
+        let detectedLanguage = Locale.Language(identifier: detectedSource)
+        let targetMatchesDetected = detectedLanguage.minimalIdentifier
+            == configuredPair.targetLanguage.minimalIdentifier
+        if settings.bidirectionalTranslationEnabled && targetMatchesDetected {
+            return configuredPair.reversed()
+        }
+
+        return LookupLanguagePair.fixed(
+            sourceIdentifier: detectedSource,
+            targetIdentifier: configuredPair.targetIdentifier
         )
     }
 
@@ -3564,7 +3132,7 @@ final class AppModel: ObservableObject {
             return []
         }
 
-        return [settings.sourceLanguage, settings.targetLanguage].map { identifier in
+        return [pair.sourceIdentifier, pair.targetIdentifier].map { identifier in
             ParagraphTranslationLanguageOption(
                 identifier: identifier,
                 displayName: displayName(forLanguageIdentifier: identifier)
@@ -3576,15 +3144,6 @@ final class AppModel: ObservableObject {
         AppLanguage(rawValue: identifier)?.displayName
             ?? Locale.current.localizedString(forIdentifier: identifier)
             ?? identifier
-    }
-
-    private func dictionarySources(for pair: LookupLanguagePair) -> [DictionarySource] {
-        settings.dictionarySources.filter { source in
-            source.isEnabled && source.type.supportsLookup(
-                sourceIdentifier: pair.sourceIdentifier,
-                targetIdentifier: pair.targetIdentifier
-            )
-        }
     }
 
     func requiredLanguagePairsForCurrentSettings() -> [LookupLanguagePair] {
@@ -3909,211 +3468,6 @@ final class AppModel: ObservableObject {
         guard !lines.isEmpty else { return 14 }
         let averageHeight = lines.map(\.boundingBox.height).reduce(0, +) / CGFloat(lines.count)
         return max(11, averageHeight * captureRect.height * 0.75)
-    }
-
-    private static func lookupDictionarySection(
-        word: String,
-        source: DictionarySource,
-        dictionaryService: DictionaryService,
-        sourceIdentifier: String,
-        targetIdentifier: String,
-        preferEnglish: Bool,
-        sourceLanguage: Locale.Language,
-        targetLanguage: Locale.Language,
-        translationBridge: TranslationBridge
-    ) async -> DictionarySectionResult {
-        let entry: DictionaryEntry
-        do {
-            guard let lookedUpEntry = try await dictionaryService.lookupSingle(
-                word,
-                source: source,
-                sourceLanguage: sourceIdentifier,
-                targetLanguage: targetIdentifier,
-                preferEnglish: preferEnglish
-            ) else {
-                return DictionarySectionResult(
-                    sourceType: source.type,
-                    state: .empty,
-                    phonetic: nil,
-                    fallbackTranslation: nil
-                )
-            }
-            entry = lookedUpEntry
-        } catch {
-            return DictionarySectionResult(
-                sourceType: source.type,
-                state: .failed(error.localizedDescription),
-                phonetic: nil,
-                fallbackTranslation: nil
-            )
-        }
-
-        let processedEntry: DictionaryEntry?
-        if sourceLanguage.minimalIdentifier == targetLanguage.minimalIdentifier {
-            processedEntry = processSameLanguageEntry(entry, isEnglish: sourceLanguage.minimalIdentifier == "en")
-        } else if entry.isPretranslated {
-            processedEntry = entry
-        } else {
-            let translatedDefinitions = await translateDefinitionsInParallel(
-                definitions: entry.definitions,
-                sourceLanguage: sourceLanguage,
-                targetLanguage: targetLanguage,
-                translationBridge: translationBridge
-            )
-
-            if translatedDefinitions.isEmpty {
-                processedEntry = nil
-            } else {
-                processedEntry = DictionaryEntry(
-                    word: entry.word,
-                    phonetic: entry.phonetic,
-                    definitions: translatedDefinitions,
-                    source: entry.source,
-                    synonyms: entry.synonyms,
-                    isPretranslated: entry.isPretranslated
-                )
-            }
-        }
-
-        guard let processedEntry else {
-            return DictionarySectionResult(
-                sourceType: source.type,
-                state: .empty,
-                phonetic: entry.phonetic,
-                fallbackTranslation: nil
-            )
-        }
-
-        return DictionarySectionResult(
-            sourceType: source.type,
-            state: .ready(processedEntry),
-            phonetic: processedEntry.phonetic,
-            fallbackTranslation: processedEntry.primaryTranslation
-        )
-    }
-
-    private static func processSameLanguageEntry(
-        _ entry: DictionaryEntry,
-        isEnglish: Bool
-    ) -> DictionaryEntry? {
-        var processedDefinitions = entry.definitions
-
-        if isEnglish && !entry.definitions.isEmpty {
-            processedDefinitions = entry.definitions.compactMap { def in
-                let trimmedMeaning = def.meaning.trimmingCharacters(in: .whitespacesAndNewlines)
-                let hasEnglishContent = trimmedMeaning.range(of: "[a-zA-Z]{3,}", options: .regularExpression) != nil
-                guard hasEnglishContent else { return nil }
-                return DictionaryEntry.Definition(
-                    partOfSpeech: def.partOfSpeech,
-                    field: def.field,
-                    meaning: def.meaning,
-                    translation: trimmedMeaning,
-                    examples: def.examples
-                )
-            }
-        }
-
-        guard !processedDefinitions.isEmpty else { return nil }
-        return DictionaryEntry(
-            word: entry.word,
-            phonetic: entry.phonetic,
-            definitions: processedDefinitions,
-            source: entry.source,
-            synonyms: entry.synonyms,
-            isPretranslated: entry.isPretranslated
-        )
-    }
-
-    private static func translateDefinitionsInParallel(
-        definitions: [DictionaryEntry.Definition],
-        sourceLanguage: Locale.Language,
-        targetLanguage: Locale.Language,
-        translationBridge: TranslationBridge
-    ) async -> [DictionaryEntry.Definition] {
-        let targetIsChinese = targetLanguage.minimalIdentifier == "zh"
-        let targetIsEnglish = targetLanguage.minimalIdentifier == "en"
-        let sourceIsEnglish = sourceLanguage.minimalIdentifier == "en"
-        let isSameLanguage = sourceLanguage.minimalIdentifier == targetLanguage.minimalIdentifier
-
-        return await withTaskGroup(of: (Int, DictionaryEntry.Definition?).self) { group in
-            for (index, def) in definitions.enumerated() {
-                group.addTask { [translationBridge] in
-                    let trimmedTranslation = def.translation?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-                    let hasDictionaryTranslation = !trimmedTranslation.isEmpty
-                    let shouldKeepDictionaryTranslation = targetIsChinese && hasDictionaryTranslation
-
-                    if shouldKeepDictionaryTranslation {
-                        return (index, def)
-                    }
-
-                    if let englishFastPathTranslation = englishFastPathTranslation(
-                        for: def,
-                        sourceLanguage: sourceLanguage,
-                        targetLanguage: targetLanguage
-                    ) {
-                        return (index, DictionaryEntry.Definition(
-                            partOfSpeech: def.partOfSpeech,
-                            field: def.field,
-                            meaning: def.meaning,
-                            translation: englishFastPathTranslation,
-                            examples: def.examples
-                        ))
-                    }
-
-                    if targetIsEnglish && sourceIsEnglish {
-                        return (index, nil)
-                    }
-
-                    let translatedText: String
-                    if isSameLanguage {
-                        translatedText = def.meaning
-                    } else if let meaningTranslation = try? await translationBridge.translate(
-                        text: def.meaning,
-                        source: sourceLanguage,
-                        target: targetLanguage
-                    ) {
-                        translatedText = meaningTranslation
-                    } else if hasDictionaryTranslation {
-                        translatedText = trimmedTranslation
-                    } else if targetIsEnglish && sourceIsEnglish {
-                        translatedText = def.meaning
-                    } else {
-                        return (index, nil)
-                    }
-
-                    return (index, DictionaryEntry.Definition(
-                        partOfSpeech: def.partOfSpeech,
-                        field: def.field,
-                        meaning: def.meaning,
-                        translation: translatedText,
-                        examples: def.examples
-                    ))
-                }
-            }
-
-            var results: [(Int, DictionaryEntry.Definition)] = []
-            for await (index, def) in group {
-                if let def {
-                    results.append((index, def))
-                }
-            }
-            return results.sorted { $0.0 < $1.0 }.map { $0.1 }
-        }
-    }
-
-    nonisolated static func englishFastPathTranslation(
-        for definition: DictionaryEntry.Definition,
-        sourceLanguage: Locale.Language,
-        targetLanguage: Locale.Language
-    ) -> String? {
-        guard sourceLanguage.minimalIdentifier == "en",
-              targetLanguage.minimalIdentifier == "en" else {
-            return nil
-        }
-
-        let trimmedMeaning = definition.meaning.trimmingCharacters(in: .whitespacesAndNewlines)
-        let hasEnglishContent = trimmedMeaning.range(of: "[a-zA-Z]{3,}", options: .regularExpression) != nil
-        return hasEnglishContent ? trimmedMeaning : nil
     }
 
     private func selectWord(from words: [RecognizedWord], normalizedPoint: CGPoint) -> RecognizedWord? {

@@ -1,6 +1,166 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "Translation target": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Translation target"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Langue cible"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "翻訳先の言語"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "번역 대상 언어"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目标语言"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目標語言"
+          }
+        }
+      }
+    },
+    "Source language is detected from Japanese, Chinese, or Korean OCR": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Source language is detected from Japanese, Chinese, or Korean OCR"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La langue source est détectée dans le texte japonais, chinois ou coréen"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日本語・中国語・韓国語のOCRから原文の言語を判定します"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "일본어·중국어·한국어 OCR에서 원문 언어를 감지합니다"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "从日语、中文或韩语 OCR 文本中检测源语言"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "從日語、中文或韓語 OCR 文字中偵測來源語言"
+          }
+        }
+      }
+    },
+    "Bidirectional translation": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bidirectional translation"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Traduction bidirectionnelle"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "双方向翻訳"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "양방향 번역"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "双向翻译"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "雙向翻譯"
+          }
+        }
+      }
+    },
+    "Also translate text detected in the selected target language": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Also translate text detected in the selected target language"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Traduit aussi le texte détecté dans la langue cible choisie"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選択した翻訳先の言語のテキストも翻訳します"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "선택한 번역 대상 언어로 된 텍스트도 번역합니다"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "也翻译检测到的目标语言文本"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "也翻譯偵測到的目標語言文字"
+          }
+        }
+      }
+    },
     "": {},
     "--": {},
     "%@ %@": {
@@ -88,43 +248,7 @@
         }
       }
     },
-    "Advanced Dictionary": {
-      "comment": "ECDICT name",
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Advanced Dictionary"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "高度な辞書"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "고급 사전"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "高级字典"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "高級字典"
-          }
-        }
-      }
-    },
-    "Advanced English Dictionary": {
+        "Advanced English Dictionary": {
       "extractionState": "stale",
       "localizations": {
         "en": {
@@ -2448,42 +2572,7 @@
         }
       }
     },
-    "ECDICT - Comprehensive offline dictionary": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ECDICT - Comprehensive offline dictionary"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ECDICT - 包括的なオフライン辞書"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ECDICT - 종합 오프라인 사전"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ECDICT - 综合离线字典"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ECDICT - 綜合離線字典"
-          }
-        }
-      }
-    },
-    "Edit Original Text": {
+        "Edit Original Text": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -5714,42 +5803,7 @@
         }
       }
     },
-    "Powered by ECDICT": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Powered by ECDICT"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Powered by ECDICT"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Powered by ECDICT"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Powered by ECDICT"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Powered by ECDICT"
-          }
-        }
-      }
-    },
-    "Pronunciation": {
+        "Pronunciation": {
       "comment": "Menu item for pronunciation toggle",
       "extractionState": "stale",
       "localizations": {
@@ -7763,43 +7817,7 @@
         }
       }
     },
-    "System Dictionary": {
-      "comment": "System dictionary name",
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "System Dictionary"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "システム辞書"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "시스템 사전"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "系统字典"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "系統字典"
-          }
-        }
-      }
-    },
-    "System Translation": {
+        "System Translation": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -10445,127 +10463,7 @@
         }
       }
     },
-    "Yomitan": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitan"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitan"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitan"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitan"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitan"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitan"
-          }
-        }
-      }
-    },
-    "Yomitan connected": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitan connected"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitanに接続済み"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitan connecté"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitan 연결됨"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已连接 Yomitan"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "已連線 Yomitan"
-          }
-        }
-      }
-    },
-    "Yomitan not connected": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitan not connected"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitanに接続されていません"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitan non connecté"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitan이 연결되지 않음"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未连接 Yomitan"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未連線 Yomitan"
-          }
-        }
-      }
-    },
-    "Checking local API…": {
+                "Checking local API…": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -10605,47 +10503,7 @@
         }
       }
     },
-    "Checking the local Yomitan service on this Mac.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Checking the local Yomitan service on this Mac."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "このMac上のYomitanサービスを確認しています。"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vérification du service Yomitan sur ce Mac."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "이 Mac의 Yomitan 서비스를 확인합니다."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "正在检查这台 Mac 上的 Yomitan 服务。"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "正在檢查這部 Mac 上的 Yomitan 服務。"
-          }
-        }
-      }
-    },
-    "Japanese lookups stay on this Mac.": {
+        "Japanese lookups stay on this Mac.": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -10685,87 +10543,7 @@
         }
       }
     },
-    "Open your browser, start Yomitan, and enable its API.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Open your browser, start Yomitan, and enable its API."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ブラウザでYomitanを起動し、APIを有効にしてください。"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ouvrez votre navigateur, démarrez Yomitan et activez son API."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "브라우저에서 Yomitan을 실행하고 API를 활성화하세요."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "请在浏览器中启动 Yomitan 并启用其 API。"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "請在瀏覽器中啟動 Yomitan 並啟用其 API。"
-          }
-        }
-      }
-    },
-    "Yomitan API setup guide": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitan API setup guide"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitan APIの設定ガイド"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Guide de configuration de l’API Yomitan"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitan API 설정 가이드"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitan API 设置指南"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitan API 設定指南"
-          }
-        }
-      }
-    },
-    "No dictionary detected yet. Look up a Japanese word to discover your sources.": {
+            "No dictionary detected yet. Look up a Japanese word to discover your sources.": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -11045,47 +10823,7 @@
         }
       }
     },
-    "Open Yomitan in your browser and enable its local API.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Open Yomitan in your browser and enable its local API."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ブラウザでYomitanを開き、ローカルAPIを有効にしてください。"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ouvrez Yomitan dans votre navigateur et activez son API locale."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "브라우저에서 Yomitan을 열고 로컬 API를 활성화하세요."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "请在浏览器中打开 Yomitan 并启用本地 API。"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "請在瀏覽器中開啟 Yomitan 並啟用本機 API。"
-          }
-        }
-      }
-    },
-    "Try again": {
+        "Try again": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -11205,47 +10943,7 @@
         }
       }
     },
-    "Yomitan returned an invalid response.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitan returned an invalid response."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitanから無効な応答が返されました。"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitan a renvoyé une réponse invalide."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitan에서 잘못된 응답을 반환했습니다."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitan 返回了无效响应。"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Yomitan 傳回無效回應。"
-          }
-        }
-      }
-    },
-    "Check": {
+        "Check": {
       "localizations": {
         "en": {
           "stringUnit": {

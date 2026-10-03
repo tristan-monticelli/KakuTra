@@ -1,21 +1,17 @@
 //
-//  JapaneseDictionaryService.swift
+//  LocalDictionaryService.swift
 //  KakuTra
 //
-//  High-performance embedded SQLite engine for Japanese-to-English immersion.
-//  Powered by Jitendex (core vocabulary, slang, Tatoeba example sentences)
-//  and JMnedict (668,000 anime, manga, character, and place names).
-//  Sub-0.1ms lookups, 100% offline, zero external dependencies.
+//  Local SQLite lookup for Japanese, Chinese, and Korean dictionaries.
+//  Dictionary files stay on device and can be managed from Dictionary settings.
 //
 
 import AppKit
 import Foundation
 import SQLite3
 
-typealias JapaneseDictionaryEntry = YomitanTermResult
-
-final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
-    static let shared = JapaneseDictionaryService()
+final class LocalDictionaryService: ObservableObject, @unchecked Sendable {
+    static let shared = LocalDictionaryService()
 
     static let databaseFilename = "english.db"
 
@@ -157,7 +153,7 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
 
     // MARK: - Fast Lookup (<0.1 ms)
 
-    func lookup(_ text: String, preferredGlossaryLanguage: String = "en") -> [JapaneseDictionaryEntry] {
+    func lookup(_ text: String) -> [DictionaryTermResult] {
         let cleaned = cleanWord(text)
         guard !cleaned.isEmpty else { return [] }
 
@@ -204,7 +200,7 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
 
     // MARK: - Chinese Fast Lookup (CC-CEDICT)
 
-    func lookupChinese(_ text: String) -> [JapaneseDictionaryEntry] {
+    func lookupChinese(_ text: String) -> [DictionaryTermResult] {
         let cleaned = cleanWord(text)
         guard !cleaned.isEmpty else { return [] }
 
@@ -230,7 +226,7 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
 
     // MARK: - Korean Fast Lookup (KRDICT)
 
-    func lookupKorean(_ text: String) -> [JapaneseDictionaryEntry] {
+    func lookupKorean(_ text: String) -> [DictionaryTermResult] {
         let cleaned = cleanWord(text)
         guard !cleaned.isEmpty else { return [] }
 
@@ -464,7 +460,7 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
         reading: String?,
         rawGlossary: String,
         rawPos: String?
-    ) -> (tags: [String], glosses: [String]) {
+    ) -> (tags: [String], glosses: [String], redirectTarget: String?) {
         var tags: [String] = []
         var glosses: [String] = []
 
@@ -484,18 +480,33 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty }
 
-        for line in rawLines {
-            // Stop at first Japanese example sentence, cross reference arrow, or "See also"
-            if line.range(of: "\\p{Hiragana}|\\p{Katakana}", options: .regularExpression) != nil ||
-               line.hasPrefix("⟶") ||
-               line.hasPrefix("See also") ||
-               line.hasPrefix("See ") ||
-               line.hasPrefix("Note") {
+        // Check for Jitendex redirect
+        for (i, line) in rawLines.enumerated() {
+            if line.hasPrefix("redirected from") && i > 0 {
+                let target = rawLines[i - 1].trimmingCharacters(in: .whitespacesAndNewlines)
+                if !target.isEmpty && target != term {
+                    return (tags, ["⟶ \(target)"], target)
+                }
+            }
+        }
+
+        var i = 0
+        var seenJapanese = false
+
+        while i < rawLines.count {
+            let line = rawLines[i]
+            let lower = line.lowercased()
+
+            // Stop at forms/attribution sections
+            if lower == "forms" || lower == "form" || lower == "jmdict" || lower == "jitendex" || lower == "tatoeba" || lower.hasPrefix("| tatoeba") {
                 break
             }
-
-            let lower = line.lowercased()
-            if ["jmdict", "jitendex", "tatoeba", "edict", "kanjidic", "edrdg"].contains(lower) {
+            if line.range(of: #"^\[\d+\]$"#, options: .regularExpression) != nil || line == "|" || line == "[" || line == "]" {
+                i += 1
+                continue
+            }
+            if lower == "see also" || lower == "antonym" || lower == "note" || lower == "explanation" {
+                i += 1
                 continue
             }
 
@@ -516,32 +527,55 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
                 case "archaic": cleanTag = "Archaic"
                 case "slang": cleanTag = "Slang"
                 case "colloquialism", "colloquial": cleanTag = "Colloquial"
+                case "abbr.": cleanTag = "Abbr"
+                case "kana": cleanTag = "Kana"
                 default: cleanTag = stripped.capitalized
                 }
                 if !tags.contains(cleanTag) { tags.append(cleanTag) }
+                i += 1
                 continue
             }
 
-            // Exclude single isolated Kanji lines
-            if line.count <= 2 && line.range(of: "\\p{Han}", options: .regularExpression) != nil {
+            let hasJp = line.range(of: #"[\p{Hiragana}\p{Katakana}\p{Han}]"#, options: .regularExpression) != nil
+            if hasJp {
+                seenJapanese = true
+                i += 1
                 continue
             }
 
-            glosses.append(line)
+            // If an English sentence directly follows a Japanese example sentence and ends with period/punctuation,
+            // it is the translation of the example sentence: skip it.
+            if seenJapanese && (line.hasSuffix(".") || line.hasSuffix("?") || line.hasSuffix("!")) && !line.hasSuffix("etc.") && !line.hasSuffix("esp.") {
+                seenJapanese = false
+                i += 1
+                continue
+            }
+
+            seenJapanese = false
+            if !glosses.contains(line) && !line.hasPrefix("⟶") {
+                glosses.append(line)
+            }
+            i += 1
         }
 
+        // Fallback for Japanese-Japanese or monolingual imported dictionaries:
+        // If no English glosses found, keep the cleaned definition lines!
         if glosses.isEmpty {
             for line in rawLines {
                 let lower = line.lowercased()
-                if ["jmdict", "jitendex", "tatoeba"].contains(lower) { continue }
-                if line.range(of: "\\p{Hiragana}|\\p{Katakana}", options: .regularExpression) == nil {
+                if ["jmdict", "jitendex", "tatoeba", "forms"].contains(lower) || lower.hasPrefix("|") { continue }
+                if line.hasPrefix("⟶") || line.range(of: #"^\[\d+\]$"#, options: .regularExpression) != nil { continue }
+                let stripped = lower.trimmingCharacters(in: CharacterSet(charactersIn: "()[]"))
+                if Self.knownJapanesePOSTags.contains(stripped) { continue }
+                if line.count <= 2 && line.range(of: #"[\p{Hiragana}\p{Katakana}\p{Han}]"#, options: .regularExpression) != nil { continue }
+                if !glosses.contains(line) {
                     glosses.append(line)
-                    if glosses.count >= 3 { break }
+                    if glosses.count >= 5 { break }
                 }
             }
         }
 
-        return (tags, Array(glosses.prefix(5)))
+        return (tags, Array(glosses.prefix(6)), nil)
     }
 
     private func cleanChineseEntry(
@@ -658,10 +692,10 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
         return (resolvedReading, tags, Array(glosses.prefix(4)))
     }
 
-    private func queryCandidates(_ candidates: [String], in db: OpaquePointer) -> [JapaneseDictionaryEntry] {
+    private func queryCandidates(_ candidates: [String], in db: OpaquePointer) -> [DictionaryTermResult] {
         guard !candidates.isEmpty else { return [] }
 
-        var entries: [JapaneseDictionaryEntry] = []
+        var entries: [DictionaryTermResult] = []
         var seenKeys = Set<String>()
 
         let sql = """
@@ -714,13 +748,29 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
                     glosses = parsed.glosses
                 } else {
                     let parsed = cleanJitendexEntry(term: term, reading: reading, rawGlossary: glossaryRaw, rawPos: posRaw)
+                    if let target = parsed.redirectTarget {
+                        // Resolve the redirect target to get the canonical entry
+                        let targetEntries = queryDirectTerm(target, in: db)
+                        if let firstTarget = targetEntries.first {
+                            let resolvedEntry = DictionaryTermResult(
+                                term: target,
+                                reading: firstTarget.reading ?? reading,
+                                dictionary: dictionary,
+                                glosses: firstTarget.glosses,
+                                tags: firstTarget.tags
+                            )
+                            entries.append(resolvedEntry)
+                            if entries.count >= 15 { break }
+                            continue
+                        }
+                    }
                     tags = parsed.tags
                     glosses = parsed.glosses
                 }
 
                 guard !glosses.isEmpty else { continue }
 
-                let entry = JapaneseDictionaryEntry(
+                let entry = DictionaryTermResult(
                     term: term,
                     reading: reading,
                     dictionary: dictionary,
@@ -737,6 +787,36 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
 
         let vocabEntries = entries.filter { $0.dictionary != "Names" && !$0.dictionary.contains("Wikipedia") }
         return vocabEntries.isEmpty ? entries : vocabEntries
+    }
+
+    private func queryDirectTerm(_ term: String, in db: OpaquePointer) -> [DictionaryTermResult] {
+        let sql = "SELECT term, reading, glossary, pos, dictionary, score FROM entries WHERE term = ? ORDER BY score DESC LIMIT 1;"
+        var stmt: OpaquePointer?
+        guard sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK else { return [] }
+        defer { sqlite3_finalize(stmt) }
+        sqlite3_bind_text(stmt, 1, (term as NSString).utf8String, -1, nil)
+        var results: [DictionaryTermResult] = []
+        if sqlite3_step(stmt) == SQLITE_ROW {
+            guard let termCString = sqlite3_column_text(stmt, 0),
+                  let glossaryCString = sqlite3_column_text(stmt, 2),
+                  let dictCString = sqlite3_column_text(stmt, 4) else { return [] }
+            let term = String(cString: termCString)
+            let reading = sqlite3_column_text(stmt, 1).map { String(cString: $0) }
+            let glossaryRaw = String(cString: glossaryCString)
+            let posRaw = sqlite3_column_text(stmt, 3).map { String(cString: $0) }
+            let dictionary = String(cString: dictCString)
+            let parsed = cleanJitendexEntry(term: term, reading: reading, rawGlossary: glossaryRaw, rawPos: posRaw)
+            if !parsed.glosses.isEmpty {
+                results.append(DictionaryTermResult(
+                    term: term,
+                    reading: reading,
+                    dictionary: dictionary,
+                    glosses: parsed.glosses,
+                    tags: parsed.tags
+                ))
+            }
+        }
+        return results
     }
 
     // MARK: - Japanese De-inflection Engine
@@ -855,12 +935,36 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
             }
         }
 
+        // 8. Volitional Forms
+        let volitionalRules: [(suffix: String, rep: String)] = [
+            ("よう", "る"), // Ichidan
+            ("しよう", "する"), ("こよう", "くる"), // Irregular
+            ("おう", "う"), ("こう", "く"), ("ごう", "ぐ"), ("そう", "す"),
+            ("とう", "つ"), ("のう", "ぬ"), ("ぼう", "ぶ"), ("もう", "む"), ("ろう", "る") // Godan
+        ]
+        for rule in volitionalRules {
+            if word.hasSuffix(rule.suffix) && word.count >= rule.suffix.count {
+                add(String(word.dropLast(rule.suffix.count)) + rule.rep)
+            }
+        }
+
+        // 9. Imperative Forms
+        let imperativeRules: [(suffix: String, rep: String)] = [
+            ("え", "う"), ("け", "く"), ("げ", "ぐ"), ("せ", "す"),
+            ("て", "つ"), ("ね", "ぬ"), ("べ", "ぶ"), ("め", "む"), ("れ", "る")
+        ]
+        for rule in imperativeRules {
+            if word.hasSuffix(rule.suffix) && word.count > rule.suffix.count {
+                add(String(word.dropLast(rule.suffix.count)) + rule.rep)
+            }
+        }
+
         return candidates
     }
 
     // MARK: - Zip Importer
 
-    func importYomitanZip(at fileURL: URL) async throws -> (dictionaryName: String, count: Int) {
+    func importDictionaryArchive(at fileURL: URL) async throws -> (dictionaryName: String, count: Int) {
         let zipData = try Data(contentsOf: fileURL)
         let entries = try ZipExtractor.extractEntries(where: { name in
             name.hasSuffix("index.json") || name.contains("term_bank_")
@@ -869,11 +973,11 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
         guard let indexEntry = entries.first(where: { $0.filename.hasSuffix("index.json") }),
               let indexObj = try? JSONSerialization.jsonObject(with: indexEntry.data) as? [String: Any],
               let dictTitle = indexObj["title"] as? String else {
-            throw NSError(domain: "JapaneseDictionaryService", code: 1, userInfo: [NSLocalizedDescriptionKey: "Archive invalide : index.json ou titre manquant"])
+            throw NSError(domain: "LocalDictionaryService", code: 1, userInfo: [NSLocalizedDescriptionKey: "Archive invalide : index.json ou titre manquant"])
         }
 
         guard db != nil else {
-            throw NSError(domain: "JapaneseDictionaryService", code: 2, userInfo: [NSLocalizedDescriptionKey: "Base non disponible"])
+            throw NSError(domain: "LocalDictionaryService", code: 2, userInfo: [NSLocalizedDescriptionKey: "Base non disponible"])
         }
 
         var importedCount = 0
@@ -888,7 +992,7 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
                 var stmt: OpaquePointer?
                 guard sqlite3_prepare_v2(db, insertSql, -1, &stmt, nil) == SQLITE_OK else {
                     sqlite3_exec(db, "ROLLBACK;", nil, nil, nil)
-                    continuation.resume(throwing: NSError(domain: "JapaneseDictionaryService", code: 3, userInfo: [NSLocalizedDescriptionKey: "Échec préparation SQL"]))
+                    continuation.resume(throwing: NSError(domain: "LocalDictionaryService", code: 3, userInfo: [NSLocalizedDescriptionKey: "Échec préparation SQL"]))
                     return
                 }
 

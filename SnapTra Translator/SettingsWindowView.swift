@@ -275,6 +275,34 @@ struct GeneralSettingsView: View {
                 // Immersion et Curseur
                 SettingsSectionCard(title: L("Immersion"), icon: "cursorarrow.rays") {
                     VStack(spacing: 12) {
+                        HStack(spacing: 12) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(L("Translation target"))
+                                    .font(.system(size: 13))
+                                Text(L("Source language is detected from Japanese, Chinese, or Korean OCR"))
+                                    .font(.system(size: 11))
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer(minLength: 8)
+                            Picker(L("Translation target"), selection: $model.settings.targetLanguage) {
+                                ForEach(AppLanguage.allCases.filter { $0 != .system }) { language in
+                                    Text(language.displayName).tag(language.rawValue)
+                                }
+                            }
+                            .labelsHidden()
+                            .frame(width: 150)
+                        }
+
+                        Divider().opacity(0.5)
+
+                        ToggleRow(
+                            title: L("Bidirectional translation"),
+                            subtitle: L("Also translate text detected in the selected target language"),
+                            isOn: $model.settings.bidirectionalTranslationEnabled
+                        )
+
+                        Divider().opacity(0.5)
+
                         ToggleRow(
                             title: L("Listen at Cursor"),
                             subtitle: L("Pause or resume live lookup as you move the pointer"),
@@ -282,6 +310,14 @@ struct GeneralSettingsView: View {
                                 get: { model.isListening },
                                 set: { model.setListening($0) }
                             )
+                        )
+
+                        Divider().opacity(0.5)
+
+                        ToggleRow(
+                            title: L("Continuous translation"),
+                            subtitle: L("Keep translating as mouse moves"),
+                            isOn: $model.settings.continuousTranslation
                         )
 
                         Divider().opacity(0.5)

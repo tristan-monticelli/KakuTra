@@ -573,9 +573,26 @@ struct OverlayView: View {
 
     @ViewBuilder
     private func cleanWordHeader(content: OverlayContent) -> some View {
-        let firstEntry: YomitanTermResult? = {
-            if case .results(let entries) = content.yomitanLookupState {
+        let firstEntry: DictionaryTermResult? = {
+            if case .results(let entries) = content.dictionaryLookupState {
                 return entries.first
+            }
+            return nil
+        }()
+
+        let displayHeadword: String = {
+            if let term = firstEntry?.term, !term.isEmpty {
+                return term
+            }
+            return content.word
+        }()
+
+        let displayReading: String? = {
+            if let reading = firstEntry?.reading, !reading.isEmpty, reading != displayHeadword {
+                return reading
+            }
+            if let term = firstEntry?.term, !term.isEmpty, term != content.word {
+                return content.word
             }
             return nil
         }()
@@ -583,13 +600,13 @@ struct OverlayView: View {
         HStack(alignment: .center, spacing: 8) {
             // Main Headword + Inline Reading + Audio Speaker
             HStack(alignment: .firstTextBaseline, spacing: 8) {
-                Text(content.word)
+                Text(displayHeadword)
                     .font(.system(size: 18, weight: .bold))
                     .foregroundStyle(.primary)
                     .lineLimit(1)
 
                 // Inline Reading (Furigana / Pinyin / IPA)
-                if let reading = firstEntry?.reading, !reading.isEmpty, reading != content.word {
+                if let reading = displayReading {
                     Text(reading)
                         .font(.system(size: 13.5, weight: .regular))
                         .foregroundStyle(.secondary)
@@ -650,7 +667,7 @@ struct OverlayView: View {
 
     @ViewBuilder
     private func cleanDefinitionsBody(content: OverlayContent) -> some View {
-        switch content.yomitanLookupState {
+        switch content.dictionaryLookupState {
         case .notRequested, .loading:
             HStack(spacing: 8) {
                 ProgressView().controlSize(.small)
@@ -674,18 +691,6 @@ struct OverlayView: View {
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, 16)
                 .padding(.bottom, 14)
-
-        case .notConnected:
-            HStack(spacing: 6) {
-                Image(systemName: "exclamationmark.circle")
-                    .font(.system(size: 11))
-                    .foregroundStyle(.orange)
-                Text(L("Base de données locale introuvable"))
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(.secondary)
-            }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 14)
 
         case .results(let entries):
             if let primary = entries.first {
@@ -1571,136 +1576,6 @@ struct OverlayView: View {
     }
 
     @ViewBuilder
-    private func dictionarySectionsView(sections: [OverlayDictionarySection]) -> some View {
-        ForEach(Array(sections.enumerated()), id: \.element.id) { index, section in
-            VStack(alignment: .leading, spacing: 0) {
-                Divider()
-                    .padding(.horizontal, 18)
-                    .opacity(0.6)
-
-                // Dictionary source header
-                dictionarySourceSectionHeader(sourceType: section.sourceType, isFirst: index == 0)
-
-                dictionarySectionBody(section)
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func dictionarySectionBody(_ section: OverlayDictionarySection) -> some View {
-        switch section.state {
-        case .loading:
-            dictionaryStatusRow(
-                text: L("Searching…"),
-                showsSpinner: true
-            )
-        case .ready(let entry):
-            definitionsSection(entry: entry, showDividers: false)
-        case .empty:
-            dictionaryStatusRow(text: L("No result"))
-        case .failed(let message):
-            dictionaryStatusRow(text: message.isEmpty ? L("Unavailable") : message)
-        }
-    }
-
-    @ViewBuilder
-    private func dictionarySourceSectionHeader(sourceType: DictionarySource.SourceType, isFirst: Bool) -> some View {
-        let config = dictionarySourceConfig(for: sourceType)
-
-        HStack(spacing: 6) {
-            Image(systemName: config.icon)
-                .font(.system(size: 11, weight: .semibold))
-            Text(config.title)
-                .font(.system(size: 11, weight: .semibold))
-            Spacer()
-            if case .result(let content) = model.overlayState {
-                if let section = content.visibleDictionarySections.first(where: { $0.sourceType == sourceType }),
-                   case .ready(let entry) = section.state {
-                    Button {
-                        let defText = entry.definitions.map { $0.translation ?? $0.meaning }.joined(separator: "\n")
-                        model.prepareAnkiNote(
-                            term: content.word,
-                            reading: content.phonetic ?? entry.phonetic,
-                            definition: defText,
-                            source: config.title,
-                            contextSentence: content.contextSentence
-                        )
-                    } label: {
-                        HStack(spacing: 3) {
-                            Image(systemName: "rectangle.stack.badge.plus")
-                            Text(L("Add to Anki"))
-                        }
-                        .font(.system(size: 10, weight: .medium))
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                    }
-                    .buttonStyle(.bordered)
-                    .controlSize(.mini)
-                }
-            }
-        }
-        .foregroundStyle(config.color)
-        .padding(.horizontal, 18)
-        .padding(.top, isFirst ? 10 : 12)
-        .padding(.bottom, 6)
-    }
-
-    private func dictionarySourceConfig(for sourceType: DictionarySource.SourceType) -> (title: String, icon: String, color: Color) {
-        switch sourceType {
-        case .ecdict:
-            return (
-                L("Advanced Dictionary"),
-                "book.closed",
-                .secondary
-            )
-        case .system:
-            return (
-                L("System Dictionary"),
-                "book.closed",
-                .secondary
-            )
-        case .youdao:
-            return (
-                L("Youdao Dictionary"),
-                "text.book.closed",
-                .orange
-            )
-        case .google:
-            return (
-                L("Google Dictionary"),
-                "globe",
-                .blue
-            )
-        case .freeDictionaryAPI:
-            return (
-                L("Free Dictionary API"),
-                "books.vertical",
-                .green
-            )
-        }
-    }
-
-    @ViewBuilder
-    private func dictionaryStatusRow(text: String, showsSpinner: Bool = false) -> some View {
-        HStack(spacing: 8) {
-            if showsSpinner {
-                ProgressView()
-                    .controlSize(.small)
-                    .scaleEffect(0.8)
-            }
-
-            Text(text)
-                .font(.system(size: 13, weight: .medium, design: .rounded))
-                .foregroundStyle(.secondary)
-
-            Spacer()
-        }
-        .padding(.horizontal, 18)
-        .frame(minHeight: compactSectionMinHeight, alignment: .leading)
-        .padding(.bottom, 12)
-    }
-
-    @ViewBuilder
     private func headerSection(content: OverlayContent) -> some View {
         let metrics = WordOverlayHeaderLayoutPolicy.resolve(
             panelWidth: overlayWidth,
@@ -1819,425 +1694,6 @@ struct OverlayView: View {
             .buttonStyle(.plain)
         }
     }
-
-    @ViewBuilder
-    private func primaryTranslationSection(content: OverlayContent) -> some View {
-        if #available(macOS 15.0, *) {
-            let targetIsEnglish = model.settings.targetLanguage.hasPrefix("en")
-            let shouldHideReadyTranslation = targetIsEnglish && !content.definitions.isEmpty
-            let usesCompactStyle = content.usesCompactPrimaryTranslationStyle
-
-            VStack(alignment: .leading, spacing: 0) {
-                switch content.primaryTranslationState {
-                case .loading:
-                    HStack(spacing: 8) {
-                        ProgressView()
-                            .controlSize(.small)
-                            .scaleEffect(0.85)
-                        Text(L("Translating"))
-                            .font(.system(size: 13, weight: .medium, design: .rounded))
-                            .foregroundStyle(.secondary)
-                        LoadingDotsView()
-                        Spacer()
-                    }
-                    .padding(.horizontal, 18)
-                    .padding(.bottom, 16)
-
-                case .ready(let translation, _):
-                    if !shouldHideReadyTranslation {
-                        HStack(spacing: 8) {
-                            if usesCompactStyle {
-                                if useSelectableWordText {
-                                    wordSelectableText(
-                                        translation,
-                                        font: .systemFont(ofSize: 17, weight: .medium),
-                                        textColor: colorScheme == .dark
-                                            ? NSColor(red: 0.2, green: 0.6, blue: 1.0, alpha: 1)
-                                            : NSColor(red: 0.1, green: 0.4, blue: 0.85, alpha: 1),
-                                        preferredLineHeight: 22
-                                    )
-                                } else {
-                                    Text(translation)
-                                        .font(.system(size: 17, weight: .medium, design: .rounded))
-                                        .foregroundStyle(
-                                            LinearGradient(
-                                                colors: colorScheme == .dark
-                                                    ? [
-                                                        Color(red: 0.2, green: 0.6, blue: 1.0),
-                                                        Color(red: 0.5, green: 0.5, blue: 0.95),
-                                                    ]
-                                                    : [
-                                                        Color(red: 0.1, green: 0.4, blue: 0.85),
-                                                        Color(red: 0.35, green: 0.3, blue: 0.8),
-                                                    ],
-                                                startPoint: .leading,
-                                                endPoint: .trailing
-                                            )
-                                        )
-                                        .tracking(0.3)
-                                }
-                            } else {
-                                if useSelectableWordText {
-                                    wordSelectableText(
-                                        translation,
-                                        font: .systemFont(ofSize: 24, weight: .bold),
-                                        preferredLineHeight: 30
-                                    )
-                                } else {
-                                    Text(translation)
-                                        .font(.system(size: 24, weight: .bold, design: .rounded))
-                                        .foregroundStyle(.primary)
-                                        .tracking(0.2)
-                                }
-                            }
-
-                            Spacer()
-                        }
-                        .padding(.horizontal, 18)
-                        .padding(.bottom, usesCompactStyle ? 8 : 16)
-                    }
-
-                case .empty:
-                    EmptyView()
-
-                case .failed(let message):
-                    HStack(spacing: 8) {
-                        Image(systemName: "exclamationmark.circle")
-                            .font(.system(size: 12, weight: .semibold))
-                            .foregroundStyle(.secondary)
-                        Text(message)
-                            .font(.system(size: 13, weight: .medium, design: .rounded))
-                            .foregroundStyle(.secondary)
-                        Spacer()
-                    }
-                    .padding(.horizontal, 18)
-                    .padding(.bottom, 16)
-                }
-            }
-            .frame(maxWidth: .infinity, minHeight: shouldHideReadyTranslation ? 8 : compactSectionMinHeight, alignment: .topLeading)
-        }
-    }
-
-    @ViewBuilder
-    private func definitionsSection(entry: DictionaryEntry, showDividers: Bool = true) -> some View {
-        let grouped = groupedDefinitionContent(
-            from: entry.definitions,
-            includeSupplementaryDetails: showsExtendedDictionaryDetails
-        )
-        if grouped.isEmpty {
-            EmptyView()
-        } else {
-            VStack(alignment: .leading, spacing: 0) {
-                if showDividers {
-                    Divider()
-                        .padding(.horizontal, 18)
-                        .opacity(0.6)
-                }
-
-                VStack(alignment: .leading, spacing: 16) {
-                    ForEach(Array(grouped.enumerated()), id: \.offset) { _, group in
-                        definitionGroupRow(group: group)
-                    }
-
-                    if showsExtendedDictionaryDetails && entry.hasSynonyms {
-                        synonymsRow(entry.synonyms)
-                    }
-                }
-                .padding(.horizontal, 18)
-                .padding(.vertical, 14)
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func definitionGroupRow(group: DefinitionDisplayGroup) -> some View {
-        HStack(alignment: .top, spacing: 10) {
-            HStack(spacing: 4) {
-                if !group.partOfSpeech.isEmpty {
-                    Text(displayedPartOfSpeech(for: group.partOfSpeech))
-                        .font(.system(size: 11, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 7)
-                        .padding(.vertical, 3)
-                        .background(
-                            RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                .fill(posColor(for: group.partOfSpeech))
-                                .shadow(color: posColor(for: group.partOfSpeech).opacity(0.3), radius: 2, x: 0, y: 1)
-                        )
-                }
-
-                if let field = group.field, !field.isEmpty {
-                    Text(displayedField(for: field))
-                        .font(.system(size: 11, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 7)
-                        .padding(.vertical, 3)
-                        .background(
-                            RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                .fill(fieldColor(for: field))
-                                .shadow(color: fieldColor(for: field).opacity(0.3), radius: 2, x: 0, y: 1)
-                        )
-                }
-            }
-            .padding(.top, 1)
-
-            VStack(alignment: .leading, spacing: 6) {
-                if !group.translations.isEmpty {
-                    if useSelectableWordText {
-                        wordSelectableText(
-                            group.translations.joined(separator: "；"),
-                            font: .systemFont(ofSize: 14, weight: .regular),
-                            preferredLineHeight: 19
-                        )
-                    } else {
-                        Text(group.translations.joined(separator: "；"))
-                            .font(.system(size: 14, weight: .regular, design: .rounded))
-                            .foregroundStyle(.primary)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                }
-
-                if !group.meanings.isEmpty {
-                    if useSelectableWordText {
-                        wordSelectableText(
-                            group.meanings.joined(separator: "\n"),
-                            font: .systemFont(ofSize: 12, weight: .regular),
-                            textColor: .secondaryLabelColor,
-                            preferredLineHeight: 16
-                        )
-                    } else {
-                        Text(group.meanings.joined(separator: "\n"))
-                            .font(.system(size: 12, weight: .regular, design: .rounded))
-                            .foregroundStyle(.secondary)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                }
-
-                if !group.examples.isEmpty {
-                    if useSelectableWordText {
-                        wordSelectableText(
-                            group.examples.prefix(2).map { "• \($0)" }.joined(separator: "\n"),
-                            font: .systemFont(ofSize: 12, weight: .regular),
-                            textColor: .secondaryLabelColor,
-                            preferredLineHeight: 16
-                        )
-                        .padding(.top, 2)
-                    } else {
-                        VStack(alignment: .leading, spacing: 4) {
-                            ForEach(Array(group.examples.prefix(2)), id: \.self) { example in
-                                HStack(alignment: .top, spacing: 6) {
-                                    Text("•")
-                                        .font(.system(size: 11, weight: .semibold, design: .rounded))
-                                        .foregroundStyle(.secondary)
-
-                                    Text(example)
-                                        .font(.system(size: 12, weight: .regular, design: .rounded))
-                                        .foregroundStyle(.secondary)
-                                        .fixedSize(horizontal: false, vertical: true)
-                                }
-                            }
-                        }
-                        .padding(.top, 2)
-                    }
-                }
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func synonymsRow(_ synonyms: [String]) -> some View {
-        let displayedSynonyms = Array(synonyms.prefix(8))
-        if !displayedSynonyms.isEmpty {
-            HStack(alignment: .top, spacing: 8) {
-                Image(systemName: "link")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(.secondary)
-                    .padding(.top, 2)
-
-                if useSelectableWordText {
-                    wordSelectableText(
-                        displayedSynonyms.joined(separator: " · "),
-                        font: .systemFont(ofSize: 12, weight: .regular),
-                        textColor: .secondaryLabelColor,
-                        preferredLineHeight: 16
-                    )
-                } else {
-                    Text(displayedSynonyms.joined(separator: " · "))
-                        .font(.system(size: 12, weight: .regular, design: .rounded))
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-            }
-            .padding(.top, 2)
-        }
-    }
-
-    private func displayedPartOfSpeech(for pos: String) -> String {
-        let lowercased = pos.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-        switch lowercased {
-        case "n", "noun":
-            return "n."
-        case "v", "verb":
-            return "v."
-        case "vt", "transitive verb":
-            return "vt."
-        case "vi", "intransitive verb":
-            return "vi."
-        case "adj", "adjective", "a":
-            return "adj."
-        case "adv", "adverb":
-            return "adv."
-        case "prep", "preposition":
-            return "prep."
-        case "conj", "conjunction":
-            return "conj."
-        case "pron", "pronoun":
-            return "pron."
-        case "interj", "interjection":
-            return "interj."
-        default:
-            return pos
-        }
-    }
-
-    private func groupedDefinitionContent(
-        from definitions: [DictionaryEntry.Definition],
-        includeSupplementaryDetails: Bool
-    ) -> [DefinitionDisplayGroup] {
-        var order: [(String, String?)] = []
-        var grouped: [String: DefinitionAccumulator] = [:]
-
-        for definition in definitions {
-            let key = "\(definition.partOfSpeech)|\(definition.field ?? "")"
-            if grouped[key] == nil {
-                order.append((definition.partOfSpeech, definition.field))
-                grouped[key] = DefinitionAccumulator()
-            }
-
-            let translation = normalizedDictionaryText(definition.translation)
-
-            if let translation {
-                grouped[key]?.translations.appendIfMissing(translation)
-            }
-
-            // Show meanings that differ from translations.
-            // When target is Chinese and a Chinese translation already exists,
-            // suppress the standalone English meaning — the Chinese translation
-            // already preserves any embedded English proper nouns (e.g. "苹果公司",
-            // "Mac 电脑"). Showing a full English definition alongside adds noise.
-            let meaning = normalizedDictionaryText(definition.meaning)
-            if let meaning,
-               meaning.caseInsensitiveCompare(translation ?? "") != .orderedSame {
-                let targetIsChinese = model.settings.targetLanguage.hasPrefix("zh")
-                let translationHasChinese = translation?.range(of: "\\p{Han}", options: .regularExpression) != nil
-                if !(targetIsChinese && translationHasChinese) {
-                    grouped[key]?.meanings.appendIfMissing(meaning)
-                }
-            }
-
-            if includeSupplementaryDetails {
-                let examples = definition.examples.compactMap(normalizedDictionaryText)
-                for example in examples {
-                    grouped[key]?.examples.appendIfMissing(example)
-                }
-            }
-        }
-
-        return order.compactMap { pos, field in
-            let key = "\(pos)|\(field ?? "")"
-            guard let content = grouped[key],
-                  !content.translations.isEmpty || !content.meanings.isEmpty || !content.examples.isEmpty else {
-                return nil
-            }
-            return DefinitionDisplayGroup(
-                partOfSpeech: pos,
-                field: field,
-                translations: content.translations,
-                meanings: content.meanings,
-                examples: content.examples
-            )
-        }
-    }
-
-    private func normalizedDictionaryText(_ value: String?) -> String? {
-        guard let value else { return nil }
-        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
-        return trimmed.isEmpty ? nil : trimmed
-    }
-
-    private func posColor(for pos: String) -> Color {
-        switch pos.lowercased() {
-        case "n.", "n", "noun":
-            return Color(red: 0.2, green: 0.6, blue: 1.0)  // Modern blue
-        case "v.", "v", "verb":
-            return Color(red: 0.2, green: 0.78, blue: 0.35)  // Modern green
-        case "vt.", "vt", "transitive verb":
-            return Color(red: 0.2, green: 0.78, blue: 0.35)  // Modern green
-        case "vi.", "vi", "intransitive verb":
-            return Color(red: 0.2, green: 0.78, blue: 0.35)  // Modern green
-        case "adj.", "adj", "adjective", "a", "a.":
-            return Color(red: 1.0, green: 0.58, blue: 0.0)  // Vibrant orange
-        case "adv.", "adv", "adverb":
-            return Color(red: 0.69, green: 0.32, blue: 0.87)  // Modern purple
-        case "prep.", "prep", "preposition":
-            return Color(red: 1.0, green: 0.27, blue: 0.58)  // Modern pink
-        case "conj.", "conj", "conjunction":
-            return Color(red: 0.2, green: 0.78, blue: 0.87)  // Modern cyan
-        case "pron.", "pron", "pronoun":
-            return Color(red: 0.2, green: 0.69, blue: 0.64)  // Modern teal
-        case "interj.", "interj", "interjection":
-            return Color(red: 1.0, green: 0.27, blue: 0.27)  // Modern red
-        default:
-            return Color(red: 0.56, green: 0.56, blue: 0.58)  // Modern gray
-        }
-    }
-
-    private func displayedField(for field: String) -> String {
-        // Remove brackets and return clean text, e.g., "[医]" -> "医"
-        let cleaned = field.trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
-        return cleaned
-    }
-
-    private func fieldColor(for field: String) -> Color {
-        // Extract the field code without brackets
-        let code = field.trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
-        switch code {
-        case "医":
-            return Color(red: 0.9, green: 0.3, blue: 0.3)     // Red for medical
-        case "法":
-            return Color(red: 0.5, green: 0.3, blue: 0.8)     // Purple for legal
-        case "经":
-            return Color(red: 0.2, green: 0.7, blue: 0.4)     // Green for economic
-        case "计":
-            return Color(red: 0.1, green: 0.5, blue: 0.9)     // Blue for computer
-        case "化":
-            return Color(red: 0.9, green: 0.6, blue: 0.1)     // Orange for chemistry
-        case "物":
-            return Color(red: 0.3, green: 0.6, blue: 0.8)     // Teal for physics
-        case "生":
-            return Color(red: 0.4, green: 0.7, blue: 0.3)     // Green for biology
-        case "数":
-            return Color(red: 0.6, green: 0.4, blue: 0.8)     // Violet for mathematics
-        default:
-            return Color(red: 0.56, green: 0.56, blue: 0.58)  // Gray for others
-        }
-    }
-
-    private struct DefinitionDisplayGroup {
-        let partOfSpeech: String
-        let field: String?
-        let translations: [String]
-        let meanings: [String]
-        let examples: [String]
-    }
-
-    private struct DefinitionAccumulator {
-        var translations: [String] = []
-        var meanings: [String] = []
-        var examples: [String] = []
-    }
-
-    // MARK: - Error View
 
     @ViewBuilder
     private func errorView(message: String) -> some View {
