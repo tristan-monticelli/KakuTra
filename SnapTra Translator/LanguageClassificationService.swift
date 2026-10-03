@@ -90,7 +90,23 @@ public enum LanguageClassificationService {
             }
         } else if wordScript == .latin {
             resolvedScript = .latin
-            resolvedLanguage = wordLang ?? contextLanguage
+            if let contextLanguage {
+                resolvedLanguage = contextLanguage
+            } else {
+                let recognizer = NLLanguageRecognizer()
+                recognizer.processString(trimmed)
+                let hypotheses = recognizer.languageHypotheses(withMaximum: 5)
+                if let frProb = hypotheses[.french], frProb > 0.15 {
+                    resolvedLanguage = .french
+                } else if let enProb = hypotheses[.english], enProb > 0.04 {
+                    resolvedLanguage = .english
+                } else if let dominant = recognizer.dominantLanguage,
+                          dominant == .german || dominant == .spanish || dominant == .italian || dominant == .french {
+                    resolvedLanguage = dominant
+                } else {
+                    resolvedLanguage = .english
+                }
+            }
             isJapanese = false
         } else if wordScript == .korean {
             resolvedScript = .korean

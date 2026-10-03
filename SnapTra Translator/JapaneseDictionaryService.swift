@@ -477,9 +477,24 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
                 if seenKeys.contains(key) { continue }
                 seenKeys.insert(key)
 
-                let glosses = glossaryRaw.components(separatedBy: "\n")
+                let rawGlosses = glossaryRaw.components(separatedBy: "\n")
                     .map { $0.trimmingCharacters(in: .whitespaces) }
                     .filter { !$0.isEmpty }
+
+                // In English immersion definitions, exclude raw Japanese sentences, cross-references, and isolated Kanji
+                let filteredGlosses = rawGlosses.filter { line in
+                    if line.range(of: "\\p{Hiragana}|\\p{Katakana}", options: .regularExpression) != nil {
+                        return false
+                    }
+                    if line.count <= 4 && line.range(of: "\\p{Han}", options: .regularExpression) != nil {
+                        return false
+                    }
+                    if line.hasPrefix("See also") {
+                        return false
+                    }
+                    return true
+                }
+                let glosses = filteredGlosses.isEmpty ? rawGlosses : filteredGlosses
 
                 let entry = JapaneseDictionaryEntry(
                     term: term,

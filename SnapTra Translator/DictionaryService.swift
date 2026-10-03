@@ -38,6 +38,94 @@ final class DictionaryService {
         return nil
     }
 
+    /// Fast, clean Apple System Dictionary parser that extracts reading/pos and structured glosses
+    /// for French, English, German, Spanish, and other Latin languages.
+    func lookupAppleSystemClean(_ word: String) -> (reading: String?, glosses: [String])? {
+        let trimmed = word.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        let cfWord = trimmed as CFString
+        let range = CFRange(location: 0, length: trimmed.utf16.count)
+        guard let def = DCSCopyTextDefinition(nil, cfWord, range) else { return nil }
+        var text = def.takeRetainedValue() as String
+        guard !text.isEmpty else { return nil }
+
+        // 1. Extract phonetic if present: /.../ or | BrE ..., AmE ... |
+        var phonetic: String? = nil
+        let ipaChars = CharacterSet(charactersIn: "əɪʃŋðθʌɔɛʊɑæɜˈˌːˑᵊ")
+        if let slash1 = text.range(of: "/"), let slash2 = text.range(of: "/", range: slash1.upperBound..<text.endIndex) {
+            let candidate = String(text[slash1.upperBound..<slash2.lowerBound]).trimmingCharacters(in: .whitespaces)
+            if candidate.unicodeScalars.contains(where: { ipaChars.contains($0) }) {
+                phonetic = candidate
+                text.removeSubrange(slash1.lowerBound...slash2.upperBound)
+            }
+        }
+        if phonetic == nil, let pStart = text.range(of: "|"), let pEnd = text.range(of: "|", range: pStart.upperBound..<text.endIndex) {
+            let candidate = String(text[pStart.upperBound..<pEnd.lowerBound]).trimmingCharacters(in: .whitespaces)
+            if candidate.contains("BrE") || candidate.contains("AmE") || candidate.unicodeScalars.contains(where: { ipaChars.contains($0) }) {
+                phonetic = candidate
+                text.removeSubrange(pStart.lowerBound...pEnd.upperBound)
+            }
+        }
+
+        // 2. Strip headword prefix if text starts with it
+        if text.hasPrefix(trimmed) {
+            text = String(text.dropFirst(trimmed.count)).trimmingCharacters(in: .whitespaces)
+        }
+
+        // 3. Extract part of speech
+        var pos: String? = nil
+        let posPatterns = [
+            "^(nom féminin|nom masculin|adjectif|verbe transitif|verbe intransitif|verbe|adverbe|pronom|préposition|conjonction|interjection)",
+            "^(noun|verb|adjective|adverb|preposition|conjunction|pronoun|interjection|transitive verb|intransitive verb)"
+        ]
+        for pat in posPatterns {
+            if let r = text.range(of: pat, options: [.regularExpression, .caseInsensitive]) {
+                pos = String(text[r]).trimmingCharacters(in: .whitespaces)
+                text = String(text[r.upperBound...]).trimmingCharacters(in: .whitespaces)
+                break
+            }
+        }
+
+        // 4. Extract definitions: check for numbered list "1 ... 2 ... 3 ..." or bullets / semicolons
+        var glosses: [String] = []
+        if let numRegex = try? NSRegularExpression(pattern: #"(?:^|\s)(\d+)\s+([^0-9]+?)(?=\s+\d+\s+|$)"#) {
+            let matches = numRegex.matches(in: text, options: [], range: NSRange(text.startIndex..., in: text))
+            if !matches.isEmpty {
+                for m in matches {
+                    if let r = Range(m.range(at: 2), in: text) {
+                        var d = String(text[r]).trimmingCharacters(in: .whitespacesAndNewlines)
+                        if let loc = d.range(of: "LOCUTION") { d = String(d[..<loc.lowerBound]) }
+                        if let ant = d.range(of: "ANTONYME") { d = String(d[..<ant.lowerBound]) }
+                        if let note = d.range(of: "Note ") { d = String(d[..<note.lowerBound]) }
+                        if let pipe = d.range(of: " | ") { d = String(d[..<pipe.lowerBound]) }
+                        d = d.trimmingCharacters(in: .whitespacesAndNewlines)
+                        if !d.isEmpty {
+                            glosses.append(d)
+                        }
+                    }
+                }
+            }
+        }
+
+        if glosses.isEmpty {
+            var clean = text
+            if let idm = clean.range(of: "IDIOMS") { clean = String(clean[..<idm.lowerBound]) }
+            if let phr = clean.range(of: "PHRASAL") { clean = String(clean[..<phr.lowerBound]) }
+            if let loc = clean.range(of: "LOCUTION") { clean = String(clean[..<loc.lowerBound]) }
+            if let note = clean.range(of: "Note ") { clean = String(clean[..<note.lowerBound]) }
+            let items = clean.components(separatedBy: ";").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
+            if items.count > 1 {
+                glosses = Array(items.prefix(4))
+            } else if !clean.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                glosses = [clean.trimmingCharacters(in: .whitespacesAndNewlines)]
+            }
+        }
+
+        guard !glosses.isEmpty else { return nil }
+        let reading = phonetic ?? pos
+        return (reading, Array(glosses.prefix(5)))
+    }
+
     /// Queries a single dictionary source and returns the matching entry.
     /// - Parameters:
     ///   - word: The word to look up

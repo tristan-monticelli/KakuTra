@@ -1657,6 +1657,18 @@ final class AppModel: ObservableObject {
         }
     }
 
+    func showPreviewWordOverlay(word: String, mouseLocation: CGPoint = CGPoint(x: 600, y: 500)) async {
+        let request = SinglePressLookupRequest(
+            lookupID: UUID(),
+            mouseLocation: mouseLocation,
+            supportsSelectedText: false,
+            selectedTextEnabled: false,
+            hasAccessibilityPermission: false
+        )
+        activeLookupID = request.lookupID
+        await performResolvedOcrWordLookup(word: word, request: request)
+    }
+
     private func performResolvedOcrWordLookup(
         word: String,
         contextSentence: String? = nil,
@@ -1844,56 +1856,59 @@ final class AppModel: ObservableObject {
     ) async {
         guard !Task.isCancelled, activeLookupID == lookupID else { return }
 
+        // 1. Try Apple System Dictionary with clean definition parser
+        if let appleResult = dictionaryService.lookupAppleSystemClean(word) {
+            let result = YomitanTermResult(
+                term: word,
+                reading: appleResult.reading,
+                dictionary: "",
+                glosses: appleResult.glosses
+            )
+            await performLocalDictionaryWordLookup(
+                word,
+                entries: [result],
+                language: classification.bcp47Code,
+                lookupID: lookupID,
+                mouseLocation: mouseLocation,
+                contextSentence: contextSentence,
+                recordsLookup: recordsLookup
+            )
+            return
+        }
+
+        // 2. Fallback to general dictionary service sources (ECDICT / system)
         var lookupSources = settings.dictionarySources
         if !lookupSources.contains(where: { $0.type == .system }) {
             lookupSources.append(DictionarySource(id: UUID(), name: DictionarySource.SourceType.system.displayName, type: .system, isEnabled: true))
         }
 
-        guard let entry = dictionaryService.lookup(
+        if let entry = dictionaryService.lookup(
             word,
             sources: lookupSources,
             sourceLanguage: classification.bcp47Code
-        ) else {
-            hideOverlay()
-            return
-        }
-
-        let section = OverlayDictionarySection(
-            sourceType: .system,
-            state: .ready(entry)
-        )
-
-        let content = OverlayContent(
-            word: word,
-            phonetic: entry.phonetic,
-            primaryTranslationState: .empty,
-            usesCompactPrimaryTranslationStyle: false,
-            dictionarySections: [section],
-            sourceLanguageIdentifier: classification.bcp47Code,
-            yomitanLookupState: .notRequested,
-            contextSentence: contextSentence
-        )
-
-        updateOverlay(state: .result(content), anchor: mouseLocation)
-
-        if recordsLookup {
-            await learningService.recordLookup(word: word, sourceLanguageIdentifier: classification.bcp47Code)
-            let definition = entry.definitions.map { $0.translation ?? $0.meaning }.joined(separator: "; ")
-            if !definition.isEmpty {
-                _ = await learningService.updateDefinition(word: word, definitionText: definition)
+        ) {
+            let glosses = entry.definitions.map { $0.translation ?? $0.meaning }.filter { !$0.isEmpty }
+            if !glosses.isEmpty {
+                let result = YomitanTermResult(
+                    term: word,
+                    reading: entry.phonetic,
+                    dictionary: "",
+                    glosses: glosses
+                )
+                await performLocalDictionaryWordLookup(
+                    word,
+                    entries: [result],
+                    language: classification.bcp47Code,
+                    lookupID: lookupID,
+                    mouseLocation: mouseLocation,
+                    contextSentence: contextSentence,
+                    recordsLookup: recordsLookup
+                )
+                return
             }
         }
 
-        if settings.playWordPronunciation {
-            speechService.speak(
-                word,
-                language: classification.bcp47Code,
-                provider: .apple,
-                gender: settings.voiceGender,
-                useAmericanAccent: settings.englishAccent.isAmerican,
-                performance: nil
-            )
-        }
+        hideOverlay()
     }
 
     private nonisolated static func containsJapaneseText(_ text: String) -> Bool {

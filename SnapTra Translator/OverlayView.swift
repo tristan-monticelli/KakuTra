@@ -234,12 +234,8 @@ struct OverlayView: View {
             ankiConfirmationOverlay(draft: draft)
         } else {
             VStack(alignment: .leading, spacing: 0) {
-                // Header: Word + Phonetic
-                headerSection(content: content)
-
-                if content.yomitanLookupState != .notRequested {
-                    yomitanResultsSection(state: content.yomitanLookupState)
-                }
+                cleanWordHeader(content: content)
+                cleanDefinitionsBody(content: content)
             }
         }
     }
@@ -428,166 +424,141 @@ struct OverlayView: View {
     }
 
     @ViewBuilder
-    private func yomitanResultsSection(state: YomitanLookupState) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Divider().padding(.horizontal, 18).opacity(0.6)
-            HStack(spacing: 7) {
-                Image(systemName: "character.book.closed.fill")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(Color.accentColor)
-                Text(L("Dictionnaire"))
-                    .font(.system(size: 12, weight: .semibold))
-                Spacer()
-                if case .results(let results) = state, !results.isEmpty {
-                    glossaryFilterMenu
-                }
-            }
-            .padding(.horizontal, 18)
-            .padding(.top, 12)
-            .padding(.bottom, 8)
+    private func cleanWordHeader(content: OverlayContent) -> some View {
+        HStack(alignment: .center, spacing: 8) {
+            // Main Headword
+            Text(content.word)
+                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .foregroundStyle(.primary)
+                .lineLimit(1)
 
-            switch state {
-            case .notRequested:
-                EmptyView()
-            case .loading:
-                HStack(spacing: 8) {
-                    ProgressView().controlSize(.small)
-                    Text(L("Searching local dictionaries…"))
-                        .font(.system(size: 12))
+            Spacer(minLength: 4)
+
+            // Audio Pronunciation Button
+            pronunciationControl(
+                kind: .word,
+                hasText: !content.word.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            )
+
+            // Minimalist Anki Action Button
+            if case .results(let entries) = content.yomitanLookupState, let first = entries.first {
+                Button {
+                    model.prepareAnkiNote(for: first, contextSentence: content.contextSentence)
+                } label: {
+                    Image(systemName: "rectangle.stack.badge.plus")
+                        .font(.system(size: 11, weight: .semibold))
                         .foregroundStyle(.secondary)
+                        .frame(width: 22, height: 22)
+                        .background(Circle().fill(.secondary.opacity(0.1)))
                 }
-                .padding(.horizontal, 18)
+                .buttonStyle(.plain)
+                .help(L("Add to Anki"))
+            }
+
+            // Dismiss Button
+            Button {
+                model.dismissOverlay()
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(.secondary)
+                    .frame(width: 20, height: 20)
+                    .background(Circle().fill(.secondary.opacity(0.1)))
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 14)
+        .padding(.bottom, 8)
+    }
+
+    @ViewBuilder
+    private func cleanDefinitionsBody(content: OverlayContent) -> some View {
+        switch content.yomitanLookupState {
+        case .notRequested, .loading:
+            HStack(spacing: 8) {
+                ProgressView().controlSize(.small)
+                Text(L("Searching…"))
+                    .font(.system(size: 12))
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 14)
+
+        case .noResults:
+            Text(L("No definition found."))
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 16)
                 .padding(.bottom, 14)
-            case .notConnected:
-                HStack(spacing: 6) {
-                    Image(systemName: "exclamationmark.circle")
-                        .font(.system(size: 11))
-                        .foregroundStyle(.orange)
-                    Text(L("Base de données locale introuvable"))
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundStyle(.secondary)
-                    Spacer()
-                    Button(L("Réessayer")) {
-                        Task { await model.retryYomitanLookup() }
-                    }
-                    .controlSize(.mini)
-                }
-                .padding(.horizontal, 18)
-                .padding(.bottom, 8)
-            case .noResults:
-                dictionaryStatusRow(text: L("No Japanese dictionary results."))
-            case .failed(let message):
-                dictionaryStatusRow(text: message.isEmpty ? L("Yomitan returned an invalid response.") : message)
-            case .results(let results):
-                let language = model.settings.yomitanPreferredGlossaryLanguage
-                let visible = results.filter { result in
-                    language == "all" || model.settings.yomitanDictionaryLanguages[result.dictionary] == language
-                }
-                if visible.isEmpty {
-                    dictionaryStatusRow(text: language == "all"
-                        ? L("No Japanese dictionary results.")
-                        : L("No results for this glossary language."))
-                } else {
-                    VStack(alignment: .leading, spacing: 10) {
-                        ForEach(Array(visible.prefix(12))) { result in
-                            yomitanEntryRow(result)
+
+        case .failed(let message):
+            Text(message.isEmpty ? L("No definition found.") : message)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 14)
+
+        case .notConnected:
+            HStack(spacing: 6) {
+                Image(systemName: "exclamationmark.circle")
+                    .font(.system(size: 11))
+                    .foregroundStyle(.orange)
+                Text(L("Base de données locale introuvable"))
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 14)
+
+        case .results(let entries):
+            VStack(alignment: .leading, spacing: 8) {
+                ForEach(Array(entries.prefix(3))) { entry in
+                    VStack(alignment: .leading, spacing: 5) {
+                        // Pronunciation / Reading Title for this translation block
+                        if let reading = entry.reading, !reading.isEmpty {
+                            Text(reading)
+                                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                                .foregroundStyle(Color.accentColor)
+                        } else if entry.term != content.word {
+                            Text(entry.term)
+                                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                                .foregroundStyle(Color.accentColor)
+                        }
+
+                        // Clean definition list
+                        VStack(alignment: .leading, spacing: 4) {
+                            ForEach(Array(entry.glosses.prefix(5).enumerated()), id: \.offset) { idx, gloss in
+                                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                                    if entry.glosses.count > 1 {
+                                        Text("\(idx + 1).")
+                                            .font(.system(size: 11, weight: .semibold, design: .rounded))
+                                            .foregroundStyle(.secondary.opacity(0.8))
+                                            .frame(minWidth: 14, alignment: .trailing)
+                                    } else {
+                                        Circle()
+                                            .fill(Color.accentColor.opacity(0.8))
+                                            .frame(width: 4, height: 4)
+                                            .padding(.top, 4)
+                                    }
+
+                                    Text(gloss)
+                                        .font(.system(size: 12.5, weight: .regular, design: .rounded))
+                                        .foregroundStyle(.primary)
+                                        .lineSpacing(2)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+                            }
                         }
                     }
-                    .padding(.horizontal, 18)
-                    .padding(.bottom, 14)
-                }
-            }
-        }
-    }
-
-    private var glossaryFilterMenu: some View {
-        Menu {
-            Button(L("All glossaries")) {
-                model.settings.yomitanPreferredGlossaryLanguage = "all"
-            }
-            ForEach(YomitanGlossaryLanguage.allCases.filter {
-                model.settings.yomitanDictionaryLanguages.values.contains($0.rawValue)
-            }) { language in
-                Button(language.title) {
-                    model.settings.yomitanPreferredGlossaryLanguage = language.rawValue
-                }
-            }
-        } label: {
-            HStack(spacing: 4) {
-                Text(glossaryLanguageTitle(model.settings.yomitanPreferredGlossaryLanguage))
-                    .lineLimit(1)
-                Image(systemName: "chevron.down")
-                    .font(.system(size: 8, weight: .bold))
-            }
-            .font(.system(size: 10, weight: .medium))
-            .foregroundStyle(.secondary)
-        }
-        .menuStyle(.borderlessButton)
-        .fixedSize()
-    }
-
-    private func glossaryLanguageTitle(_ identifier: String) -> String {
-        guard identifier != "all",
-              let language = YomitanGlossaryLanguage(rawValue: identifier) else {
-            return L("All glossaries")
-        }
-        return language.title
-    }
-
-    private func yomitanEntryRow(_ result: YomitanTermResult) -> some View {
-        VStack(alignment: .leading, spacing: 5) {
-            HStack(alignment: .firstTextBaseline, spacing: 7) {
-                Text(result.term)
-                    .font(.system(size: 15, weight: .semibold, design: .rounded))
-                    .foregroundStyle(.primary)
-                if let reading = result.reading, !reading.isEmpty, reading != result.term {
-                    Text(reading)
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundStyle(.secondary)
-                }
-                Spacer(minLength: 0)
-
-                Button {
-                    if case .result(let content) = model.overlayState {
-                        model.prepareAnkiNote(for: result, contextSentence: content.contextSentence)
+                    if entry.id != entries.prefix(3).last?.id {
+                        Divider().padding(.vertical, 4).opacity(0.3)
                     }
-                } label: {
-                    HStack(spacing: 3) {
-                        Image(systemName: "rectangle.stack.badge.plus")
-                        Text(L("Add to Anki"))
-                    }
-                    .font(.system(size: 10, weight: .medium))
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 3)
-                }
-                .buttonStyle(.bordered)
-                .controlSize(.mini)
-            }
-            HStack(spacing: 5) {
-                Text(result.dictionary)
-                    .foregroundStyle(Color.accentColor)
-                    .lineLimit(1)
-                Text("·")
-                    .foregroundStyle(.tertiary)
-                Text(model.settings.yomitanDictionaryLanguages[result.dictionary].map(glossaryLanguageTitle) ?? L("Not assigned"))
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-            }
-            .font(.system(size: 10, weight: .medium))
-            ForEach(Array(result.glosses.prefix(6).enumerated()), id: \.offset) { item in
-                HStack(alignment: .firstTextBaseline, spacing: 6) {
-                    Circle().fill(Color.secondary.opacity(0.6)).frame(width: 3, height: 3)
-                    Text(item.element)
-                        .font(.system(size: 12))
-                        .foregroundStyle(.primary.opacity(0.9))
-                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 14)
         }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 10)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.primary.opacity(colorScheme == .dark ? 0.045 : 0.035), in: RoundedRectangle(cornerRadius: 9))
     }
 
     private var paragraphLoadingView: some View {

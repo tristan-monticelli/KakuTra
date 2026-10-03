@@ -213,6 +213,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
             }
             .store(in: &cancellables)
 
+        // Inter-process debug preview listener for visual validation & screenshots
+        DistributedNotificationCenter.default().addObserver(
+            forName: NSNotification.Name("kakuTraDebugPreview"),
+            object: nil,
+            queue: .main
+        ) { [weak self] note in
+            let word = (note.userInfo?["word"] as? String) ?? (note.object as? String) ?? "猫"
+            Task { @MainActor in
+                await self?.model.showPreviewWordOverlay(word: word)
+            }
+        }
+
         #if DEBUG
         // Listen for debugShowChannelSelector changes to refresh settings window size
         model.settings.$debugShowChannelSelector
