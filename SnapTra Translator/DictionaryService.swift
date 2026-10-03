@@ -40,7 +40,7 @@ final class DictionaryService {
 
     /// Fast, clean Apple System Dictionary parser that extracts reading/pos and structured glosses
     /// for French, English, German, Spanish, and other Latin languages.
-    func lookupAppleSystemClean(_ word: String) -> (reading: String?, glosses: [String])? {
+    func lookupAppleSystemClean(_ word: String) -> (reading: String?, tags: [String], glosses: [String])? {
         let trimmed = word.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return nil }
         let cfWord = trimmed as CFString
@@ -122,8 +122,11 @@ final class DictionaryService {
         }
 
         guard !glosses.isEmpty else { return nil }
-        let reading = phonetic ?? pos
-        return (reading, Array(glosses.prefix(5)))
+        var tags: [String] = []
+        if let pos = pos, !pos.isEmpty {
+            tags.append(pos.capitalized)
+        }
+        return (phonetic, tags, Array(glosses.prefix(5)))
     }
 
     /// Queries a single dictionary source and returns the matching entry.

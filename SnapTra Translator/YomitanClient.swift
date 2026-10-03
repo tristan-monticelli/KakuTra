@@ -5,8 +5,23 @@ struct YomitanTermResult: Equatable, Identifiable, Sendable {
     let reading: String?
     let dictionary: String
     let glosses: [String]
+    let tags: [String]
 
-    var id: String { "\(dictionary)|\(term)|\(reading ?? "")|\(glosses.joined(separator: "\u{1f}"))" }
+    init(
+        term: String,
+        reading: String?,
+        dictionary: String,
+        glosses: [String],
+        tags: [String] = []
+    ) {
+        self.term = term
+        self.reading = reading
+        self.dictionary = dictionary
+        self.glosses = glosses
+        self.tags = tags
+    }
+
+    var id: String { "\(dictionary)|\(term)|\(reading ?? "")|\(tags.joined(separator: ","))|\(glosses.joined(separator: "\u{1f}"))" }
 }
 
 struct YomitanToken: Equatable, Sendable {

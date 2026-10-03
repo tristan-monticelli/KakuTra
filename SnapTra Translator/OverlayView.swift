@@ -425,31 +425,57 @@ struct OverlayView: View {
 
     @ViewBuilder
     private func cleanWordHeader(content: OverlayContent) -> some View {
-        HStack(alignment: .center, spacing: 8) {
-            // Main Headword
-            Text(content.word)
-                .font(.system(size: 20, weight: .bold, design: .rounded))
-                .foregroundStyle(.primary)
-                .lineLimit(1)
+        let firstEntry: YomitanTermResult? = {
+            if case .results(let entries) = content.yomitanLookupState {
+                return entries.first
+            }
+            return nil
+        }()
 
-            Spacer(minLength: 4)
+        HStack(alignment: .center, spacing: 10) {
+            // Main Headword + Inline Reading + Audio Speaker
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Text(content.word)
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
 
-            // Audio Pronunciation Button
-            pronunciationControl(
-                kind: .word,
-                hasText: !content.word.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            )
+                // Inline Reading (Furigana / Pinyin / IPA)
+                if let reading = firstEntry?.reading, !reading.isEmpty, reading != content.word {
+                    Text(reading)
+                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                        .foregroundStyle(Color.accentColor)
+                        .lineLimit(1)
+                }
+
+                // Minimalist Audio Pronunciation Speaker
+                if !content.word.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    Button {
+                        model.playOverlayPronunciation(kind: .word)
+                    } label: {
+                        Image(systemName: model.isPronunciationPlaying(kind: .word) ? "waveform" : "speaker.wave.2")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(model.isPronunciationPlaying(kind: .word) ? Color.accentColor : .secondary)
+                            .frame(width: 24, height: 24)
+                            .background(Circle().fill(Color.primary.opacity(0.06)))
+                    }
+                    .buttonStyle(.plain)
+                    .help(L("Play pronunciation"))
+                }
+            }
+
+            Spacer(minLength: 8)
 
             // Minimalist Anki Action Button
-            if case .results(let entries) = content.yomitanLookupState, let first = entries.first {
+            if let first = firstEntry {
                 Button {
                     model.prepareAnkiNote(for: first, contextSentence: content.contextSentence)
                 } label: {
                     Image(systemName: "rectangle.stack.badge.plus")
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundStyle(.secondary)
-                        .frame(width: 22, height: 22)
-                        .background(Circle().fill(.secondary.opacity(0.1)))
+                        .frame(width: 24, height: 24)
+                        .background(Circle().fill(Color.primary.opacity(0.06)))
                 }
                 .buttonStyle(.plain)
                 .help(L("Add to Anki"))
@@ -460,15 +486,16 @@ struct OverlayView: View {
                 model.dismissOverlay()
             } label: {
                 Image(systemName: "xmark")
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.system(size: 10, weight: .bold))
                     .foregroundStyle(.secondary)
-                    .frame(width: 20, height: 20)
-                    .background(Circle().fill(.secondary.opacity(0.1)))
+                    .frame(width: 22, height: 22)
+                    .background(Circle().fill(Color.primary.opacity(0.06)))
             }
             .buttonStyle(.plain)
+            .help(L("Close"))
         }
-        .padding(.horizontal, 16)
-        .padding(.top, 14)
+        .padding(.horizontal, 18)
+        .padding(.top, 16)
         .padding(.bottom, 8)
     }
 
@@ -482,22 +509,22 @@ struct OverlayView: View {
                     .font(.system(size: 12))
                     .foregroundStyle(.secondary)
             }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 14)
+            .padding(.horizontal, 18)
+            .padding(.bottom, 16)
 
         case .noResults:
             Text(L("No definition found."))
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(.secondary)
-                .padding(.horizontal, 16)
-                .padding(.bottom, 14)
+                .padding(.horizontal, 18)
+                .padding(.bottom, 16)
 
         case .failed(let message):
             Text(message.isEmpty ? L("No definition found.") : message)
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(.secondary)
-                .padding(.horizontal, 16)
-                .padding(.bottom, 14)
+                .padding(.horizontal, 18)
+                .padding(.bottom, 16)
 
         case .notConnected:
             HStack(spacing: 6) {
@@ -508,33 +535,59 @@ struct OverlayView: View {
                     .font(.system(size: 11, weight: .medium))
                     .foregroundStyle(.secondary)
             }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 14)
+            .padding(.horizontal, 18)
+            .padding(.bottom, 16)
 
         case .results(let entries):
-            VStack(alignment: .leading, spacing: 8) {
-                ForEach(Array(entries.prefix(3))) { entry in
-                    VStack(alignment: .leading, spacing: 5) {
-                        // Pronunciation / Reading Title for this translation block
-                        if let reading = entry.reading, !reading.isEmpty {
-                            Text(reading)
-                                .font(.system(size: 13, weight: .semibold, design: .rounded))
-                                .foregroundStyle(Color.accentColor)
-                        } else if entry.term != content.word {
-                            Text(entry.term)
-                                .font(.system(size: 13, weight: .semibold, design: .rounded))
-                                .foregroundStyle(Color.accentColor)
+            VStack(alignment: .leading, spacing: 10) {
+                ForEach(Array(entries.prefix(3).enumerated()), id: \.element.id) { index, entry in
+                    VStack(alignment: .leading, spacing: 6) {
+                        // For secondary entries (index > 0): show secondary reading & tags
+                        if index > 0 {
+                            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                                if let reading = entry.reading, !reading.isEmpty {
+                                    Text(reading)
+                                        .font(.system(size: 13.5, weight: .semibold, design: .rounded))
+                                        .foregroundStyle(Color.accentColor)
+                                } else if entry.term != content.word {
+                                    Text(entry.term)
+                                        .font(.system(size: 13.5, weight: .semibold, design: .rounded))
+                                        .foregroundStyle(Color.accentColor)
+                                }
+
+                                ForEach(entry.tags, id: \.self) { tag in
+                                    Text(tag)
+                                        .font(.system(size: 9.5, weight: .semibold, design: .rounded))
+                                        .foregroundStyle(.secondary)
+                                        .padding(.horizontal, 6)
+                                        .padding(.vertical, 2)
+                                        .background(Color.secondary.opacity(0.12), in: Capsule())
+                                }
+                            }
+                        } else if !entry.tags.isEmpty {
+                            // Primary entry tags (e.g. [Noun], [Common])
+                            HStack(spacing: 6) {
+                                ForEach(entry.tags, id: \.self) { tag in
+                                    Text(tag)
+                                        .font(.system(size: 10, weight: .semibold, design: .rounded))
+                                        .foregroundStyle(Color.accentColor)
+                                        .padding(.horizontal, 7)
+                                        .padding(.vertical, 2.5)
+                                        .background(Color.accentColor.opacity(0.12), in: Capsule())
+                                }
+                            }
+                            .padding(.bottom, 2)
                         }
 
                         // Clean definition list
-                        VStack(alignment: .leading, spacing: 4) {
-                            ForEach(Array(entry.glosses.prefix(5).enumerated()), id: \.offset) { idx, gloss in
-                                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                        VStack(alignment: .leading, spacing: 5) {
+                            ForEach(Array(entry.glosses.prefix(4).enumerated()), id: \.offset) { idx, gloss in
+                                HStack(alignment: .firstTextBaseline, spacing: 7) {
                                     if entry.glosses.count > 1 {
                                         Text("\(idx + 1).")
-                                            .font(.system(size: 11, weight: .semibold, design: .rounded))
-                                            .foregroundStyle(.secondary.opacity(0.8))
-                                            .frame(minWidth: 14, alignment: .trailing)
+                                            .font(.system(size: 11.5, weight: .semibold, design: .rounded))
+                                            .foregroundStyle(.secondary.opacity(0.75))
+                                            .frame(minWidth: 15, alignment: .trailing)
                                     } else {
                                         Circle()
                                             .fill(Color.accentColor.opacity(0.8))
@@ -543,21 +596,22 @@ struct OverlayView: View {
                                     }
 
                                     Text(gloss)
-                                        .font(.system(size: 12.5, weight: .regular, design: .rounded))
+                                        .font(.system(size: 13, weight: .regular, design: .rounded))
                                         .foregroundStyle(.primary)
-                                        .lineSpacing(2)
+                                        .lineSpacing(2.5)
                                         .fixedSize(horizontal: false, vertical: true)
                                 }
                             }
                         }
                     }
-                    if entry.id != entries.prefix(3).last?.id {
-                        Divider().padding(.vertical, 4).opacity(0.3)
+
+                    if index < min(entries.count, 3) - 1 {
+                        Divider().padding(.vertical, 2).opacity(0.4)
                     }
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 14)
+            .padding(.horizontal, 18)
+            .padding(.bottom, 16)
         }
     }
 

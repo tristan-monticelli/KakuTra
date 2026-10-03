@@ -440,6 +440,182 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
         return candidates
     }
 
+    private static let knownJapanesePOSTags: Set<String> = [
+        "n", "noun", "pronoun", "prefix", "pref", "suf", "suffix", "exp", "expression",
+        "v1", "1-dan", "ichidan verb", "ichidan", "v5", "5-dan", "godan verb", "godan",
+        "v5k", "v5s", "v5t", "v5n", "v5m", "v5r", "v5w", "v5g", "v5b", "v5k-s",
+        "vs", "suru verb", "suru", "vk", "kuru verb",
+        "vt", "transitive", "transitive verb", "vi", "intransitive", "intransitive verb",
+        "adj-i", "i-adj", "adjective", "adjective (keiyoushi)",
+        "adj-na", "na-adj", "adjectival noun", "adjective (keiyoudoushi)",
+        "adj-no", "adj-pn", "adj-t", "adj-f",
+        "adv", "adverb", "adverb (fukushi)", "adv-to",
+        "conj", "conjunction", "int", "interjection", "prt", "particle", "ctr", "counter",
+        "num", "numeric", "pn", "proper noun",
+        "archaic", "slang", "colloquialism", "colloquial", "vulgar", "obscure", "rare",
+        "yojijukugo", "idiomatic expression", "idiom", "derogatory", "dated", "historical",
+        "honorific", "humble", "polite", "familiar", "formal", "children's language",
+        "male term", "female term", "jocular", "poetic", "sensitive", "proverb",
+        "euphemism", "usually written using kana alone", "uk"
+    ]
+
+    private func cleanJitendexEntry(
+        term: String,
+        reading: String?,
+        rawGlossary: String,
+        rawPos: String?
+    ) -> (tags: [String], glosses: [String]) {
+        var tags: [String] = []
+        var glosses: [String] = []
+
+        if let rawPos = rawPos?.trimmingCharacters(in: .whitespacesAndNewlines), !rawPos.isEmpty {
+            if rawPos.contains("★") || rawPos.localizedCaseInsensitiveContains("priority") {
+                tags.append("Common")
+            }
+            let posComponents = rawPos.components(separatedBy: CharacterSet.whitespacesAndNewlines)
+                .filter { !$0.isEmpty && !$0.contains("★") && !$0.localizedCaseInsensitiveContains("priority") && $0 != "form" }
+            for comp in posComponents {
+                let cap = comp.capitalized
+                if !tags.contains(cap) { tags.append(cap) }
+            }
+        }
+
+        let rawLines = rawGlossary.components(separatedBy: "\n")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+
+        for line in rawLines {
+            // Stop at first Japanese example sentence, cross reference arrow, or "See also"
+            if line.range(of: "\\p{Hiragana}|\\p{Katakana}", options: .regularExpression) != nil ||
+               line.hasPrefix("⟶") ||
+               line.hasPrefix("See also") ||
+               line.hasPrefix("See ") ||
+               line.hasPrefix("Note") {
+                break
+            }
+
+            let lower = line.lowercased()
+            if ["jmdict", "jitendex", "tatoeba", "edict", "kanjidic", "edrdg"].contains(lower) {
+                continue
+            }
+
+            let stripped = lower.trimmingCharacters(in: CharacterSet(charactersIn: "()[]"))
+            if Self.knownJapanesePOSTags.contains(stripped) || stripped.hasPrefix("5-dan") || stripped.hasPrefix("1-dan") {
+                let cleanTag: String
+                switch stripped {
+                case "n", "noun": cleanTag = "Noun"
+                case "exp", "expression": cleanTag = "Exp"
+                case "vt", "transitive", "transitive verb": cleanTag = "Transitive"
+                case "vi", "intransitive", "intransitive verb": cleanTag = "Intransitive"
+                case "adj-i", "i-adj", "adjective", "adjective (keiyoushi)": cleanTag = "Adj-i"
+                case "adj-na", "na-adj", "adjectival noun": cleanTag = "Adj-na"
+                case "adv", "adverb", "adverb (fukushi)": cleanTag = "Adverb"
+                case "v1", "1-dan", "ichidan verb": cleanTag = "1-dan"
+                case let s where s.hasPrefix("5-dan"): cleanTag = "5-dan"
+                case "vs", "suru verb": cleanTag = "Suru"
+                case "archaic": cleanTag = "Archaic"
+                case "slang": cleanTag = "Slang"
+                case "colloquialism", "colloquial": cleanTag = "Colloquial"
+                default: cleanTag = stripped.capitalized
+                }
+                if !tags.contains(cleanTag) { tags.append(cleanTag) }
+                continue
+            }
+
+            // Exclude single isolated Kanji lines
+            if line.count <= 2 && line.range(of: "\\p{Han}", options: .regularExpression) != nil {
+                continue
+            }
+
+            glosses.append(line)
+        }
+
+        if glosses.isEmpty {
+            for line in rawLines {
+                let lower = line.lowercased()
+                if ["jmdict", "jitendex", "tatoeba"].contains(lower) { continue }
+                if line.range(of: "\\p{Hiragana}|\\p{Katakana}", options: .regularExpression) == nil {
+                    glosses.append(line)
+                    if glosses.count >= 3 { break }
+                }
+            }
+        }
+
+        return (tags, Array(glosses.prefix(5)))
+    }
+
+    private func cleanChineseEntry(
+        term: String,
+        reading: String?,
+        rawGlossary: String
+    ) -> (reading: String?, tags: [String], glosses: [String]) {
+        var text = rawGlossary.trimmingCharacters(in: .whitespacesAndNewlines)
+        if text.hasPrefix("【") {
+            if let closeIdx = text.range(of: "】") {
+                text = String(text[closeIdx.upperBound...]).trimmingCharacters(in: .whitespaces)
+            }
+        }
+        var tags: [String] = []
+        let tagPatterns = ["(ACG)", "(slang)", "(dialect)", "(coll.)", "(loanword)", "(idiom)"]
+        for p in tagPatterns {
+            if text.contains(p) {
+                tags.append(p.replacingOccurrences(of: "(", with: "").replacingOccurrences(of: ")", with: "").capitalized)
+                text = text.replacingOccurrences(of: p, with: "")
+            }
+        }
+        text = text.trimmingCharacters(in: .whitespaces)
+        let parts = text.components(separatedBy: CharacterSet(charactersIn: ";/"))
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+        return (reading, tags, Array(parts.prefix(4)))
+    }
+
+    private func cleanKoreanEntry(
+        term: String,
+        reading: String?,
+        rawGlossary: String,
+        rawPos: String?
+    ) -> (reading: String?, tags: [String], glosses: [String]) {
+        var resolvedReading = reading
+        var text = rawGlossary.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Ignore raw Wikipedia encyclopedia dumps
+        if text.contains("Wikipedia") || text.hasPrefix("«") {
+            return (nil, [], [])
+        }
+
+        if let hStart = text.range(of: "〔"), let hEnd = text.range(of: "〕", range: hStart.upperBound..<text.endIndex) {
+            let hanja = String(text[hStart.upperBound..<hEnd.lowerBound]).trimmingCharacters(in: .whitespaces)
+            if !hanja.isEmpty {
+                resolvedReading = hanja
+            }
+            text.removeSubrange(hStart.lowerBound...hEnd.upperBound)
+        }
+
+        if let m = text.range(of: "^[^a-zA-Z]+", options: .regularExpression) {
+            text = String(text[m.upperBound...]).trimmingCharacters(in: .whitespaces)
+        }
+
+        if let seeMore = text.range(of: "See More") {
+            text = String(text[..<seeMore.lowerBound]).trimmingCharacters(in: .whitespaces)
+        }
+
+        var tags: [String] = []
+        if let rawPos = rawPos?.trimmingCharacters(in: .whitespacesAndNewlines), !rawPos.isEmpty {
+            let parts = rawPos.components(separatedBy: " ").filter { !$0.isEmpty }
+            for p in parts {
+                tags.append(p)
+            }
+        }
+
+        let parts = text.components(separatedBy: ";")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty && $0.range(of: "[a-zA-Z]", options: .regularExpression) != nil }
+
+        let glosses = parts.isEmpty ? (text.isEmpty ? [term] : [text]) : parts
+        return (resolvedReading, tags, Array(glosses.prefix(4)))
+    }
+
     private func queryCandidates(_ candidates: [String], in db: OpaquePointer) -> [JapaneseDictionaryEntry] {
         guard !candidates.isEmpty else { return [] }
 
@@ -469,38 +645,45 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
                       let dictCString = sqlite3_column_text(stmt, 4) else { continue }
 
                 let term = String(cString: termCString)
-                let reading = sqlite3_column_text(stmt, 1).map { String(cString: $0) }
+                var reading = sqlite3_column_text(stmt, 1).map { String(cString: $0) }
                 let glossaryRaw = String(cString: glossaryCString)
+                let posRaw = sqlite3_column_text(stmt, 3).map { String(cString: $0) }
                 let dictionary = String(cString: dictCString)
 
                 let key = "\(dictionary)|\(term)|\(reading ?? "")"
                 if seenKeys.contains(key) { continue }
                 seenKeys.insert(key)
 
-                let rawGlosses = glossaryRaw.components(separatedBy: "\n")
-                    .map { $0.trimmingCharacters(in: .whitespaces) }
-                    .filter { !$0.isEmpty }
+                let tags: [String]
+                let glosses: [String]
 
-                // In English immersion definitions, exclude raw Japanese sentences, cross-references, and isolated Kanji
-                let filteredGlosses = rawGlosses.filter { line in
-                    if line.range(of: "\\p{Hiragana}|\\p{Katakana}", options: .regularExpression) != nil {
-                        return false
+                if dictionary == "CC-CEDICT" || db == chineseDb {
+                    let parsed = cleanChineseEntry(term: term, reading: reading, rawGlossary: glossaryRaw)
+                    reading = parsed.reading
+                    tags = parsed.tags
+                    glosses = parsed.glosses
+                } else if dictionary == "KRDICT" || db == koreanDb {
+                    if dictionary.contains("Wikipedia") || glossaryRaw.contains("Wikipedia") {
+                        continue
                     }
-                    if line.count <= 4 && line.range(of: "\\p{Han}", options: .regularExpression) != nil {
-                        return false
-                    }
-                    if line.hasPrefix("See also") {
-                        return false
-                    }
-                    return true
+                    let parsed = cleanKoreanEntry(term: term, reading: reading, rawGlossary: glossaryRaw, rawPos: posRaw)
+                    reading = parsed.reading
+                    tags = parsed.tags
+                    glosses = parsed.glosses
+                } else {
+                    let parsed = cleanJitendexEntry(term: term, reading: reading, rawGlossary: glossaryRaw, rawPos: posRaw)
+                    tags = parsed.tags
+                    glosses = parsed.glosses
                 }
-                let glosses = filteredGlosses.isEmpty ? rawGlosses : filteredGlosses
+
+                guard !glosses.isEmpty else { continue }
 
                 let entry = JapaneseDictionaryEntry(
                     term: term,
                     reading: reading,
                     dictionary: dictionary,
-                    glosses: glosses
+                    glosses: glosses,
+                    tags: tags
                 )
                 entries.append(entry)
 
@@ -510,7 +693,8 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
             if entries.count >= 15 { break }
         }
 
-        return entries
+        let vocabEntries = entries.filter { $0.dictionary != "Names" && !$0.dictionary.contains("Wikipedia") }
+        return vocabEntries.isEmpty ? entries : vocabEntries
     }
 
     // MARK: - Japanese De-inflection Engine

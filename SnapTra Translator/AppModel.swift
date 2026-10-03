@@ -1658,6 +1658,7 @@ final class AppModel: ObservableObject {
     }
 
     func showPreviewWordOverlay(word: String, mouseLocation: CGPoint = CGPoint(x: 600, y: 500)) async {
+        isTapKeptOverlayPresented = true
         let request = SinglePressLookupRequest(
             lookupID: UUID(),
             mouseLocation: mouseLocation,
@@ -1862,7 +1863,8 @@ final class AppModel: ObservableObject {
                 term: word,
                 reading: appleResult.reading,
                 dictionary: "",
-                glosses: appleResult.glosses
+                glosses: appleResult.glosses,
+                tags: appleResult.tags
             )
             await performLocalDictionaryWordLookup(
                 word,
@@ -1889,11 +1891,13 @@ final class AppModel: ObservableObject {
         ) {
             let glosses = entry.definitions.map { $0.translation ?? $0.meaning }.filter { !$0.isEmpty }
             if !glosses.isEmpty {
+                let tags = entry.definitions.compactMap { $0.partOfSpeech }.filter { !$0.isEmpty }
                 let result = YomitanTermResult(
                     term: word,
                     reading: entry.phonetic,
                     dictionary: "",
-                    glosses: glosses
+                    glosses: glosses,
+                    tags: tags
                 )
                 await performLocalDictionaryWordLookup(
                     word,
