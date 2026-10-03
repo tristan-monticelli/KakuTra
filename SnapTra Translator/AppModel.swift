@@ -3242,9 +3242,7 @@ final class AppModel: ObservableObject {
             } else {
                 showOverlayWindowForActiveLookup(makeKey: isParagraphOverlayPresented)
             }
-            if activeLookupMode == .ocrSentence || isTapKeptOverlayPresented || !settings.continuousTranslation {
-                overlayWindowController.setInteractive(true)
-            }
+            overlayWindowController.setInteractive(true)
         default:
             publishOverlayStateIfNeeded(state, wasWindowVisible: wasWindowVisible)
             if overlayWindowController.isVisible {

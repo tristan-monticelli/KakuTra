@@ -237,6 +237,7 @@ struct OverlayView: View {
                 cleanWordHeader(content: content)
                 cleanDefinitionsBody(content: content)
             }
+            .textSelection(.enabled)
         }
     }
 
@@ -2340,7 +2341,7 @@ enum WordOverlayTextSelectionPolicy {
         isWordOverlayMode: Bool,
         showsWordOverlayControls: Bool
     ) -> Bool {
-        isWordOverlayMode && showsWordOverlayControls
+        true
     }
 }
 

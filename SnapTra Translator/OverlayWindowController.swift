@@ -5,6 +5,11 @@ import SwiftUI
 private final class OverlayPanel: NSPanel {
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { true }
+
+    override var acceptsMouseMovedEvents: Bool {
+        get { true }
+        set { }
+    }
 }
 
 private final class ManualRegionSelectionPanel: NSPanel {
@@ -1219,7 +1224,8 @@ final class OverlayWindowController: NSWindowController {
         panel.hasShadow = false
         panel.level = .statusBar
         panel.collectionBehavior = Self.allSpacesCollectionBehavior
-        panel.ignoresMouseEvents = true
+        panel.acceptsMouseMovedEvents = true
+        panel.ignoresMouseEvents = false
         panel.isMovableByWindowBackground = false
         super.init(window: panel)
         CaptureExclusionRegistry.shared.register(panel)
@@ -1228,9 +1234,6 @@ final class OverlayWindowController: NSWindowController {
     /// 设置窗口是否接受鼠标事件
     func setInteractive(_ interactive: Bool) {
         window?.ignoresMouseEvents = !interactive
-        if interactive {
-            window?.makeKey()
-        }
     }
 
     func isMouseInside(point: CGPoint) -> Bool {
