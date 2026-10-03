@@ -563,11 +563,20 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
                 text = text.replacingOccurrences(of: p, with: "")
             }
         }
-        text = text.trimmingCharacters(in: .whitespaces)
+        text = text.replacingOccurrences(of: #"\s*CL:[^\s;/]+"#, with: "", options: .regularExpression).trimmingCharacters(in: .whitespaces)
         let parts = text.components(separatedBy: CharacterSet(charactersIn: ";/"))
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty }
-        return (reading, tags, Array(parts.prefix(4)))
+
+        var glosses: [String] = []
+        for p in parts {
+            if p.hasPrefix("CL:") {
+                continue
+            }
+            glosses.append(p)
+        }
+
+        return (reading, tags, Array(glosses.prefix(4)))
     }
 
     private func cleanKoreanEntry(
@@ -580,7 +589,7 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
         var text = rawGlossary.trimmingCharacters(in: .whitespacesAndNewlines)
 
         // Ignore raw Wikipedia encyclopedia dumps
-        if text.contains("Wikipedia") || text.hasPrefix("«") {
+        if text.contains("Wikipedia") || text.hasPrefix("«") || text.hasPrefix("(") {
             return (nil, [], [])
         }
 
@@ -592,27 +601,58 @@ final class JapaneseDictionaryService: ObservableObject, @unchecked Sendable {
             text.removeSubrange(hStart.lowerBound...hEnd.upperBound)
         }
 
-        if let m = text.range(of: "^[^a-zA-Z]+", options: .regularExpression) {
-            text = String(text[m.upperBound...]).trimmingCharacters(in: .whitespaces)
-        }
-
         if let seeMore = text.range(of: "See More") {
             text = String(text[..<seeMore.lowerBound]).trimmingCharacters(in: .whitespaces)
         }
 
+        if text.hasPrefix(term) {
+            text = String(text.dropFirst(term.count)).trimmingCharacters(in: .whitespaces)
+        }
+        text = text.replacingOccurrences(of: #"^\d+\.\s*"#, with: "", options: .regularExpression).trimmingCharacters(in: .whitespaces)
+
+        if let m = text.range(of: "^[^a-zA-Z]+", options: .regularExpression) {
+            text = String(text[m.upperBound...]).trimmingCharacters(in: .whitespaces)
+        }
+
+        // Strict POS extraction: NEVER include stars or emoji
         var tags: [String] = []
         if let rawPos = rawPos?.trimmingCharacters(in: .whitespacesAndNewlines), !rawPos.isEmpty {
-            let parts = rawPos.components(separatedBy: " ").filter { !$0.isEmpty }
+            let parts = rawPos.components(separatedBy: CharacterSet.whitespacesAndNewlines)
             for p in parts {
-                tags.append(p)
+                if p.contains("⭐") || p.contains("★") { continue }
+                let cleaned = p.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+                if !cleaned.isEmpty && !tags.contains(cleaned.capitalized) {
+                    tags.append(cleaned.capitalized)
+                }
             }
         }
 
-        let parts = text.components(separatedBy: ";")
+        // Extract translation keywords vs explanatory sentence (e.g. "A small animal...", "One's relatives...")
+        let sentencePattern = #"(?<=\S)\s+([A-Z][a-z]*(?:\s+[a-z]+){2,}.*)$"#
+        var explanation: String? = nil
+        var keywordsPart = text
+        if let match = text.range(of: sentencePattern, options: .regularExpression) {
+            explanation = String(text[match]).trimmingCharacters(in: .whitespaces)
+            keywordsPart = String(text[..<match.lowerBound]).trimmingCharacters(in: .whitespaces)
+        }
+
+        var glosses: [String] = []
+        let kwList = keywordsPart.components(separatedBy: ";")
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty && $0.range(of: "[a-zA-Z]", options: .regularExpression) != nil }
 
-        let glosses = parts.isEmpty ? (text.isEmpty ? [term] : [text]) : parts
+        for kw in kwList {
+            if !glosses.contains(kw) {
+                glosses.append(kw)
+            }
+        }
+
+        if let explanation = explanation, !explanation.isEmpty {
+            glosses.append(explanation)
+        } else if glosses.isEmpty {
+            glosses = [text]
+        }
+
         return (resolvedReading, tags, Array(glosses.prefix(4)))
     }
 

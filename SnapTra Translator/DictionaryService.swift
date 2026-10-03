@@ -67,6 +67,20 @@ final class DictionaryService {
             }
         }
 
+        if var p = phonetic {
+            p = p.replacingOccurrences(of: "BrE ", with: "")
+            p = p.replacingOccurrences(of: "AmE ", with: "")
+            if let comma = p.firstIndex(of: ",") {
+                p = String(p[..<comma])
+            }
+            p = p.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !p.isEmpty {
+                phonetic = p.hasPrefix("/") ? p : "/\(p)/"
+            } else {
+                phonetic = nil
+            }
+        }
+
         // 2. Strip headword prefix if text starts with it
         if text.hasPrefix(trimmed) {
             text = String(text.dropFirst(trimmed.count)).trimmingCharacters(in: .whitespaces)
@@ -98,6 +112,14 @@ final class DictionaryService {
                         if let ant = d.range(of: "ANTONYME") { d = String(d[..<ant.lowerBound]) }
                         if let note = d.range(of: "Note ") { d = String(d[..<note.lowerBound]) }
                         if let pipe = d.range(of: " | ") { d = String(d[..<pipe.lowerBound]) }
+                        if let arrow = d.range(of: "▸") {
+                            let before = String(d[..<arrow.lowerBound]).trimmingCharacters(in: .whitespacesAndNewlines)
+                            if !before.isEmpty {
+                                d = before
+                            } else {
+                                continue
+                            }
+                        }
                         d = d.trimmingCharacters(in: .whitespacesAndNewlines)
                         if !d.isEmpty {
                             glosses.append(d)
@@ -113,11 +135,13 @@ final class DictionaryService {
             if let phr = clean.range(of: "PHRASAL") { clean = String(clean[..<phr.lowerBound]) }
             if let loc = clean.range(of: "LOCUTION") { clean = String(clean[..<loc.lowerBound]) }
             if let note = clean.range(of: "Note ") { clean = String(clean[..<note.lowerBound]) }
-            let items = clean.components(separatedBy: ";").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
+            if let arrow = clean.range(of: "▸") { clean = String(clean[..<arrow.lowerBound]) }
+            let trimChars = CharacterSet.whitespacesAndNewlines.union(CharacterSet(charactersIn: ";,"))
+            let items = clean.components(separatedBy: ";").map { $0.trimmingCharacters(in: trimChars) }.filter { !$0.isEmpty }
             if items.count > 1 {
                 glosses = Array(items.prefix(4))
-            } else if !clean.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                glosses = [clean.trimmingCharacters(in: .whitespacesAndNewlines)]
+            } else if !clean.trimmingCharacters(in: trimChars).isEmpty {
+                glosses = [clean.trimmingCharacters(in: trimChars)]
             }
         }
 

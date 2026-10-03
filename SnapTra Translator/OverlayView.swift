@@ -432,19 +432,19 @@ struct OverlayView: View {
             return nil
         }()
 
-        HStack(alignment: .center, spacing: 10) {
+        HStack(alignment: .center, spacing: 8) {
             // Main Headword + Inline Reading + Audio Speaker
             HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Text(content.word)
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .font(.system(size: 18, weight: .bold))
                     .foregroundStyle(.primary)
                     .lineLimit(1)
 
                 // Inline Reading (Furigana / Pinyin / IPA)
                 if let reading = firstEntry?.reading, !reading.isEmpty, reading != content.word {
                     Text(reading)
-                        .font(.system(size: 15, weight: .semibold, design: .rounded))
-                        .foregroundStyle(Color.accentColor)
+                        .font(.system(size: 13.5, weight: .regular))
+                        .foregroundStyle(.secondary)
                         .lineLimit(1)
                 }
 
@@ -454,10 +454,10 @@ struct OverlayView: View {
                         model.playOverlayPronunciation(kind: .word)
                     } label: {
                         Image(systemName: model.isPronunciationPlaying(kind: .word) ? "waveform" : "speaker.wave.2")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.system(size: 11.5, weight: .medium))
                             .foregroundStyle(model.isPronunciationPlaying(kind: .word) ? Color.accentColor : .secondary)
-                            .frame(width: 24, height: 24)
-                            .background(Circle().fill(Color.primary.opacity(0.06)))
+                            .frame(width: 20, height: 20)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                     .help(L("Play pronunciation"))
@@ -466,37 +466,38 @@ struct OverlayView: View {
 
             Spacer(minLength: 8)
 
-            // Minimalist Anki Action Button
-            if let first = firstEntry {
+            // Header Action Buttons
+            HStack(spacing: 4) {
+                if let first = firstEntry {
+                    Button {
+                        model.prepareAnkiNote(for: first, contextSentence: content.contextSentence)
+                    } label: {
+                        Image(systemName: "plus.rectangle.on.rectangle")
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundStyle(.secondary)
+                            .frame(width: 20, height: 20)
+                            .background(Color.primary.opacity(0.04), in: RoundedRectangle(cornerRadius: 4, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                    .help(L("Add to Anki"))
+                }
+
                 Button {
-                    model.prepareAnkiNote(for: first, contextSentence: content.contextSentence)
+                    model.dismissOverlay()
                 } label: {
-                    Image(systemName: "rectangle.stack.badge.plus")
-                        .font(.system(size: 11, weight: .semibold))
+                    Image(systemName: "xmark")
+                        .font(.system(size: 9.5, weight: .semibold))
                         .foregroundStyle(.secondary)
-                        .frame(width: 24, height: 24)
-                        .background(Circle().fill(Color.primary.opacity(0.06)))
+                        .frame(width: 20, height: 20)
+                        .background(Color.primary.opacity(0.04), in: RoundedRectangle(cornerRadius: 4, style: .continuous))
                 }
                 .buttonStyle(.plain)
-                .help(L("Add to Anki"))
+                .help(L("Close"))
             }
-
-            // Dismiss Button
-            Button {
-                model.dismissOverlay()
-            } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 10, weight: .bold))
-                    .foregroundStyle(.secondary)
-                    .frame(width: 22, height: 22)
-                    .background(Circle().fill(Color.primary.opacity(0.06)))
-            }
-            .buttonStyle(.plain)
-            .help(L("Close"))
         }
-        .padding(.horizontal, 18)
-        .padding(.top, 16)
-        .padding(.bottom, 8)
+        .padding(.horizontal, 16)
+        .padding(.top, 14)
+        .padding(.bottom, 6)
     }
 
     @ViewBuilder
@@ -509,22 +510,22 @@ struct OverlayView: View {
                     .font(.system(size: 12))
                     .foregroundStyle(.secondary)
             }
-            .padding(.horizontal, 18)
-            .padding(.bottom, 16)
+            .padding(.horizontal, 16)
+            .padding(.bottom, 14)
 
         case .noResults:
             Text(L("No definition found."))
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(.secondary)
-                .padding(.horizontal, 18)
-                .padding(.bottom, 16)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 14)
 
         case .failed(let message):
             Text(message.isEmpty ? L("No definition found.") : message)
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(.secondary)
-                .padding(.horizontal, 18)
-                .padding(.bottom, 16)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 14)
 
         case .notConnected:
             HStack(spacing: 6) {
@@ -535,83 +536,80 @@ struct OverlayView: View {
                     .font(.system(size: 11, weight: .medium))
                     .foregroundStyle(.secondary)
             }
-            .padding(.horizontal, 18)
-            .padding(.bottom, 16)
+            .padding(.horizontal, 16)
+            .padding(.bottom, 14)
 
         case .results(let entries):
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 8) {
                 ForEach(Array(entries.prefix(3).enumerated()), id: \.element.id) { index, entry in
                     VStack(alignment: .leading, spacing: 6) {
-                        // For secondary entries (index > 0): show secondary reading & tags
+                        // For secondary entries (index > 0): clean separator & title
                         if index > 0 {
-                            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                                if let reading = entry.reading, !reading.isEmpty {
-                                    Text(reading)
-                                        .font(.system(size: 13.5, weight: .semibold, design: .rounded))
-                                        .foregroundStyle(Color.accentColor)
-                                } else if entry.term != content.word {
-                                    Text(entry.term)
-                                        .font(.system(size: 13.5, weight: .semibold, design: .rounded))
-                                        .foregroundStyle(Color.accentColor)
-                                }
+                            Divider().opacity(0.3).padding(.vertical, 2)
+                            HStack(spacing: 6) {
+                                Text(entry.reading ?? entry.term)
+                                    .font(.system(size: 12.5, weight: .medium))
+                                    .foregroundStyle(.secondary)
 
                                 ForEach(entry.tags, id: \.self) { tag in
                                     Text(tag)
-                                        .font(.system(size: 9.5, weight: .semibold, design: .rounded))
+                                        .font(.system(size: 9.5, weight: .medium))
                                         .foregroundStyle(.secondary)
-                                        .padding(.horizontal, 6)
-                                        .padding(.vertical, 2)
-                                        .background(Color.secondary.opacity(0.12), in: Capsule())
+                                        .padding(.horizontal, 4)
+                                        .padding(.vertical, 1.5)
+                                        .background(Color.primary.opacity(0.05), in: RoundedRectangle(cornerRadius: 3, style: .continuous))
                                 }
                             }
                         } else if !entry.tags.isEmpty {
-                            // Primary entry tags (e.g. [Noun], [Common])
-                            HStack(spacing: 6) {
+                            // Primary entry metadata tags (e.g. [Common], [Noun])
+                            HStack(spacing: 5) {
                                 ForEach(entry.tags, id: \.self) { tag in
                                     Text(tag)
-                                        .font(.system(size: 10, weight: .semibold, design: .rounded))
-                                        .foregroundStyle(Color.accentColor)
-                                        .padding(.horizontal, 7)
-                                        .padding(.vertical, 2.5)
-                                        .background(Color.accentColor.opacity(0.12), in: Capsule())
+                                        .font(.system(size: 10, weight: .medium))
+                                        .foregroundStyle(tag == "Common" ? Color.accentColor : Color.secondary)
+                                        .padding(.horizontal, 5)
+                                        .padding(.vertical, 2)
+                                        .background(
+                                            (tag == "Common" ? Color.accentColor.opacity(0.12) : Color.primary.opacity(0.06)),
+                                            in: RoundedRectangle(cornerRadius: 3.5, style: .continuous)
+                                        )
                                 }
                             }
                             .padding(.bottom, 2)
                         }
 
-                        // Clean definition list
-                        VStack(alignment: .leading, spacing: 5) {
-                            ForEach(Array(entry.glosses.prefix(4).enumerated()), id: \.offset) { idx, gloss in
-                                HStack(alignment: .firstTextBaseline, spacing: 7) {
-                                    if entry.glosses.count > 1 {
+                        // Definition list: clean unnumbered text for single definition, aligned numbers for multi
+                        if entry.glosses.count == 1 {
+                            Text(entry.glosses[0])
+                                .font(.system(size: 13, weight: .regular))
+                                .foregroundStyle(index == 0 ? .primary : .secondary)
+                                .lineSpacing(3)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .padding(.leading, index > 0 ? 4 : 0)
+                        } else {
+                            VStack(alignment: .leading, spacing: 5) {
+                                ForEach(Array(entry.glosses.prefix(4).enumerated()), id: \.offset) { idx, gloss in
+                                    HStack(alignment: .top, spacing: 6) {
                                         Text("\(idx + 1).")
-                                            .font(.system(size: 11.5, weight: .semibold, design: .rounded))
-                                            .foregroundStyle(.secondary.opacity(0.75))
-                                            .frame(minWidth: 15, alignment: .trailing)
-                                    } else {
-                                        Circle()
-                                            .fill(Color.accentColor.opacity(0.8))
-                                            .frame(width: 4, height: 4)
-                                            .padding(.top, 4)
-                                    }
+                                            .font(.system(size: 12, weight: .regular))
+                                            .foregroundStyle(.secondary.opacity(0.7))
+                                            .frame(width: 14, alignment: .trailing)
 
-                                    Text(gloss)
-                                        .font(.system(size: 13, weight: .regular, design: .rounded))
-                                        .foregroundStyle(.primary)
-                                        .lineSpacing(2.5)
-                                        .fixedSize(horizontal: false, vertical: true)
+                                        Text(gloss)
+                                            .font(.system(size: 13, weight: .regular))
+                                            .foregroundStyle(index == 0 ? .primary : .secondary)
+                                            .lineSpacing(3)
+                                            .fixedSize(horizontal: false, vertical: true)
+                                    }
                                 }
                             }
+                            .padding(.leading, index > 0 ? 4 : 0)
                         }
-                    }
-
-                    if index < min(entries.count, 3) - 1 {
-                        Divider().padding(.vertical, 2).opacity(0.4)
                     }
                 }
             }
-            .padding(.horizontal, 18)
-            .padding(.bottom, 16)
+            .padding(.horizontal, 16)
+            .padding(.bottom, 14)
         }
     }
 
