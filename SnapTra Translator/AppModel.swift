@@ -1296,13 +1296,23 @@ final class AppModel: ObservableObject {
         if ankiConfirmationDraft != nil {
             return
         }
-        if overlayWindowController.isMouseInside(point: NSEvent.mouseLocation) {
+
+        let mouseLocation = NSEvent.mouseLocation
+        let isInside = overlayWindowController.isMouseInside(point: mouseLocation)
+
+        if isInside {
+            // User moved cursor into overlay card: make interactive for tooltips, text selection & buttons
             overlayWindowController.setInteractive(true)
             return
-        }
-        if isTapKeptOverlayPresented {
-            handleTapKeptOverlayMouseMoved()
-            return
+        } else {
+            if isTapKeptOverlayPresented {
+                handleTapKeptOverlayMouseMoved()
+                return
+            }
+            // Mouse is outside card: keep non-interactive so continuous hover scans cleanly
+            if settings.continuousTranslation {
+                overlayWindowController.setInteractive(false)
+            }
         }
 
         guard isHotkeyActive || isListening else { return }
@@ -1357,6 +1367,7 @@ final class AppModel: ObservableObject {
     }
 
     private func startLookup(at mouseLocation: CGPoint) {
+        paragraphHighlightWindowController.hide()
         activeLookupMode = .word
         hideInPlaceTranslation()
         cancelActiveLookupWork(outcome: .superseded)
@@ -1694,6 +1705,7 @@ final class AppModel: ObservableObject {
         contextSentence: String? = nil,
         request: SinglePressLookupRequest
     ) async {
+        paragraphHighlightWindowController.hide()
         let lookupID = request.lookupID
         let mouseLocation = request.mouseLocation
         _ = lookupPerformanceContext(for: lookupID)
@@ -3268,7 +3280,11 @@ final class AppModel: ObservableObject {
             } else {
                 showOverlayWindowForActiveLookup(makeKey: isParagraphOverlayPresented)
             }
-            overlayWindowController.setInteractive(true)
+            if activeLookupMode == .ocrSentence || isTapKeptOverlayPresented || !settings.continuousTranslation {
+                overlayWindowController.setInteractive(true)
+            } else {
+                overlayWindowController.setInteractive(false)
+            }
         default:
             publishOverlayStateIfNeeded(state, wasWindowVisible: wasWindowVisible)
             if overlayWindowController.isVisible {

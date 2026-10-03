@@ -5,11 +5,6 @@ import SwiftUI
 private final class OverlayPanel: NSPanel {
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { true }
-
-    override var acceptsMouseMovedEvents: Bool {
-        get { true }
-        set { }
-    }
 }
 
 private final class ManualRegionSelectionPanel: NSPanel {
@@ -23,29 +18,7 @@ struct DebugOCRBorderView: View {
     var wordBoxes: [CGRect]
 
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                Rectangle()
-                    .stroke(Color.red, lineWidth: 3)
-                    .background(Color.clear)
-
-                ForEach(Array(wordBoxes.enumerated()), id: \.offset) { _, box in
-                    let converted = convertNormalizedBox(box, in: geometry.size)
-                    Rectangle()
-                        .stroke(Color.green, lineWidth: 1.5)
-                        .frame(width: converted.width, height: converted.height)
-                        .position(x: converted.midX, y: converted.midY)
-                }
-            }
-        }
-    }
-
-    private func convertNormalizedBox(_ box: CGRect, in size: CGSize) -> CGRect {
-        let x = box.origin.x * size.width
-        let y = (1 - box.origin.y - box.height) * size.height
-        let width = box.width * size.width
-        let height = box.height * size.height
-        return CGRect(x: x, y: y, width: width, height: height)
+        EmptyView()
     }
 }
 
@@ -85,10 +58,7 @@ final class DebugOverlayWindowController: NSWindowController {
     }
 
     func show(at rect: CGRect, wordBoxes: [CGRect] = []) {
-        guard let window else { return }
-        hostingView.rootView = AnyView(DebugOCRBorderView(wordBoxes: wordBoxes))
-        window.setFrame(rect, display: true)
-        window.orderFrontRegardless()
+        // Disabled: do not display any debug detection boxes on screen
     }
 
     func hide() {
@@ -1224,8 +1194,7 @@ final class OverlayWindowController: NSWindowController {
         panel.hasShadow = false
         panel.level = .statusBar
         panel.collectionBehavior = Self.allSpacesCollectionBehavior
-        panel.acceptsMouseMovedEvents = true
-        panel.ignoresMouseEvents = false
+        panel.ignoresMouseEvents = true
         panel.isMovableByWindowBackground = false
         super.init(window: panel)
         CaptureExclusionRegistry.shared.register(panel)
@@ -1637,13 +1606,23 @@ final class OverlayWindowController: NSWindowController {
         )
 
         let offsetX: CGFloat = 12
-        let proposedOrigin: CGPoint
+        let shadowMargin: CGFloat = 50
 
+        // If placing the card to the right of the cursor exceeds screen bounds,
+        // place it to the left of the cursor so the cursor is never trapped inside the card.
+        let proposedX: CGFloat
+        if anchor.x + offsetX + size.width > screenFrame.maxX - shadowMargin {
+            proposedX = anchor.x - offsetX - size.width
+        } else {
+            proposedX = anchor.x + offsetX
+        }
+
+        let proposedOrigin: CGPoint
         switch placement {
         case .below:
-            proposedOrigin = CGPoint(x: anchor.x + offsetX, y: anchor.y - WordOverlayLayout.gap - size.height)
+            proposedOrigin = CGPoint(x: proposedX, y: anchor.y - WordOverlayLayout.gap - size.height)
         case .above:
-            proposedOrigin = CGPoint(x: anchor.x + offsetX, y: anchor.y + WordOverlayLayout.gap)
+            proposedOrigin = CGPoint(x: proposedX, y: anchor.y + WordOverlayLayout.gap)
         }
 
         return clampedOrigin(proposedOrigin, size: size, in: screenFrame)
