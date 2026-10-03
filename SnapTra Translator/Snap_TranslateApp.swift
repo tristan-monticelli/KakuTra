@@ -606,9 +606,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
             return
         }
 
-        let needsScreenRecording = !model.permissions.status.screenRecording
+        let needsPermissions = !model.permissions.status.screenRecording || !model.permissions.status.accessibility
 
-        if needsScreenRecording {
+        if needsPermissions {
             openSettings(initialTab: .general)
         } else {
             hasCompletedInitialSetup = true
@@ -626,7 +626,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
             NSApp.setActivationPolicy(.accessory)
         }
         
-        if !hasCompletedInitialSetup && model.permissions.status.screenRecording {
+        if !hasCompletedInitialSetup && model.permissions.status.screenRecording && model.permissions.status.accessibility {
             hasCompletedInitialSetup = true
             UserDefaults.standard.set(true, forKey: AppSettingKey.hasCompletedInitialSetup)
         }

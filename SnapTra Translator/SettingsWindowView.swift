@@ -361,9 +361,19 @@ struct GeneralSettingsView: View {
                         GeneralPermissionRow(
                             icon: "rectangle.dashed.badge.record",
                             title: L("Screen Recording"),
-                            subtitle: L("Requis pour la détection OCR des textes japonais à l'écran"),
+                            subtitle: L("Requis pour la capture OCR des textes à l'écran"),
                             isGranted: model.permissions.status.screenRecording,
                             action: { model.permissions.requestAndOpenScreenRecording() }
+                        )
+
+                        Divider().opacity(0.3)
+
+                        GeneralPermissionRow(
+                            icon: "hand.tap",
+                            title: L("Accessibility"),
+                            subtitle: L("Requis pour détecter la position du curseur et la touche de raccourci"),
+                            isGranted: model.permissions.status.accessibility,
+                            action: { model.permissions.requestAndOpenAccessibility() }
                         )
                     }
                 }

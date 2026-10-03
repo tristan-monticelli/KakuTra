@@ -143,6 +143,16 @@ Text(L("Word"))
                         Divider()
                             .opacity(0.5)
 
+                        PermissionRow(
+                            title: L("Accessibility"),
+                            isGranted: model.permissions.status.accessibility,
+                            actionTitle: L("Open Settings"),
+                            action: { model.permissions.requestAndOpenAccessibility() }
+                        )
+
+                        Divider()
+                            .opacity(0.5)
+
                         HStack {
                             Spacer()
                             Button {
