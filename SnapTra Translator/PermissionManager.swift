@@ -16,6 +16,12 @@ final class PermissionManager: ObservableObject {
         accessibility: AXIsProcessTrusted()
     )
 
+    init() {
+        Task { [weak self] in
+            await self?.refreshStatusAsync()
+        }
+    }
+
     func refreshStatus() {
         Task { await refreshStatusAsync() }
     }
@@ -31,6 +37,9 @@ final class PermissionManager: ObservableObject {
 
     func requestScreenRecording() {
         CGRequestScreenCaptureAccess()
+        Task {
+            _ = try? await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+        }
     }
 
     func requestAndOpenScreenRecording() {

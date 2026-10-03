@@ -1177,7 +1177,12 @@ final class AppModel: ObservableObject {
     }
 
     private func beginDoubleTapAutomaticParagraphLookup() {
-        guard permissions.status.screenRecording else { return }
+        var hasScreenRecording = permissions.status.screenRecording
+        if !hasScreenRecording && CGPreflightScreenCaptureAccess() {
+            hasScreenRecording = true
+            Task { @MainActor in self.permissions.refreshStatus() }
+        }
+        guard hasScreenRecording || CGPreflightScreenCaptureAccess() else { return }
         activeLookupMode = .ocrSentence
         stopMouseTracking()
         let mouseLocation = NSEvent.mouseLocation
@@ -1196,7 +1201,12 @@ final class AppModel: ObservableObject {
     }
 
     private func beginManualParagraphRegionSelection(restoresOverlayOnCancel: Bool) {
-        guard permissions.status.screenRecording else {
+        var hasScreenRecording = permissions.status.screenRecording
+        if !hasScreenRecording && CGPreflightScreenCaptureAccess() {
+            hasScreenRecording = true
+            Task { @MainActor in self.permissions.refreshStatus() }
+        }
+        guard hasScreenRecording || CGPreflightScreenCaptureAccess() else {
             updateOverlay(state: .error(L("Enable Screen Recording")), anchor: overlayAnchor)
             return
         }
@@ -1513,17 +1523,25 @@ final class AppModel: ObservableObject {
         let lookupID = request.lookupID
         let mouseLocation = request.mouseLocation
         let performance = lookupPerformanceContext(for: lookupID)
-        guard permissions.status.screenRecording else {
-            return .missingScreenRecordingPermission
+        var hasScreenRecording = permissions.status.screenRecording
+        if !hasScreenRecording && CGPreflightScreenCaptureAccess() {
+            hasScreenRecording = true
+            Task { @MainActor in self.permissions.refreshStatus() }
         }
 
         guard let capture = await captureService.captureAroundCursor(
             at: mouseLocation,
             performance: performance
         ) else {
+            if !hasScreenRecording && !CGPreflightScreenCaptureAccess() {
+                return .missingScreenRecordingPermission
+            }
             return Task.isCancelled || activeLookupID != lookupID
                 ? .cancelled
                 : .captureFailed
+        }
+        if !permissions.status.screenRecording {
+            Task { @MainActor in self.permissions.refreshStatus() }
         }
         guard !Task.isCancelled, activeLookupID == lookupID else { return .cancelled }
 
@@ -2064,9 +2082,10 @@ final class AppModel: ObservableObject {
 
     func performParagraphLookup(lookupID: UUID) async {
         guard !Task.isCancelled, activeLookupID == lookupID else { return }
-        guard permissions.status.screenRecording else {
-            updateOverlay(state: .error(L("Enable Screen Recording")), anchor: NSEvent.mouseLocation)
-            return
+        var hasScreenRecording = permissions.status.screenRecording
+        if !hasScreenRecording && CGPreflightScreenCaptureAccess() {
+            hasScreenRecording = true
+            Task { @MainActor in self.permissions.refreshStatus() }
         }
 
         let mouseLocation = NSEvent.mouseLocation
@@ -2074,8 +2093,15 @@ final class AppModel: ObservableObject {
 
         guard let capture = await captureService.captureCurrentDisplay() else {
             paragraphHighlightWindowController.hide()
-            updateOverlay(state: .error(L("Capture failed")), anchor: mouseLocation)
+            if !hasScreenRecording && !CGPreflightScreenCaptureAccess() {
+                updateOverlay(state: .error(L("Enable Screen Recording")), anchor: mouseLocation)
+            } else {
+                updateOverlay(state: .error(L("Capture failed")), anchor: mouseLocation)
+            }
             return
+        }
+        if !permissions.status.screenRecording {
+            Task { @MainActor in self.permissions.refreshStatus() }
         }
 
         if settings.debugShowOcrRegion {
