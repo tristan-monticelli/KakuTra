@@ -13,9 +13,9 @@
 ### Task 1: Document dictionary result source
 
 **Files:**
-- Modify: `SnapTra Translator/DictionaryEntry.swift`
-- Modify: `SnapTra Translator/DictionaryService.swift`
-- Modify: `SnapTra Translator/OfflineDictionaryService.swift`
+- Modify: `KakuTra Translator/DictionaryEntry.swift`
+- Modify: `KakuTra Translator/DictionaryService.swift`
+- Modify: `KakuTra Translator/OfflineDictionaryService.swift`
 
 **Steps:**
 1. Add a source enum for advanced vs system dictionary.
@@ -26,7 +26,7 @@
 ### Task 2: Propagate source into overlay content
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
 
 **Steps:**
 1. Add an optional dictionary source to `OverlayContent`.
@@ -36,8 +36,8 @@
 ### Task 3: Reframe the advanced dictionary UI
 
 **Files:**
-- Modify: `SnapTra Translator/SettingsView.swift`
-- Modify: `SnapTra Translator/ContentView.swift`
+- Modify: `KakuTra Translator/SettingsView.swift`
+- Modify: `KakuTra Translator/ContentView.swift`
 
 **Steps:**
 1. Rename `ECDICT` to `Advanced English Dictionary`.
@@ -48,7 +48,7 @@
 ### Task 4: Show source badges in the overlay
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/OverlayView.swift`
 
 **Steps:**
 1. Add a compact badge near the word header.
@@ -59,9 +59,9 @@
 ### Task 5: Update localizable strings and verify
 
 **Files:**
-- Modify: `SnapTra Translator/Localizable.xcstrings`
+- Modify: `KakuTra Translator/Localizable.xcstrings`
 
 **Steps:**
 1. Add or update strings for the new user-facing copy.
-2. Build with `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build`.
+2. Build with `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build`.
 3. Verify the settings card remains readable and the overlay source badge appears for both advanced and system dictionary results.

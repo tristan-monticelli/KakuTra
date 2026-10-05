@@ -2,7 +2,7 @@
 
 ## Background
 
-SnapTra Translator can automatically pronounce a detected word or sentence, and already persists separate word and sentence auto-play settings. The translation overlays do not expose those settings, do not offer manual replay, and cannot show whether speech is loading, playing, complete, or failed. `SpeechService` currently starts and stops speech but does not publish a complete playback lifecycle for SwiftUI.
+KakuTra can automatically pronounce a detected word or sentence, and already persists separate word and sentence auto-play settings. The translation overlays do not expose those settings, do not offer manual replay, and cannot show whether speech is loading, playing, complete, or failed. `SpeechService` currently starts and stops speech but does not publish a complete playback lifecycle for SwiftUI.
 
 ## Goals
 

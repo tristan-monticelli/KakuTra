@@ -6,15 +6,15 @@
 
 **Architecture:** Store a source language identifier on `WordRecord`, pass it from the resolved lookup language pair, and extend `LearningService` predicates with an optional language filter. The SwiftUI settings page loads language options from saved records, adds a language picker, and shows language badges on rows.
 
-**Tech Stack:** Swift, SwiftUI, SwiftData, XCTest, macOS app target `SnapTra Translator`.
+**Tech Stack:** Swift, SwiftUI, SwiftData, XCTest, macOS app target `KakuTra Translator`.
 
 ---
 
 ### Task 1: Data And Service Tests
 
 **Files:**
-- Modify: `SnapTra TranslatorTests/LearningServicePaginationTests.swift`
-- Modify: `SnapTra TranslatorTests/LookupDirectionTests.swift` only if language display helper tests are added there
+- Modify: `KakuTra TranslatorTests/LearningServicePaginationTests.swift`
+- Modify: `KakuTra TranslatorTests/LookupDirectionTests.swift` only if language display helper tests are added there
 
 **Step 1: Write failing tests**
 
@@ -26,16 +26,16 @@ Add tests that verify:
 
 **Step 2: Run test to verify failure**
 
-Run: `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test -only-testing:SnapTra_TranslatorTests/LearningServicePaginationTests`
+Run: `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" test -only-testing:KakuTra_TranslatorTests/LearningServicePaginationTests`
 
 Expected: FAIL because the new API and stored property do not exist yet.
 
 ### Task 2: WordRecord Language Storage
 
 **Files:**
-- Modify: `SnapTra Translator/WordRecord.swift`
-- Modify: `SnapTra Translator/LearningService.swift`
-- Modify: `SnapTra Translator/AppModel.swift:678-680`
+- Modify: `KakuTra Translator/WordRecord.swift`
+- Modify: `KakuTra Translator/LearningService.swift`
+- Modify: `KakuTra Translator/AppModel.swift:678-680`
 
 **Step 1: Add storage**
 
@@ -52,7 +52,7 @@ Run the same focused test command. Expected: tests for storage pass; language fi
 ### Task 3: Language Filtering Service
 
 **Files:**
-- Modify: `SnapTra Translator/LearningService.swift`
+- Modify: `KakuTra Translator/LearningService.swift`
 
 **Step 1: Add language option model**
 
@@ -73,7 +73,7 @@ Run the focused learning tests. Expected: PASS.
 ### Task 4: Settings UI
 
 **Files:**
-- Modify: `SnapTra Translator/LearningSettingsView.swift`
+- Modify: `KakuTra Translator/LearningSettingsView.swift`
 
 **Step 1: Add UI state**
 
@@ -94,7 +94,7 @@ Keep `ViewThatFits` row/stack behavior so the controls wrap cleanly in narrower 
 ### Task 5: Export Language Column
 
 **Files:**
-- Modify: `SnapTra Translator/LearningExportService.swift`
+- Modify: `KakuTra Translator/LearningExportService.swift`
 - Modify: tests if export tests exist or add coverage in the nearest existing test target
 
 **Step 1: Extend protocol and row**
@@ -116,18 +116,18 @@ Run focused tests and ensure export output includes the language column.
 
 **Step 1: Run focused tests**
 
-Run: `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test -only-testing:SnapTra_TranslatorTests/LearningServicePaginationTests`
+Run: `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" test -only-testing:KakuTra_TranslatorTests/LearningServicePaginationTests`
 
 Expected: PASS.
 
 **Step 2: Run full tests**
 
-Run: `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test`
+Run: `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" test`
 
 Expected: PASS or report environmental failures.
 
 **Step 3: Run build**
 
-Run: `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build`
+Run: `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build`
 
 Expected: BUILD SUCCEEDED.

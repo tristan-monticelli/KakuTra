@@ -43,7 +43,7 @@ HotkeyManager
 - speculative OCR 可以提前计算，但在 AX/clipboard 仲裁结束前不得展示结果。
 - App Store channel 不执行 AX 或 clipboard fallback。
 - OCR 继续使用当前 `.accurate` 语义；不能为速度全局切回 `.fast`。
-- 缓存后仍只排除已注册的 SnapTra overlay；Settings 等普通本应用窗口仍可被 OCR 捕获。
+- 缓存后仍只排除已注册的 KakuTra overlay；Settings 等普通本应用窗口仍可被 OCR 捕获。
 - 新发音、`stopSpeaking()`、lookup 取消和 overlay dismiss 都必须让旧线上请求失效；取消不能触发 Apple fallback。
 - 每次有效 lookup 仍记录 lookup count；完整 matching-record export 语义不变。
 - 新增的 `LookupPerformance` logger/signpost 不记录原文、definition、坐标、URL、token 或凭证。
@@ -74,7 +74,7 @@ HotkeyManager
 
 统一样本矩阵：
 
-- Channel：`SnapTra Translator`、`SnapTra Translator Direct`。
+- Channel：`KakuTra Translator`、`KakuTra Translator Direct`。
 - Route：App Store OCR、Direct OCR/no-selection、Direct AX selection、Direct fresh clipboard fallback。
 - 温度：cold 每格至少 5 次；warm 预热 3 次后至少 20 次。
 - Learning 数据量：0、100、5,000。
@@ -100,9 +100,9 @@ HotkeyManager
 
 **Files:**
 
-- Create: `SnapTra Translator/LookupPerformance.swift`
-- Create: `SnapTra TranslatorTests/LookupPerformanceTests.swift`
-- Modify: `SnapTra Translator.xcodeproj/project.pbxproj`
+- Create: `KakuTra Translator/LookupPerformance.swift`
+- Create: `KakuTra TranslatorTests/LookupPerformanceTests.swift`
+- Modify: `KakuTra Translator.xcodeproj/project.pbxproj`
 
 **Step 1: 写失败测试**
 
@@ -122,10 +122,10 @@ func testReporterAPIHasNoSourceTextOrCoordinateFields()
 
 ```bash
 xcodebuild test \
-  -project "SnapTra Translator.xcodeproj" \
-  -scheme "SnapTra Translator" \
+  -project "KakuTra Translator.xcodeproj" \
+  -scheme "KakuTra Translator" \
   -destination 'platform=macOS' \
-  -only-testing:'SnapTra TranslatorTests/LookupPerformanceTests' \
+  -only-testing:'KakuTra TranslatorTests/LookupPerformanceTests' \
   CODE_SIGNING_ALLOWED=NO
 ```
 
@@ -194,9 +194,9 @@ protocol LookupPerformanceReporting: Sendable {
 **Step 5: 提交**
 
 ```bash
-git add 'SnapTra Translator/LookupPerformance.swift' \
-  'SnapTra TranslatorTests/LookupPerformanceTests.swift' \
-  'SnapTra Translator.xcodeproj/project.pbxproj'
+git add 'KakuTra Translator/LookupPerformance.swift' \
+  'KakuTra TranslatorTests/LookupPerformanceTests.swift' \
+  'KakuTra Translator.xcodeproj/project.pbxproj'
 git commit -m "perf(metrics): add correlated lookup traces"
 ```
 
@@ -206,14 +206,14 @@ git commit -m "perf(metrics): add correlated lookup traces"
 
 **Files:**
 
-- Modify: `SnapTra Translator/AppModel.swift`
-- Modify: `SnapTra Translator/OverlayWindowController.swift`
-- Modify: `SnapTra Translator/SelectedTextService.swift`
-- Modify: `SnapTra Translator/ScreenCaptureService.swift`
-- Modify: `SnapTra Translator/SpeechService.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/OverlayWindowController.swift`
+- Modify: `KakuTra Translator/SelectedTextService.swift`
+- Modify: `KakuTra Translator/ScreenCaptureService.swift`
+- Modify: `KakuTra Translator/SpeechService.swift`
 - Create: `scripts/performance/capture-lookup-trace.sh`
 - Create: `docs/performance/hotkey-word-lookup-p0-results.md`
-- Test: `SnapTra TranslatorTests/LookupPerformanceTests.swift`
+- Test: `KakuTra TranslatorTests/LookupPerformanceTests.swift`
 
 **Step 1: 扩展失败测试**
 
@@ -242,14 +242,14 @@ git commit -m "perf(metrics): add correlated lookup traces"
 mkdir -p scripts/performance docs/performance
 ```
 
-脚本接受 `<output.trace> [duration]`，attach 当前 `SnapTra Translator` 进程：
+脚本接受 `<output.trace> [duration]`，attach 当前 `KakuTra Translator` 进程：
 
 ```bash
 xcrun xctrace record \
   --template Logging \
   --instrument 'Points of Interest' \
   --instrument os_signpost \
-  --attach 'SnapTra Translator' \
+  --attach 'KakuTra Translator' \
   --time-limit "${duration:-60s}" \
   --output "$output"
 ```
@@ -265,14 +265,14 @@ Expected: exit 0。
 **Step 4: 记录优化前 Release 基线**
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" \
-  -scheme "SnapTra Translator" -configuration Release \
-  -derivedDataPath /tmp/snaptra-p0-before-appstore \
+xcodebuild -project "KakuTra Translator.xcodeproj" \
+  -scheme "KakuTra Translator" -configuration Release \
+  -derivedDataPath /tmp/KakuTra-p0-before-appstore \
   build CODE_SIGNING_ALLOWED=NO
 
-xcodebuild -project "SnapTra Translator.xcodeproj" \
-  -scheme "SnapTra Translator Direct" -configuration Release \
-  -derivedDataPath /tmp/snaptra-p0-before-direct \
+xcodebuild -project "KakuTra Translator.xcodeproj" \
+  -scheme "KakuTra Translator Direct" -configuration Release \
+  -derivedDataPath /tmp/KakuTra-p0-before-direct \
   build CODE_SIGNING_ALLOWED=NO
 ```
 
@@ -282,19 +282,19 @@ xcodebuild -project "SnapTra Translator.xcodeproj" \
 
 ```bash
 xcodebuild test \
-  -project "SnapTra Translator.xcodeproj" \
-  -scheme "SnapTra Translator" \
+  -project "KakuTra Translator.xcodeproj" \
+  -scheme "KakuTra Translator" \
   -destination 'platform=macOS' \
-  -only-testing:'SnapTra TranslatorTests/LookupPerformanceTests' \
+  -only-testing:'KakuTra TranslatorTests/LookupPerformanceTests' \
   CODE_SIGNING_ALLOWED=NO
 ```
 
 ```bash
-git add 'SnapTra Translator/AppModel.swift' \
-  'SnapTra Translator/OverlayWindowController.swift' \
-  'SnapTra Translator/SelectedTextService.swift' \
-  'SnapTra Translator/ScreenCaptureService.swift' \
-  'SnapTra Translator/SpeechService.swift' \
+git add 'KakuTra Translator/AppModel.swift' \
+  'KakuTra Translator/OverlayWindowController.swift' \
+  'KakuTra Translator/SelectedTextService.swift' \
+  'KakuTra Translator/ScreenCaptureService.swift' \
+  'KakuTra Translator/SpeechService.swift' \
   scripts/performance/capture-lookup-trace.sh \
   docs/performance/hotkey-word-lookup-p0-results.md
 git commit -m "perf(metrics): instrument word lookup stages"
@@ -306,10 +306,10 @@ git commit -m "perf(metrics): instrument word lookup stages"
 
 **Files:**
 
-- Create: `SnapTra Translator/SinglePressLookupCoordinator.swift`
-- Modify: `SnapTra Translator/AppModel.swift`
-- Create: `SnapTra TranslatorTests/SelectedTextPerformanceTests.swift`
-- Modify: `SnapTra Translator.xcodeproj/project.pbxproj`
+- Create: `KakuTra Translator/SinglePressLookupCoordinator.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
+- Create: `KakuTra TranslatorTests/SelectedTextPerformanceTests.swift`
+- Modify: `KakuTra Translator.xcodeproj/project.pbxproj`
 
 **Step 1: 写失败测试**
 
@@ -342,10 +342,10 @@ enum SinglePressLookupExecutionPolicy: Equatable, Sendable {
 
 ```bash
 xcodebuild test \
-  -project "SnapTra Translator.xcodeproj" \
-  -scheme "SnapTra Translator" \
+  -project "KakuTra Translator.xcodeproj" \
+  -scheme "KakuTra Translator" \
   -destination 'platform=macOS' \
-  -only-testing:'SnapTra TranslatorTests/SinglePressLookupRequestTests' \
+  -only-testing:'KakuTra TranslatorTests/SinglePressLookupRequestTests' \
   CODE_SIGNING_ALLOWED=NO
 ```
 
@@ -361,21 +361,21 @@ xcodebuild test \
 
 ```bash
 xcodebuild test \
-  -project "SnapTra Translator.xcodeproj" \
-  -scheme "SnapTra Translator" \
+  -project "KakuTra Translator.xcodeproj" \
+  -scheme "KakuTra Translator" \
   -destination 'platform=macOS' \
-  -only-testing:'SnapTra TranslatorTests/SinglePressLookupRequestTests' \
-  -only-testing:'SnapTra TranslatorTests/SelectedTextLookupRoutingTests' \
+  -only-testing:'KakuTra TranslatorTests/SinglePressLookupRequestTests' \
+  -only-testing:'KakuTra TranslatorTests/SelectedTextLookupRoutingTests' \
   CODE_SIGNING_ALLOWED=NO
 ```
 
 **Step 5: 提交**
 
 ```bash
-git add 'SnapTra Translator/SinglePressLookupCoordinator.swift' \
-  'SnapTra Translator/AppModel.swift' \
-  'SnapTra TranslatorTests/SelectedTextPerformanceTests.swift' \
-  'SnapTra Translator.xcodeproj/project.pbxproj'
+git add 'KakuTra Translator/SinglePressLookupCoordinator.swift' \
+  'KakuTra Translator/AppModel.swift' \
+  'KakuTra TranslatorTests/SelectedTextPerformanceTests.swift' \
+  'KakuTra Translator.xcodeproj/project.pbxproj'
 git commit -m "fix(lookup): freeze single press context"
 ```
 
@@ -385,11 +385,11 @@ git commit -m "fix(lookup): freeze single press context"
 
 **Files:**
 
-- Create: `SnapTra Translator/SelectedTextProbeExecutor.swift`
-- Modify: `SnapTra Translator/SelectedTextService.swift`
-- Modify: `SnapTra Translator/LookupIntent.swift` only if signatures need adapting; do not change router semantics
-- Test: `SnapTra TranslatorTests/SelectedTextPerformanceTests.swift`
-- Test: `SnapTra TranslatorTests/SettingsStoreTests.swift`
+- Create: `KakuTra Translator/SelectedTextProbeExecutor.swift`
+- Modify: `KakuTra Translator/SelectedTextService.swift`
+- Modify: `KakuTra Translator/LookupIntent.swift` only if signatures need adapting; do not change router semantics
+- Test: `KakuTra TranslatorTests/SelectedTextPerformanceTests.swift`
+- Test: `KakuTra TranslatorTests/SettingsStoreTests.swift`
 
 **Step 1: 写 probe policy 和 executor 红灯测试**
 
@@ -409,11 +409,11 @@ func testDisabledDiagnosticsDoesNotEvaluateMessageAutoclosure()
 
 ```bash
 xcodebuild test \
-  -project "SnapTra Translator.xcodeproj" \
-  -scheme "SnapTra Translator" \
+  -project "KakuTra Translator.xcodeproj" \
+  -scheme "KakuTra Translator" \
   -destination 'platform=macOS' \
-  -only-testing:'SnapTra TranslatorTests/SelectedTextProbePolicyTests' \
-  -only-testing:'SnapTra TranslatorTests/SelectedTextProbeExecutorTests' \
+  -only-testing:'KakuTra TranslatorTests/SelectedTextProbePolicyTests' \
+  -only-testing:'KakuTra TranslatorTests/SelectedTextProbeExecutorTests' \
   CODE_SIGNING_ALLOWED=NO
 ```
 
@@ -442,12 +442,12 @@ xcodebuild test \
 
 ```bash
 xcodebuild test \
-  -project "SnapTra Translator.xcodeproj" \
-  -scheme "SnapTra Translator" \
+  -project "KakuTra Translator.xcodeproj" \
+  -scheme "KakuTra Translator" \
   -destination 'platform=macOS' \
-  -only-testing:'SnapTra TranslatorTests/SelectedTextProbePolicyTests' \
-  -only-testing:'SnapTra TranslatorTests/SelectedTextProbeExecutorTests' \
-  -only-testing:'SnapTra TranslatorTests/SelectedTextLookupRoutingTests' \
+  -only-testing:'KakuTra TranslatorTests/SelectedTextProbePolicyTests' \
+  -only-testing:'KakuTra TranslatorTests/SelectedTextProbeExecutorTests' \
+  -only-testing:'KakuTra TranslatorTests/SelectedTextLookupRoutingTests' \
   CODE_SIGNING_ALLOWED=NO
 ```
 
@@ -456,11 +456,11 @@ Expected: known-range/no-bounds、unknown-range fallback、clipboard freshness �
 **Step 5: 提交**
 
 ```bash
-git add 'SnapTra Translator/SelectedTextProbeExecutor.swift' \
-  'SnapTra Translator/SelectedTextService.swift' \
-  'SnapTra Translator/LookupIntent.swift' \
-  'SnapTra TranslatorTests/SelectedTextPerformanceTests.swift' \
-  'SnapTra TranslatorTests/SettingsStoreTests.swift'
+git add 'KakuTra Translator/SelectedTextProbeExecutor.swift' \
+  'KakuTra Translator/SelectedTextService.swift' \
+  'KakuTra Translator/LookupIntent.swift' \
+  'KakuTra TranslatorTests/SelectedTextPerformanceTests.swift' \
+  'KakuTra TranslatorTests/SettingsStoreTests.swift'
 git commit -m "perf(selected-text): short-circuit accessibility probes"
 ```
 
@@ -470,8 +470,8 @@ git commit -m "perf(selected-text): short-circuit accessibility probes"
 
 **Files:**
 
-- Modify: `SnapTra Translator/CaptureExclusionRegistry.swift`
-- Modify: `SnapTra TranslatorTests/CaptureExclusionRegistryTests.swift`
+- Modify: `KakuTra Translator/CaptureExclusionRegistry.swift`
+- Modify: `KakuTra TranslatorTests/CaptureExclusionRegistryTests.swift`
 
 **Step 1: 写失败测试**
 
@@ -487,10 +487,10 @@ func testOnlyRegisteredWindowsRemainExcluded()
 
 ```bash
 xcodebuild test \
-  -project "SnapTra Translator.xcodeproj" \
-  -scheme "SnapTra Translator" \
+  -project "KakuTra Translator.xcodeproj" \
+  -scheme "KakuTra Translator" \
   -destination 'platform=macOS' \
-  -only-testing:'SnapTra TranslatorTests/CaptureExclusionRegistryTests' \
+  -only-testing:'KakuTra TranslatorTests/CaptureExclusionRegistryTests' \
   CODE_SIGNING_ALLOWED=NO
 ```
 
@@ -515,8 +515,8 @@ struct CaptureExclusionSnapshot: Equatable, Sendable {
 **Step 5: 提交**
 
 ```bash
-git add 'SnapTra Translator/CaptureExclusionRegistry.swift' \
-  'SnapTra TranslatorTests/CaptureExclusionRegistryTests.swift'
+git add 'KakuTra Translator/CaptureExclusionRegistry.swift' \
+  'KakuTra TranslatorTests/CaptureExclusionRegistryTests.swift'
 git commit -m "refactor(capture): version overlay exclusions"
 ```
 
@@ -526,10 +526,10 @@ git commit -m "refactor(capture): version overlay exclusions"
 
 **Files:**
 
-- Create: `SnapTra Translator/ScreenCaptureContentCache.swift`
-- Modify: `SnapTra Translator/ScreenCaptureService.swift`
-- Modify: `SnapTra Translator/AppModel.swift`
-- Test: `SnapTra TranslatorTests/CaptureExclusionRegistryTests.swift`
+- Create: `KakuTra Translator/ScreenCaptureContentCache.swift`
+- Modify: `KakuTra Translator/ScreenCaptureService.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
+- Test: `KakuTra TranslatorTests/CaptureExclusionRegistryTests.swift`
 
 **Step 1: 写 async cache 红灯测试**
 
@@ -556,10 +556,10 @@ struct ScreenCaptureCacheKey: Equatable, Sendable {
 
 ```bash
 xcodebuild test \
-  -project "SnapTra Translator.xcodeproj" \
-  -scheme "SnapTra Translator" \
+  -project "KakuTra Translator.xcodeproj" \
+  -scheme "KakuTra Translator" \
   -destination 'platform=macOS' \
-  -only-testing:'SnapTra TranslatorTests/ScreenCaptureContentCacheTests' \
+  -only-testing:'KakuTra TranslatorTests/ScreenCaptureContentCacheTests' \
   CODE_SIGNING_ALLOWED=NO
 ```
 
@@ -587,24 +587,24 @@ try await SCShareableContent.excludingDesktopWindows(
 
 ```bash
 xcodebuild test \
-  -project "SnapTra Translator.xcodeproj" \
-  -scheme "SnapTra Translator" \
+  -project "KakuTra Translator.xcodeproj" \
+  -scheme "KakuTra Translator" \
   -destination 'platform=macOS' \
-  -only-testing:'SnapTra TranslatorTests/CaptureExclusionRegistryTests' \
+  -only-testing:'KakuTra TranslatorTests/CaptureExclusionRegistryTests' \
   CODE_SIGNING_ALLOWED=NO
 
-xcodebuild -project "SnapTra Translator.xcodeproj" \
-  -scheme "SnapTra Translator Direct" -configuration Debug \
+xcodebuild -project "KakuTra Translator.xcodeproj" \
+  -scheme "KakuTra Translator Direct" -configuration Debug \
   build CODE_SIGNING_ALLOWED=NO
 ```
 
 **Step 5: 提交**
 
 ```bash
-git add 'SnapTra Translator/ScreenCaptureContentCache.swift' \
-  'SnapTra Translator/ScreenCaptureService.swift' \
-  'SnapTra Translator/AppModel.swift' \
-  'SnapTra TranslatorTests/CaptureExclusionRegistryTests.swift'
+git add 'KakuTra Translator/ScreenCaptureContentCache.swift' \
+  'KakuTra Translator/ScreenCaptureService.swift' \
+  'KakuTra Translator/AppModel.swift' \
+  'KakuTra TranslatorTests/CaptureExclusionRegistryTests.swift'
 git commit -m "perf(capture): cache shareable content metadata"
 ```
 
@@ -614,12 +614,12 @@ git commit -m "perf(capture): cache shareable content metadata"
 
 **Files:**
 
-- Modify: `SnapTra Translator/SinglePressLookupCoordinator.swift`
-- Modify: `SnapTra Translator/AppModel.swift`
-- Modify: `SnapTra Translator/ScreenCaptureService.swift`
-- Modify: `SnapTra Translator/OCRService.swift` only if a cancellation check seam is required
-- Test: `SnapTra TranslatorTests/SelectedTextPerformanceTests.swift`
-- Test: `SnapTra TranslatorTests/SettingsStoreTests.swift`
+- Modify: `KakuTra Translator/SinglePressLookupCoordinator.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/ScreenCaptureService.swift`
+- Modify: `KakuTra Translator/OCRService.swift` only if a cancellation check seam is required
+- Test: `KakuTra TranslatorTests/SelectedTextPerformanceTests.swift`
+- Test: `KakuTra TranslatorTests/SettingsStoreTests.swift`
 
 **Step 1: 用可控 continuation 写并发顺序红灯测试**
 
@@ -636,10 +636,10 @@ func testAllDependenciesReceiveTheFrozenMousePoint()
 
 ```bash
 xcodebuild test \
-  -project "SnapTra Translator.xcodeproj" \
-  -scheme "SnapTra Translator" \
+  -project "KakuTra Translator.xcodeproj" \
+  -scheme "KakuTra Translator" \
   -destination 'platform=macOS' \
-  -only-testing:'SnapTra TranslatorTests/SinglePressLookupCoordinatorTests' \
+  -only-testing:'KakuTra TranslatorTests/SinglePressLookupCoordinatorTests' \
   CODE_SIGNING_ALLOWED=NO
 ```
 
@@ -669,22 +669,22 @@ Direct -> await staged AX
 
 ```bash
 xcodebuild test \
-  -project "SnapTra Translator.xcodeproj" \
-  -scheme "SnapTra Translator" \
+  -project "KakuTra Translator.xcodeproj" \
+  -scheme "KakuTra Translator" \
   -destination 'platform=macOS' \
-  -only-testing:'SnapTra TranslatorTests/SinglePressLookupCoordinatorTests' \
-  -only-testing:'SnapTra TranslatorTests/SelectedTextLookupRoutingTests' \
-  -only-testing:'SnapTra TranslatorTests/CaptureExclusionRegistryTests' \
+  -only-testing:'KakuTra TranslatorTests/SinglePressLookupCoordinatorTests' \
+  -only-testing:'KakuTra TranslatorTests/SelectedTextLookupRoutingTests' \
+  -only-testing:'KakuTra TranslatorTests/CaptureExclusionRegistryTests' \
   CODE_SIGNING_ALLOWED=NO
 ```
 
 ```bash
-git add 'SnapTra Translator/SinglePressLookupCoordinator.swift' \
-  'SnapTra Translator/AppModel.swift' \
-  'SnapTra Translator/ScreenCaptureService.swift' \
-  'SnapTra Translator/OCRService.swift' \
-  'SnapTra TranslatorTests/SelectedTextPerformanceTests.swift' \
-  'SnapTra TranslatorTests/SettingsStoreTests.swift'
+git add 'KakuTra Translator/SinglePressLookupCoordinator.swift' \
+  'KakuTra Translator/AppModel.swift' \
+  'KakuTra Translator/ScreenCaptureService.swift' \
+  'KakuTra Translator/OCRService.swift' \
+  'KakuTra TranslatorTests/SelectedTextPerformanceTests.swift' \
+  'KakuTra TranslatorTests/SettingsStoreTests.swift'
 git commit -m "perf(lookup): overlap OCR with clipboard fallback"
 ```
 
@@ -694,9 +694,9 @@ git commit -m "perf(lookup): overlap OCR with clipboard fallback"
 
 **Files:**
 
-- Modify: `SnapTra Translator/SpeechService.swift`
-- Create: `SnapTra TranslatorTests/SpeechServiceTests.swift`
-- Modify: `SnapTra Translator.xcodeproj/project.pbxproj`
+- Modify: `KakuTra Translator/SpeechService.swift`
+- Create: `KakuTra TranslatorTests/SpeechServiceTests.swift`
+- Modify: `KakuTra Translator.xcodeproj/project.pbxproj`
 
 **Step 1: 先建立高层测试 seam**
 
@@ -743,10 +743,10 @@ func testOldCompletionCannotClearNewerActiveTask()
 
 ```bash
 xcodebuild test \
-  -project "SnapTra Translator.xcodeproj" \
-  -scheme "SnapTra Translator" \
+  -project "KakuTra Translator.xcodeproj" \
+  -scheme "KakuTra Translator" \
   -destination 'platform=macOS' \
-  -only-testing:'SnapTra TranslatorTests/SpeechServiceTests' \
+  -only-testing:'KakuTra TranslatorTests/SpeechServiceTests' \
   CODE_SIGNING_ALLOWED=NO
 ```
 
@@ -764,9 +764,9 @@ private var requestGeneration: UInt64 = 0
 **Step 5: 运行绿灯测试并提交**
 
 ```bash
-git add 'SnapTra Translator/SpeechService.swift' \
-  'SnapTra TranslatorTests/SpeechServiceTests.swift' \
-  'SnapTra Translator.xcodeproj/project.pbxproj'
+git add 'KakuTra Translator/SpeechService.swift' \
+  'KakuTra TranslatorTests/SpeechServiceTests.swift' \
+  'KakuTra Translator.xcodeproj/project.pbxproj'
 git commit -m "fix(tts): guard playback with request generations"
 ```
 
@@ -776,8 +776,8 @@ git commit -m "fix(tts): guard playback with request generations"
 
 **Files:**
 
-- Modify: `SnapTra Translator/SpeechService.swift`
-- Test: `SnapTra TranslatorTests/SpeechServiceTests.swift`
+- Modify: `KakuTra Translator/SpeechService.swift`
+- Test: `KakuTra TranslatorTests/SpeechServiceTests.swift`
 
 **Step 1: 写 HTTP cancellation 红灯测试**
 
@@ -841,16 +841,16 @@ protocol TTSWebSocketTaskCreating: Sendable {
 
 ```bash
 xcodebuild test \
-  -project "SnapTra Translator.xcodeproj" \
-  -scheme "SnapTra Translator" \
+  -project "KakuTra Translator.xcodeproj" \
+  -scheme "KakuTra Translator" \
   -destination 'platform=macOS' \
-  -only-testing:'SnapTra TranslatorTests/SpeechServiceTests' \
+  -only-testing:'KakuTra TranslatorTests/SpeechServiceTests' \
   CODE_SIGNING_ALLOWED=NO
 ```
 
 ```bash
-git add 'SnapTra Translator/SpeechService.swift' \
-  'SnapTra TranslatorTests/SpeechServiceTests.swift'
+git add 'KakuTra Translator/SpeechService.swift' \
+  'KakuTra TranslatorTests/SpeechServiceTests.swift'
 git commit -m "fix(tts): cancel active HTTP and WebSocket requests"
 ```
 
@@ -860,10 +860,10 @@ git commit -m "fix(tts): cancel active HTTP and WebSocket requests"
 
 **Files:**
 
-- Modify: `SnapTra Translator/SpeechService.swift`
-- Modify: `SnapTra Translator/AppModel.swift`
-- Test: `SnapTra TranslatorTests/SpeechServiceTests.swift`
-- Test: `SnapTra TranslatorTests/LookupPerformanceTests.swift`
+- Modify: `KakuTra Translator/SpeechService.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
+- Test: `KakuTra TranslatorTests/SpeechServiceTests.swift`
+- Test: `KakuTra TranslatorTests/LookupPerformanceTests.swift`
 
 **Step 1: 写顺序红灯测试**
 
@@ -879,7 +879,7 @@ func testAppleDidStartAndOnlinePlayAcceptedUseSameLookupID()
 
 - Debug-only dumper 在 play 成功或当前请求 fallback 已提交之后调度。
 - 写入 utility actor/task；`SpeechService` 不 await。
-- 文件放临时目录 `SnapTraTranslator/TTS`，文件名包含 provider、generation、UUID，使用 atomic write。
+- 文件放临时目录 `KakuTraTranslator/TTS`，文件名包含 provider、generation、UUID，使用 atomic write。
 - Release 不创建 dumper。本轮不做清理/LRU。
 
 **Step 3: 接入 audio start**
@@ -895,10 +895,10 @@ func testAppleDidStartAndOnlinePlayAcceptedUseSameLookupID()
 **Step 5: 提交**
 
 ```bash
-git add 'SnapTra Translator/SpeechService.swift' \
-  'SnapTra Translator/AppModel.swift' \
-  'SnapTra TranslatorTests/SpeechServiceTests.swift' \
-  'SnapTra TranslatorTests/LookupPerformanceTests.swift'
+git add 'KakuTra Translator/SpeechService.swift' \
+  'KakuTra Translator/AppModel.swift' \
+  'KakuTra TranslatorTests/SpeechServiceTests.swift' \
+  'KakuTra TranslatorTests/LookupPerformanceTests.swift'
 git commit -m "perf(tts): move debug audio dumps off playback path"
 ```
 
@@ -908,8 +908,8 @@ git commit -m "perf(tts): move debug audio dumps off playback path"
 
 **Files:**
 
-- Modify: `SnapTra Translator/LearningService.swift`
-- Modify: `SnapTra TranslatorTests/LearningServicePaginationTests.swift`
+- Modify: `KakuTra Translator/LearningService.swift`
+- Modify: `KakuTra TranslatorTests/LearningServicePaginationTests.swift`
 
 **Step 1: 写行为红灯测试**
 
@@ -926,10 +926,10 @@ func testRecordLookupAtFiveThousandRecordsUpdatesOnlyTargetWord()
 
 ```bash
 xcodebuild test \
-  -project "SnapTra Translator.xcodeproj" \
-  -scheme "SnapTra Translator" \
+  -project "KakuTra Translator.xcodeproj" \
+  -scheme "KakuTra Translator" \
   -destination 'platform=macOS' \
-  -only-testing:'SnapTra TranslatorTests/LearningServicePaginationTests' \
+  -only-testing:'KakuTra TranslatorTests/LearningServicePaginationTests' \
   CODE_SIGNING_ALLOWED=NO
 ```
 
@@ -949,8 +949,8 @@ xcodebuild test \
 **Step 5: 提交**
 
 ```bash
-git add 'SnapTra Translator/LearningService.swift' \
-  'SnapTra TranslatorTests/LearningServicePaginationTests.swift'
+git add 'KakuTra Translator/LearningService.swift' \
+  'KakuTra TranslatorTests/LearningServicePaginationTests.swift'
 git commit -m "perf(learning): remove lookup-time language scans"
 ```
 
@@ -960,11 +960,11 @@ git commit -m "perf(learning): remove lookup-time language scans"
 
 **Files:**
 
-- Modify: `SnapTra Translator/AppModel.swift`
-- Modify: `SnapTra Translator/LearningService.swift`
-- Modify: `SnapTra Translator/WordRecord.swift`
-- Modify: `SnapTra TranslatorTests/LearningServicePaginationTests.swift`
-- Modify: `SnapTra TranslatorTests/LookupDirectionTests.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/LearningService.swift`
+- Modify: `KakuTra Translator/WordRecord.swift`
+- Modify: `KakuTra TranslatorTests/LearningServicePaginationTests.swift`
+- Modify: `KakuTra TranslatorTests/LookupDirectionTests.swift`
 
 **Step 1: 写失败测试**
 
@@ -997,22 +997,22 @@ func testExportStillIncludesRecordsOutsideVisiblePage()
 
 ```bash
 xcodebuild test \
-  -project "SnapTra Translator.xcodeproj" \
-  -scheme "SnapTra Translator" \
+  -project "KakuTra Translator.xcodeproj" \
+  -scheme "KakuTra Translator" \
   -destination 'platform=macOS' \
-  -only-testing:'SnapTra TranslatorTests/LearningServicePaginationTests' \
-  -only-testing:'SnapTra TranslatorTests/OverlayPrimaryTranslationStateTests' \
+  -only-testing:'KakuTra TranslatorTests/LearningServicePaginationTests' \
+  -only-testing:'KakuTra TranslatorTests/OverlayPrimaryTranslationStateTests' \
   CODE_SIGNING_ALLOWED=NO
 ```
 
 **Step 5: 提交**
 
 ```bash
-git add 'SnapTra Translator/AppModel.swift' \
-  'SnapTra Translator/LearningService.swift' \
-  'SnapTra Translator/WordRecord.swift' \
-  'SnapTra TranslatorTests/LearningServicePaginationTests.swift' \
-  'SnapTra TranslatorTests/LookupDirectionTests.swift'
+git add 'KakuTra Translator/AppModel.swift' \
+  'KakuTra Translator/LearningService.swift' \
+  'KakuTra Translator/WordRecord.swift' \
+  'KakuTra TranslatorTests/LearningServicePaginationTests.swift' \
+  'KakuTra TranslatorTests/LookupDirectionTests.swift'
 git commit -m "perf(learning): coalesce lookup definition writes"
 ```
 
@@ -1029,10 +1029,10 @@ git commit -m "perf(learning): coalesce lookup definition writes"
 
 ```bash
 xcodebuild test \
-  -project "SnapTra Translator.xcodeproj" \
-  -scheme "SnapTra Translator" \
+  -project "KakuTra Translator.xcodeproj" \
+  -scheme "KakuTra Translator" \
   -destination 'platform=macOS' \
-  -derivedDataPath /tmp/snaptra-p0-tests \
+  -derivedDataPath /tmp/KakuTra-p0-tests \
   CODE_SIGNING_ALLOWED=NO
 ```
 
@@ -1041,14 +1041,14 @@ Expected: 全部测试通过，无新 actor-isolation error；既有 warning 单
 **Step 2: 构建两个发行面**
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" \
-  -scheme "SnapTra Translator" -configuration Release \
-  -derivedDataPath /tmp/snaptra-p0-after-appstore \
+xcodebuild -project "KakuTra Translator.xcodeproj" \
+  -scheme "KakuTra Translator" -configuration Release \
+  -derivedDataPath /tmp/KakuTra-p0-after-appstore \
   build CODE_SIGNING_ALLOWED=NO
 
-xcodebuild -project "SnapTra Translator.xcodeproj" \
-  -scheme "SnapTra Translator Direct" -configuration Release \
-  -derivedDataPath /tmp/snaptra-p0-after-direct \
+xcodebuild -project "KakuTra Translator.xcodeproj" \
+  -scheme "KakuTra Translator Direct" -configuration Release \
+  -derivedDataPath /tmp/KakuTra-p0-after-direct \
   build CODE_SIGNING_ALLOWED=NO
 ```
 

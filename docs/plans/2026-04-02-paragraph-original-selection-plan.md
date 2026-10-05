@@ -13,7 +13,7 @@
 ### Task 1: 收缩原文拖拽热区
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/OverlayView.swift`
 
 **Step 1: 删除原文正文拖拽 overlay**
 
@@ -32,7 +32,7 @@
 
 Run:
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build
 ```
 
 Expected:

@@ -13,7 +13,7 @@
 ### Task 1: Add rectangle capture support
 
 **Files:**
-- Modify: `SnapTra Translator/ScreenCaptureService.swift`
+- Modify: `KakuTra Translator/ScreenCaptureService.swift`
 
 **Steps:**
 - Add `capture(rect:) async -> (image: CGImage, region: CaptureRegion)?`.
@@ -25,7 +25,7 @@
 ### Task 2: Expose OCR text for manual regions
 
 **Files:**
-- Modify: `SnapTra Translator/OCRService.swift`
+- Modify: `KakuTra Translator/OCRService.swift`
 
 **Steps:**
 - Add a nonisolated static helper that takes `[RecognizedTextLine]` and returns reading-order text.
@@ -36,7 +36,7 @@
 ### Task 3: Make OCR highlight corners draggable
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayWindowController.swift`
+- Modify: `KakuTra Translator/OverlayWindowController.swift`
 
 **Steps:**
 - Add a `ParagraphHighlightResizeCorner` enum for four corners.
@@ -50,7 +50,7 @@
 ### Task 4: Re-run OCR and translation after resize
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
 
 **Steps:**
 - Wire `paragraphHighlightWindowController.onResizeCompleted` in `init`.
@@ -69,6 +69,6 @@
 - Modify: none
 
 **Steps:**
-- Run `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build`.
+- Run `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build`.
 - Expected: build succeeds.
 - If build fails, make the smallest fix and rerun.

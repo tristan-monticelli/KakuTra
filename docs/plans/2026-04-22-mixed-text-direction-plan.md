@@ -13,7 +13,7 @@
 ### Task 1: Dominant Script Scoring
 
 **Files:**
-- Modify: `SnapTra Translator/LookupDirection.swift`
+- Modify: `KakuTra Translator/LookupDirection.swift`
 
 **Steps:**
 1. Add helpers to strip mentions, URLs, and numeric runs from observed text.
@@ -24,7 +24,7 @@
 ### Task 2: Resolver Integration
 
 **Files:**
-- Modify: `SnapTra Translator/LookupDirection.swift`
+- Modify: `KakuTra Translator/LookupDirection.swift`
 
 **Steps:**
 1. Switch `LookupLanguagePairResolver.resolve` to use the new dominant-script helper.
@@ -34,7 +34,7 @@
 ### Task 3: Regression Tests
 
 **Files:**
-- Modify: `SnapTra TranslatorTests/LookupDirectionTests.swift`
+- Modify: `KakuTra TranslatorTests/LookupDirectionTests.swift`
 
 **Steps:**
 1. Add a test for a Chinese-dominant mixed sentence.
@@ -45,8 +45,8 @@
 ### Task 4: Verification
 
 **Commands:**
-- `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/OCRTokenClassifierTests"`
-- `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build`
+- `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/OCRTokenClassifierTests"`
+- `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build`
 
 **Manual checks:**
 - Enable bidirectional translation for `English -> 简体中文`.

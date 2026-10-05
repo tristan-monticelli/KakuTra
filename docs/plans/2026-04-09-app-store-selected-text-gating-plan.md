@@ -13,8 +13,8 @@
 ### Task 1: Add channel capability helper
 
 **Files:**
-- Modify: `SnapTra Translator/UpdateChecker.swift`
-- Test: `SnapTra TranslatorTests/SettingsStoreTests.swift`
+- Modify: `KakuTra Translator/UpdateChecker.swift`
+- Test: `KakuTra TranslatorTests/SettingsStoreTests.swift`
 
 **Step 1: Write the failing test**
 
@@ -45,7 +45,7 @@ func testUnsupportedSelectedTextCapabilityFallsBackToOcrWord() {
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/SelectedTextLookupRoutingTests"
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/SelectedTextLookupRoutingTests"
 ```
 
 Expected: FAIL because routing does not yet understand channel capability.
@@ -62,14 +62,14 @@ Run the same `xcodebuild` command and confirm the lookup routing tests pass.
 **Step 5: Commit**
 
 ```bash
-git add "SnapTra Translator/UpdateChecker.swift" "SnapTra Translator/LookupIntent.swift" "SnapTra TranslatorTests/SettingsStoreTests.swift"
+git add "KakuTra Translator/UpdateChecker.swift" "KakuTra Translator/LookupIntent.swift" "KakuTra TranslatorTests/SettingsStoreTests.swift"
 git commit -m "feat: add channel gating for selected text routing"
 ```
 
 ### Task 2: Gate selected-text lookup at runtime
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
 
 **Step 1: Write the failing test**
 
@@ -92,14 +92,14 @@ Build the app and confirm the code compiles.
 **Step 5: Commit**
 
 ```bash
-git add "SnapTra Translator/AppModel.swift"
+git add "KakuTra Translator/AppModel.swift"
 git commit -m "fix: skip selected text lookup in app store channel"
 ```
 
 ### Task 3: Hide unsupported settings in General
 
 **Files:**
-- Modify: `SnapTra Translator/SettingsWindowView.swift`
+- Modify: `KakuTra Translator/SettingsWindowView.swift`
 
 **Step 1: Write the failing test**
 
@@ -124,21 +124,21 @@ Build the app and inspect the General tab in both distribution channels.
 **Step 5: Commit**
 
 ```bash
-git add "SnapTra Translator/SettingsWindowView.swift"
+git add "KakuTra Translator/SettingsWindowView.swift"
 git commit -m "fix(settings): hide unsupported selected text controls in app store"
 ```
 
 ### Task 4: Verify end-to-end behavior
 
 **Files:**
-- Modify if needed: `SnapTra TranslatorTests/SettingsStoreTests.swift`
+- Modify if needed: `KakuTra TranslatorTests/SettingsStoreTests.swift`
 
 **Step 1: Run targeted tests**
 
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/SelectedTextLookupRoutingTests"
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/SelectedTextLookupRoutingTests"
 ```
 
 Expected: PASS.
@@ -148,13 +148,13 @@ Expected: PASS.
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Release -destination 'platform=macOS' build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Release -destination 'platform=macOS' build
 ```
 
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator Direct" -configuration Release -destination 'platform=macOS' build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator Direct" -configuration Release -destination 'platform=macOS' build
 ```
 
 Expected:

@@ -13,8 +13,8 @@
 ### Task 1: Gesture And Policy Tests
 
 **Files:**
-- Modify: `SnapTra TranslatorTests/HotkeyManagerTests.swift`
-- Modify: `SnapTra TranslatorTests/ParagraphOverlayLayoutTests.swift`
+- Modify: `KakuTra TranslatorTests/HotkeyManagerTests.swift`
+- Modify: `KakuTra TranslatorTests/ParagraphOverlayLayoutTests.swift`
 
 - [ ] **Step 1: Write failing tests**
 
@@ -22,7 +22,7 @@ Add tests that expect a short tap release to be identifiable separately from a l
 
 - [ ] **Step 2: Run focused tests**
 
-Run: `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/HotkeyManagerTests" -only-testing:"SnapTra TranslatorTests/ParagraphOverlayLayoutTests"`
+Run: `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/HotkeyManagerTests" -only-testing:"KakuTra TranslatorTests/ParagraphOverlayLayoutTests"`
 
 Expected: FAIL because the new tap release kind and word overlay policy do not exist yet.
 
@@ -37,9 +37,9 @@ Expected: PASS for the new focused tests.
 ### Task 2: Settings Persistence
 
 **Files:**
-- Modify: `SnapTra Translator/AppSettings.swift`
-- Modify: `SnapTra Translator/SettingsStore.swift`
-- Modify: `SnapTra TranslatorTests/SettingsStoreTests.swift`
+- Modify: `KakuTra Translator/AppSettings.swift`
+- Modify: `KakuTra Translator/SettingsStore.swift`
+- Modify: `KakuTra TranslatorTests/SettingsStoreTests.swift`
 
 - [ ] **Step 1: Write failing settings tests**
 
@@ -47,7 +47,7 @@ Assert the new setting defaults to `true`, persists to `UserDefaults`, and loads
 
 - [ ] **Step 2: Run settings tests**
 
-Run: `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/SettingsStoreMigrationTests"`
+Run: `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/SettingsStoreMigrationTests"`
 
 Expected: FAIL because the key and property do not exist yet.
 
@@ -62,11 +62,11 @@ Expected: PASS for settings tests.
 ### Task 3: AppModel And UI Integration
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
-- Modify: `SnapTra Translator/OverlayView.swift`
-- Modify: `SnapTra Translator/SettingsView.swift`
-- Modify: `SnapTra Translator/SettingsWindowView.swift`
-- Modify: `SnapTra Translator/Localizable.xcstrings`
+- Modify: `KakuTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/SettingsView.swift`
+- Modify: `KakuTra Translator/SettingsWindowView.swift`
+- Modify: `KakuTra Translator/Localizable.xcstrings`
 - Modify: `README.md`
 - Modify: `README.zh-CN.md`
 - Modify: `docs/README.md`
@@ -85,4 +85,4 @@ Add user-facing strings and README text for the new mode.
 
 - [ ] **Step 4: Verify**
 
-Run focused tests, `jq empty "SnapTra Translator/Localizable.xcstrings"`, and a Debug build.
+Run focused tests, `jq empty "KakuTra Translator/Localizable.xcstrings"`, and a Debug build.

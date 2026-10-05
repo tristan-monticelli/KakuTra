@@ -13,8 +13,8 @@
 ### Task 1: Add non-blocking double-tap detection to the hotkey layer
 
 **Files:**
-- Modify: `SnapTra Translator/HotkeyManager.swift`
-- Create: `SnapTra TranslatorTests/HotkeyManagerTests.swift`
+- Modify: `KakuTra Translator/HotkeyManager.swift`
+- Create: `KakuTra TranslatorTests/HotkeyManagerTests.swift`
 
 **Step 1: Write the failing test**
 
@@ -40,7 +40,7 @@ func testSecondTapEmitsDoubleTapWithoutDelayingFirstTrigger() {
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:'SnapTra TranslatorTests/HotkeyManagerTests/testSecondTapEmitsDoubleTapWithoutDelayingFirstTrigger'
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:'KakuTra TranslatorTests/HotkeyManagerTests/testSecondTapEmitsDoubleTapWithoutDelayingFirstTrigger'
 ```
 
 Expected: FAIL because `onDoubleTap` and test hooks do not exist yet.
@@ -77,17 +77,17 @@ Expected: PASS.
 **Step 5: Commit**
 
 ```bash
-git add "SnapTra Translator/HotkeyManager.swift" "SnapTra TranslatorTests/HotkeyManagerTests.swift"
+git add "KakuTra Translator/HotkeyManager.swift" "KakuTra TranslatorTests/HotkeyManagerTests.swift"
 git commit -m "feat: add non-blocking hotkey double tap detection"
 ```
 
 ### Task 2: Extend overlay state to support paragraph loading and paragraph results
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
-- Modify: `SnapTra Translator/OverlayView.swift`
-- Modify: `SnapTra Translator/OverlayWindowController.swift`
-- Create: `SnapTra TranslatorTests/OverlayModeTests.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/OverlayWindowController.swift`
+- Create: `KakuTra TranslatorTests/OverlayModeTests.swift`
 
 **Step 1: Write the failing test**
 
@@ -108,7 +108,7 @@ func testParagraphModeRendersOriginalAndTranslationWithoutDictionarySections() {
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:'SnapTra TranslatorTests/OverlayModeTests/testParagraphModeRendersOriginalAndTranslationWithoutDictionarySections'
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:'KakuTra TranslatorTests/OverlayModeTests/testParagraphModeRendersOriginalAndTranslationWithoutDictionarySections'
 ```
 
 Expected: FAIL because paragraph display mode does not exist.
@@ -138,15 +138,15 @@ Expected: PASS.
 **Step 5: Commit**
 
 ```bash
-git add "SnapTra Translator/AppModel.swift" "SnapTra Translator/OverlayView.swift" "SnapTra Translator/OverlayWindowController.swift" "SnapTra TranslatorTests/OverlayModeTests.swift"
+git add "KakuTra Translator/AppModel.swift" "KakuTra Translator/OverlayView.swift" "KakuTra Translator/OverlayWindowController.swift" "KakuTra TranslatorTests/OverlayModeTests.swift"
 git commit -m "feat: add paragraph overlay modes"
 ```
 
 ### Task 3: Add full-display capture for the display under the pointer
 
 **Files:**
-- Modify: `SnapTra Translator/ScreenCaptureService.swift`
-- Create: `SnapTra TranslatorTests/ScreenCaptureGeometryTests.swift`
+- Modify: `KakuTra Translator/ScreenCaptureService.swift`
+- Create: `KakuTra TranslatorTests/ScreenCaptureGeometryTests.swift`
 
 **Step 1: Write the failing test**
 
@@ -167,7 +167,7 @@ func testDisplayLocalCoordinatesFlipYAxisForFullDisplayRect() {
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:'SnapTra TranslatorTests/ScreenCaptureGeometryTests/testDisplayLocalCoordinatesFlipYAxisForFullDisplayRect'
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:'KakuTra TranslatorTests/ScreenCaptureGeometryTests/testDisplayLocalCoordinatesFlipYAxisForFullDisplayRect'
 ```
 
 Expected: FAIL because reusable geometry helpers for full-display capture do not exist.
@@ -196,15 +196,15 @@ Expected: PASS.
 **Step 5: Commit**
 
 ```bash
-git add "SnapTra Translator/ScreenCaptureService.swift" "SnapTra TranslatorTests/ScreenCaptureGeometryTests.swift"
+git add "KakuTra Translator/ScreenCaptureService.swift" "KakuTra TranslatorTests/ScreenCaptureGeometryTests.swift"
 git commit -m "feat: add full-display capture for paragraph OCR"
 ```
 
 ### Task 4: Add OCR line and paragraph grouping with pointer hit-testing
 
 **Files:**
-- Modify: `SnapTra Translator/OCRService.swift`
-- Create: `SnapTra TranslatorTests/OCRParagraphGroupingTests.swift`
+- Modify: `KakuTra Translator/OCRService.swift`
+- Create: `KakuTra TranslatorTests/OCRParagraphGroupingTests.swift`
 
 **Step 1: Write the failing test**
 
@@ -228,7 +228,7 @@ func testGroupsAlignedEnglishLinesIntoOneParagraphAndSelectsPointerHit() {
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:'SnapTra TranslatorTests/OCRParagraphGroupingTests/testGroupsAlignedEnglishLinesIntoOneParagraphAndSelectsPointerHit'
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:'KakuTra TranslatorTests/OCRParagraphGroupingTests/testGroupsAlignedEnglishLinesIntoOneParagraphAndSelectsPointerHit'
 ```
 
 Expected: FAIL because line and paragraph models do not exist.
@@ -264,15 +264,15 @@ Expected: PASS.
 **Step 5: Commit**
 
 ```bash
-git add "SnapTra Translator/OCRService.swift" "SnapTra TranslatorTests/OCRParagraphGroupingTests.swift"
+git add "KakuTra Translator/OCRService.swift" "KakuTra TranslatorTests/OCRParagraphGroupingTests.swift"
 git commit -m "feat: add OCR paragraph grouping and hit testing"
 ```
 
 ### Task 5: Add paragraph highlight rendering with green corner markers
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayWindowController.swift`
-- Create: `SnapTra TranslatorTests/ParagraphHighlightGeometryTests.swift`
+- Modify: `KakuTra Translator/OverlayWindowController.swift`
+- Create: `KakuTra TranslatorTests/ParagraphHighlightGeometryTests.swift`
 
 **Step 1: Write the failing test**
 
@@ -291,7 +291,7 @@ func testCornerSegmentsStayInsideParagraphBounds() {
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:'SnapTra TranslatorTests/ParagraphHighlightGeometryTests/testCornerSegmentsStayInsideParagraphBounds'
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:'KakuTra TranslatorTests/ParagraphHighlightGeometryTests/testCornerSegmentsStayInsideParagraphBounds'
 ```
 
 Expected: FAIL because production highlight geometry is not defined.
@@ -317,16 +317,16 @@ Expected: PASS.
 **Step 5: Commit**
 
 ```bash
-git add "SnapTra Translator/OverlayWindowController.swift" "SnapTra TranslatorTests/ParagraphHighlightGeometryTests.swift"
+git add "KakuTra Translator/OverlayWindowController.swift" "KakuTra TranslatorTests/ParagraphHighlightGeometryTests.swift"
 git commit -m "feat: add paragraph corner highlight overlay"
 ```
 
 ### Task 6: Integrate paragraph upgrade flow into AppModel
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
-- Modify: `SnapTra Translator/TranslationService.swift`
-- Create: `SnapTra TranslatorTests/AppModelParagraphFlowTests.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/TranslationService.swift`
+- Create: `KakuTra TranslatorTests/AppModelParagraphFlowTests.swift`
 
 **Step 1: Write the failing test**
 
@@ -346,7 +346,7 @@ func testDoubleTapUpgradesExistingLookupToParagraphLoading() async {
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:'SnapTra TranslatorTests/AppModelParagraphFlowTests/testDoubleTapUpgradesExistingLookupToParagraphLoading'
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:'KakuTra TranslatorTests/AppModelParagraphFlowTests/testDoubleTapUpgradesExistingLookupToParagraphLoading'
 ```
 
 Expected: FAIL because the paragraph upgrade flow is not wired.
@@ -382,7 +382,7 @@ Expected: PASS.
 **Step 5: Commit**
 
 ```bash
-git add "SnapTra Translator/AppModel.swift" "SnapTra Translator/TranslationService.swift" "SnapTra TranslatorTests/AppModelParagraphFlowTests.swift"
+git add "KakuTra Translator/AppModel.swift" "KakuTra Translator/TranslationService.swift" "KakuTra TranslatorTests/AppModelParagraphFlowTests.swift"
 git commit -m "feat: integrate paragraph OCR upgrade flow"
 ```
 
@@ -396,7 +396,7 @@ git commit -m "feat: integrate paragraph OCR upgrade flow"
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:'SnapTra TranslatorTests/HotkeyManagerTests' -only-testing:'SnapTra TranslatorTests/OverlayModeTests' -only-testing:'SnapTra TranslatorTests/ScreenCaptureGeometryTests' -only-testing:'SnapTra TranslatorTests/OCRParagraphGroupingTests' -only-testing:'SnapTra TranslatorTests/ParagraphHighlightGeometryTests' -only-testing:'SnapTra TranslatorTests/AppModelParagraphFlowTests'
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:'KakuTra TranslatorTests/HotkeyManagerTests' -only-testing:'KakuTra TranslatorTests/OverlayModeTests' -only-testing:'KakuTra TranslatorTests/ScreenCaptureGeometryTests' -only-testing:'KakuTra TranslatorTests/OCRParagraphGroupingTests' -only-testing:'KakuTra TranslatorTests/ParagraphHighlightGeometryTests' -only-testing:'KakuTra TranslatorTests/AppModelParagraphFlowTests'
 ```
 
 Expected: PASS for the new focused suite.
@@ -406,7 +406,7 @@ Expected: PASS for the new focused suite.
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test
 ```
 
 Expected: PASS for the full project test suite.

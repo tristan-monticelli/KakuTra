@@ -13,8 +13,8 @@
 ### Task 1: Harden HotkeyManager Event Handling
 
 **Files:**
-- Modify: `SnapTra Translator/HotkeyManager.swift`
-- Test: `SnapTra TranslatorTests/HotkeyManagerTests.swift`
+- Modify: `KakuTra Translator/HotkeyManager.swift`
+- Test: `KakuTra TranslatorTests/HotkeyManagerTests.swift`
 
 **Step 1: Add a state reset test**
 
@@ -31,7 +31,7 @@ Update `HotkeyManager` to:
 
 Run:
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test -only-testing:SnapTra_TranslatorTests/HotkeyManagerTests
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" test -only-testing:KakuTra_TranslatorTests/HotkeyManagerTests
 ```
 
 Expected: hotkey tests pass.
@@ -41,7 +41,7 @@ Expected: hotkey tests pass.
 ### Task 2: Add App-Level Sleep/Wake Recovery
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
 
 **Step 1: Add recovery methods**
 
@@ -73,7 +73,7 @@ Sleep notifications call `prepareForSystemSleep()`. Wake/session notifications s
 
 Run:
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build
 ```
 
 Expected: build succeeds.

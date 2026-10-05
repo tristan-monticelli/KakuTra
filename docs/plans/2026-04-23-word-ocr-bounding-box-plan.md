@@ -13,7 +13,7 @@
 ### Task 1: Add OCR box extraction coverage
 
 **Files:**
-- Modify: `SnapTra TranslatorTests/OCRParagraphGroupingTests.swift`
+- Modify: `KakuTra TranslatorTests/OCRParagraphGroupingTests.swift`
 
 **Steps:**
 1. Add a test helper that can build `RecognizedWord` arrays with controlled bounding boxes for hit-testing scenarios.
@@ -24,7 +24,7 @@
 ### Task 2: Refactor word box generation to prefer Vision ranges
 
 **Files:**
-- Modify: `SnapTra Translator/OCRService.swift`
+- Modify: `KakuTra Translator/OCRService.swift`
 
 **Steps:**
 1. Extract the per-observation word-building logic out of `extractWords` into a small helper that has access to both the `VNRecognizedTextObservation` and the top `VNRecognizedText` candidate.
@@ -36,7 +36,7 @@
 ### Task 3: Tighten word hit-testing
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
 
 **Steps:**
 1. Change `selectWord(from:normalizedPoint:)` to run a strict containment pass with zero tolerance.
@@ -47,7 +47,7 @@
 ### Task 4: Add OCR extraction fallback tests
 
 **Files:**
-- Modify: `SnapTra TranslatorTests/OCRParagraphGroupingTests.swift`
+- Modify: `KakuTra TranslatorTests/OCRParagraphGroupingTests.swift`
 
 **Steps:**
 1. Add a unit-level box-generation test around the new helper surface if it can be exercised without constructing real Vision observations.
@@ -57,8 +57,8 @@
 ### Task 5: Verify the change
 
 **Commands:**
-- `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/OCRParagraphGroupingTests"`
-- `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build`
+- `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/OCRParagraphGroupingTests"`
+- `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build`
 
 **Manual checks:**
 - Enable the OCR debug region, hover on a mixed line such as `Copilot用不了了？突然不能用了`, and trigger single-press lookup: the green boxes should stay aligned with the words.

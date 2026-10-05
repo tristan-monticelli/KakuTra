@@ -13,7 +13,7 @@
 ### Task 1: Google Response Validation
 
 **Files:**
-- Modify: `SnapTra Translator/OnlineDictionaryService.swift`
+- Modify: `KakuTra Translator/OnlineDictionaryService.swift`
 
 **Steps:**
 1. Add typed Google lookup errors with user-facing messages.
@@ -23,8 +23,8 @@
 ### Task 2: Error Propagation
 
 **Files:**
-- Modify: `SnapTra Translator/DictionaryService.swift`
-- Modify: `SnapTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/DictionaryService.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
 
 **Steps:**
 1. Change `lookupSingle` to throw typed online lookup errors.
@@ -34,7 +34,7 @@
 ### Task 3: Regression Tests
 
 **Files:**
-- Modify: `SnapTra TranslatorTests/SettingsStoreTests.swift`
+- Modify: `KakuTra TranslatorTests/SettingsStoreTests.swift`
 
 **Steps:**
 1. Add a test that block-page HTML is recognized as a Google failure.
@@ -43,8 +43,8 @@
 ### Task 4: Verification
 
 **Commands:**
-- `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/OnlineDictionaryServiceTests"`
-- `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build`
+- `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/OnlineDictionaryServiceTests"`
+- `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build`
 
 **Manual checks:**
 - Trigger a Google dictionary lookup on the current network.

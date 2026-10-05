@@ -12,7 +12,7 @@
 
 ## 根因
 
-原文正文在 [OverlayView.swift](/Users/yelog/workspace/swift/SnapTra%20Translator/SnapTra%20Translator/OverlayView.swift) 中额外挂载了透明拖拽覆盖层。该覆盖层位于 `SelectableTextView` 之上，会优先截获鼠标事件，导致正文文本无法进入 `NSTextView` 的选中链路。
+原文正文在 [OverlayView.swift](/Users/yelog/workspace/swift/KakuTra%20Translator/KakuTra%20Translator/OverlayView.swift) 中额外挂载了透明拖拽覆盖层。该覆盖层位于 `SelectableTextView` 之上，会优先截获鼠标事件，导致正文文本无法进入 `NSTextView` 的选中链路。
 
 ## 方案
 

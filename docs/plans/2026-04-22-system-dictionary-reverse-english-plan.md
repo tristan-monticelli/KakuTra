@@ -13,7 +13,7 @@
 ### Task 1: Tighten English Fast Path
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
 
 **Steps:**
 1. Add a small helper that decides whether a definition meaning can be reused directly as an English translation.
@@ -23,7 +23,7 @@
 ### Task 2: Regression Tests
 
 **Files:**
-- Modify: `SnapTra TranslatorTests/SettingsStoreTests.swift`
+- Modify: `KakuTra TranslatorTests/SettingsStoreTests.swift`
 
 **Steps:**
 1. Add a test that English-source content still qualifies for the English fast path.
@@ -32,8 +32,8 @@
 ### Task 3: Verification
 
 **Commands:**
-- `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/DictionaryDefinitionTranslationDecisionTests"`
-- `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build`
+- `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/DictionaryDefinitionTranslationDecisionTests"`
+- `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build`
 
 **Manual checks:**
 - Configure `English -> 简体中文` with bidirectional lookup enabled.

@@ -13,7 +13,7 @@
 ### Task 1: Refine source editor presentation
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/OverlayView.swift`
 
 **Steps:**
 - Update `editableParagraphOriginalTextView(text:)` so the editor looks like an inset native editing surface instead of a large white input box.
@@ -24,7 +24,7 @@
 ### Task 2: Simplify language selector hierarchy
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/OverlayView.swift`
 
 **Steps:**
 - Update `paragraphLanguageSelector(content:)` to remove the long horizontal divider lines around the language pill.
@@ -34,7 +34,7 @@
 ### Task 3: Improve section spacing and output priority
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/OverlayView.swift`
 
 **Steps:**
 - Adjust padding around the original text area, language selector, native translation result, and service result cards.
@@ -47,6 +47,6 @@
 - Modify: none
 
 **Steps:**
-- Run `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build`.
+- Run `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build`.
 - Expected: build succeeds.
 - If build fails from style or type errors in `OverlayView.swift`, fix the minimal issue and rerun.

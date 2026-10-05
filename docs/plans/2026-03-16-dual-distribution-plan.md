@@ -13,10 +13,10 @@
 ### Task 1: Add channel-specific bundle metadata and entitlements
 
 **Files:**
-- Create: `SnapTra Translator/Info-AppStore.plist`
-- Create: `SnapTra Translator/Info-Direct.plist`
-- Create: `SnapTra Translator/SnapTra AppStore.entitlements`
-- Create: `SnapTra Translator/SnapTra Direct.entitlements`
+- Create: `KakuTra Translator/Info-AppStore.plist`
+- Create: `KakuTra Translator/Info-Direct.plist`
+- Create: `KakuTra Translator/KakuTra AppStore.entitlements`
+- Create: `KakuTra Translator/KakuTra Direct.entitlements`
 
 **Step 1: Create the App Store plist**
 
@@ -50,16 +50,16 @@ Use the App Store entitlements and add:
 ### Task 2: Split the Xcode project into App Store and Direct targets
 
 **Files:**
-- Modify: `SnapTra Translator.xcodeproj/project.pbxproj`
-- Modify: `SnapTra Translator.xcodeproj/xcshareddata/xcschemes/SnapTra Translator.xcscheme`
-- Create: `SnapTra Translator.xcodeproj/xcshareddata/xcschemes/SnapTra Translator Direct.xcscheme`
+- Modify: `KakuTra Translator.xcodeproj/project.pbxproj`
+- Modify: `KakuTra Translator.xcodeproj/xcshareddata/xcschemes/KakuTra Translator.xcscheme`
+- Create: `KakuTra Translator.xcodeproj/xcshareddata/xcschemes/KakuTra Translator Direct.xcscheme`
 
 **Step 1: Rename the existing target role to App Store**
 
 Keep the current target as the App Store build and point it to:
 
 - `Info-AppStore.plist`
-- `SnapTra AppStore.entitlements`
+- `KakuTra AppStore.entitlements`
 
 **Step 2: Duplicate the app target for Direct distribution**
 
@@ -79,15 +79,15 @@ Set:
 
 **Step 5: Add separate shared schemes**
 
-Keep `SnapTra Translator.xcscheme` pointing at the App Store target and add `SnapTra Translator Direct.xcscheme` for the direct target.
+Keep `KakuTra Translator.xcscheme` pointing at the App Store target and add `KakuTra Translator Direct.xcscheme` for the direct target.
 
 ### Task 3: Split the updater implementation by compilation target
 
 **Files:**
-- Create: `SnapTra Translator/UpdateChecker.swift`
-- Create: `SnapTra Translator/UpdateChecker+AppStore.swift`
-- Create: `SnapTra Translator/UpdateChecker+Direct.swift`
-- Delete: `SnapTra Translator/UpdateChecker.swift` (replace with split implementation)
+- Create: `KakuTra Translator/UpdateChecker.swift`
+- Create: `KakuTra Translator/UpdateChecker+AppStore.swift`
+- Create: `KakuTra Translator/UpdateChecker+Direct.swift`
+- Delete: `KakuTra Translator/UpdateChecker.swift` (replace with split implementation)
 
 **Step 1: Extract the shared interface**
 
@@ -125,7 +125,7 @@ Ensure:
 
 **Step 1: Build the Direct scheme in packaging**
 
-Change the package script to build `SnapTra Translator Direct` and remove the runtime metadata injection that is now provided by the direct plist.
+Change the package script to build `KakuTra Translator Direct` and remove the runtime metadata injection that is now provided by the direct plist.
 
 **Step 2: Keep Sparkle validation only for the Direct build**
 
@@ -145,7 +145,7 @@ Retain the current non-`--deep` signing flow so nested Sparkle helpers keep vali
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Release -destination "platform=macOS" build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Release -destination "platform=macOS" build
 ```
 
 Expected:
@@ -158,7 +158,7 @@ Expected:
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator Direct" -configuration Release -destination "platform=macOS" build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator Direct" -configuration Release -destination "platform=macOS" build
 ```
 
 Expected:

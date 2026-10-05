@@ -86,7 +86,7 @@
   - non-list paragraph fallback
 - Add unit tests for translated block reassembly so marker order and blank lines remain stable.
 - Add rendering-focused tests for paragraph attributed output if it can be isolated cheaply; otherwise cover the formatter directly.
-- Run the full `SnapTra TranslatorTests` suite and manually verify:
+- Run the full `KakuTra TranslatorTests` suite and manually verify:
   - original paragraph still shows line breaks
   - native translation keeps bullet-per-line output
   - wrapped list items align correctly in the overlay

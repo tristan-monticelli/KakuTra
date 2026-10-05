@@ -68,9 +68,9 @@ The current issues come from three separate layers competing with each other:
 
 ## Files
 
-- `SnapTra Translator/AppModel.swift`
-- `SnapTra Translator/OverlayWindowController.swift`
-- `SnapTra Translator/OverlayView.swift`
+- `KakuTra Translator/AppModel.swift`
+- `KakuTra Translator/OverlayWindowController.swift`
+- `KakuTra Translator/OverlayView.swift`
 
 ## Validation
 
@@ -82,4 +82,4 @@ The current issues come from three separate layers competing with each other:
   - drag from title row or original-text lines
   - panel moves immediately
 - Build succeeds:
-  - `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build`
+  - `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build`

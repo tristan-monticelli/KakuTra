@@ -6,7 +6,7 @@ usage() {
 Usage:
   scripts/build/check-app-store-entitlements.sh <path-to-app>
 
-Checks the signed App Store app for the sandbox entitlements required by SnapTra.
+Checks the signed App Store app for the sandbox entitlements required by KakuTra.
 USAGE
 }
 

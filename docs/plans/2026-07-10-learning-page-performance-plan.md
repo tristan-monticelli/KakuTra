@@ -13,9 +13,9 @@
 ### Task 1: Lock Pagination And Row Snapshot Behavior
 
 **Files:**
-- Modify: `SnapTra TranslatorTests/LearningServicePaginationTests.swift`
-- Modify: `SnapTra Translator/LearningService.swift`
-- Modify: `SnapTra Translator/LearningSettingsView.swift`
+- Modify: `KakuTra TranslatorTests/LearningServicePaginationTests.swift`
+- Modify: `KakuTra Translator/LearningService.swift`
+- Modify: `KakuTra Translator/LearningSettingsView.swift`
 
 **Step 1: Write failing tests**
 
@@ -26,7 +26,7 @@ Add coverage that records with equal lookup count and date use word ordering as 
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -target "SnapTra TranslatorTests" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -target "KakuTra TranslatorTests" -configuration Debug build
 ```
 
 Expected: fail because `LearningService.visibleRows` and the stable word tie-breaker do not exist.
@@ -42,8 +42,8 @@ Expected: the new test code compiles.
 ### Task 2: Replace Cumulative Pagination
 
 **Files:**
-- Modify: `SnapTra Translator/LearningService.swift:109-140`
-- Test: `SnapTra TranslatorTests/LearningServicePaginationTests.swift`
+- Modify: `KakuTra Translator/LearningService.swift:109-140`
+- Test: `KakuTra TranslatorTests/LearningServicePaginationTests.swift`
 
 **Step 1: Implement a fixed query window**
 
@@ -60,8 +60,8 @@ Expected: compile succeeds and existing page-count assertions remain valid.
 ### Task 3: Give Learning One Scroll Owner
 
 **Files:**
-- Modify: `SnapTra Translator/DictionarySettingsView.swift:401-429`
-- Modify: `SnapTra Translator/LearningSettingsView.swift:23-66`
+- Modify: `KakuTra Translator/DictionarySettingsView.swift:401-429`
+- Modify: `KakuTra Translator/LearningSettingsView.swift:23-66`
 
 **Step 1: Split the Learning route from generic scrolling**
 
@@ -76,7 +76,7 @@ Replace `ScrollView { LazyVStack { ... } }` with a bordered `List` that fills th
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build
 ```
 
 Expected: build succeeds.
@@ -84,8 +84,8 @@ Expected: build succeeds.
 ### Task 4: Redesign Learning Controls And Rows
 
 **Files:**
-- Modify: `SnapTra Translator/LearningSettingsView.swift`
-- Modify: `SnapTra Translator/Localizable.xcstrings`
+- Modify: `KakuTra Translator/LearningSettingsView.swift`
+- Modify: `KakuTra Translator/Localizable.xcstrings`
 
 **Step 1: Consolidate summary and filtering**
 
@@ -106,8 +106,8 @@ Add translations for management and automatic-cleanup settings labels in the str
 ### Task 5: Debounce Search And Preserve Export Scope
 
 **Files:**
-- Modify: `SnapTra Translator/LearningSettingsView.swift`
-- Test: `SnapTra TranslatorTests/LearningServicePaginationTests.swift`
+- Modify: `KakuTra Translator/LearningSettingsView.swift`
+- Test: `KakuTra TranslatorTests/LearningServicePaginationTests.swift`
 
 **Step 1: Add cancellable debounce**
 
@@ -122,7 +122,7 @@ Keep `LearningService.exportRows` as a separate full matching query. Do not deri
 Run the focused pagination suite with the target's display name, validate `Localizable.xcstrings` with `jq empty`, and build the Debug scheme:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug -derivedDataPath /tmp/snaptra-learning-tests test '-only-testing:SnapTra TranslatorTests/LearningServicePaginationTests'
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug -derivedDataPath /tmp/KakuTra-learning-tests test '-only-testing:KakuTra TranslatorTests/LearningServicePaginationTests'
 ```
 
 ### Task 6: Final Verification
@@ -139,8 +139,8 @@ git diff --check
 **Step 2: Run the tests and build the app independently**
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug -derivedDataPath /tmp/snaptra-learning-tests test '-only-testing:SnapTra TranslatorTests/LearningServicePaginationTests'
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug -derivedDataPath /tmp/snaptra-learning-app build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug -derivedDataPath /tmp/KakuTra-learning-tests test '-only-testing:KakuTra TranslatorTests/LearningServicePaginationTests'
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug -derivedDataPath /tmp/KakuTra-learning-app build
 ```
 
 Expected: both builds succeed.

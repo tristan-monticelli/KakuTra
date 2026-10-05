@@ -111,7 +111,7 @@ jobs:
           SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
         run: |
           TAG="${{ steps.version.outputs.tag }}"
-          DMG_PATH="dist/SnapTra-Translator-${TAG#v}.dmg"
+          DMG_PATH="dist/KakuTra-Translator-${TAG#v}.dmg"
 
           SIGNATURE=$(echo "$SPARKLE_PRIVATE_KEY" | sign_update --ed-key-file - "$DMG_PATH")
           echo "Sparkle signature: $SIGNATURE"
@@ -121,7 +121,7 @@ jobs:
         id: update_appcast
         run: |
           TAG="${{ steps.version.outputs.tag }}"
-          DMG_PATH="dist/SnapTra-Translator-${TAG#v}.dmg"
+          DMG_PATH="dist/KakuTra-Translator-${TAG#v}.dmg"
           VERSION="${TAG#v}"
           APPCAST_WORKTREE="$RUNNER_TEMP/appcast-main"
           CHANGELOG_PATH="$GITHUB_WORKSPACE/CHANGELOG.md"
@@ -214,7 +214,7 @@ jobs:
                   if not section:
                       return None
 
-                  html_parts = [f'<h2>SnapTra Translator {version}</h2>']
+                  html_parts = [f'<h2>KakuTra {version}</h2>']
                   current_list = []
                   current_heading = None
 
@@ -244,10 +244,10 @@ jobs:
               if changelog_html:
                   description.text = changelog_html
               else:
-                  description.text = f'<h2>SnapTra Translator $VERSION</h2><ul><li>Version $VERSION release</li></ul>'
+                  description.text = f'<h2>KakuTra $VERSION</h2><ul><li>Version $VERSION release</li></ul>'
 
               enclosure = ET.SubElement(item, 'enclosure')
-              enclosure.set('url', 'https://github.com/yelog/SnapTraTranslator/releases/download/$TAG/SnapTra-Translator-$VERSION.dmg')
+              enclosure.set('url', 'https://github.com/yelog/KakuTraTranslator/releases/download/$TAG/KakuTra-Translator-$VERSION.dmg')
               enclosure.set('length', '$FILE_SIZE')
               enclosure.set('type', 'application/octet-stream')
               sig_parts = '$SIGNATURE'.split()
@@ -374,7 +374,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG="${{ steps.version.outputs.tag }}"
-          DMG_PATH="dist/SnapTra-Translator-${TAG#v}.dmg"
+          DMG_PATH="dist/KakuTra-Translator-${TAG#v}.dmg"
           SHA_PATH="${DMG_PATH}.sha256"
           SIGNATURE_PATH="${DMG_PATH}.sparkle-signature"
 

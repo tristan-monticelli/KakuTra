@@ -11,8 +11,8 @@
 ### Task 1: Provider Model And Defaults
 
 **Files:**
-- Modify: `SnapTra Translator/SettingsStore.swift`
-- Modify: `SnapTra TranslatorTests/SettingsStoreTests.swift`
+- Modify: `KakuTra Translator/SettingsStore.swift`
+- Modify: `KakuTra TranslatorTests/SettingsStoreTests.swift`
 
 **Steps:**
 1. Add LLM source cases to `SentenceTranslationSource.SourceType`.
@@ -24,7 +24,7 @@
 ### Task 2: LLM Translation Requests
 
 **Files:**
-- Modify: `SnapTra Translator/SentenceTranslationService.swift`
+- Modify: `KakuTra Translator/SentenceTranslationService.swift`
 
 **Steps:**
 1. Add a Keychain helper for provider API keys.
@@ -38,10 +38,10 @@
 ### Task 3: UI And Runtime Flow
 
 **Files:**
-- Modify: `SnapTra Translator/SentenceSettingsView.swift`
-- Modify: `SnapTra Translator/DictionarySettingsView.swift`
-- Modify: `SnapTra Translator/SentenceLatencyTester.swift`
-- Modify: `SnapTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/SentenceSettingsView.swift`
+- Modify: `KakuTra Translator/DictionarySettingsView.swift`
+- Modify: `KakuTra Translator/SentenceLatencyTester.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
 
 **Steps:**
 1. Show LLM providers in the existing reorderable sentence services list.
@@ -54,7 +54,7 @@
 ### Task 4: Verification
 
 **Commands:**
-- `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test`
-- `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build`
+- `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" test`
+- `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build`
 
 **Expected:** Tests pass and the app target builds without warnings introduced by the new provider code.

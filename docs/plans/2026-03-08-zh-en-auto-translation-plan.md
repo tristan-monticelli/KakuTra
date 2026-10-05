@@ -13,16 +13,16 @@
 ### Task 1: Add Test Target and Smoke Coverage
 
 **Files:**
-- Modify: `SnapTra Translator.xcodeproj/project.pbxproj`
-- Create: `SnapTra TranslatorTests/SmokeTests.swift`
+- Modify: `KakuTra Translator.xcodeproj/project.pbxproj`
+- Create: `KakuTra TranslatorTests/SmokeTests.swift`
 
 **Step 1: Add the failing test target scaffold**
 
-Create a macOS unit-test target named `SnapTra TranslatorTests` and add a minimal smoke test:
+Create a macOS unit-test target named `KakuTra TranslatorTests` and add a minimal smoke test:
 
 ```swift
 import XCTest
-@testable import SnapTra_Translator
+@testable import KakuTra_Translator
 
 final class SmokeTests: XCTestCase {
     func testSmoke() {
@@ -36,7 +36,7 @@ final class SmokeTests: XCTestCase {
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test
 ```
 
 Expected: PASS with the new smoke test executing.
@@ -44,21 +44,21 @@ Expected: PASS with the new smoke test executing.
 **Step 3: Commit**
 
 ```bash
-git add "SnapTra Translator.xcodeproj/project.pbxproj" "SnapTra TranslatorTests/SmokeTests.swift"
+git add "KakuTra Translator.xcodeproj/project.pbxproj" "KakuTra TranslatorTests/SmokeTests.swift"
 git commit -m "test: add macOS unit test target"
 ```
 
 ### Task 2: Add Lookup Direction Model and Unit Tests
 
 **Files:**
-- Create: `SnapTra Translator/LookupDirection.swift`
-- Create: `SnapTra TranslatorTests/LookupDirectionTests.swift`
+- Create: `KakuTra Translator/LookupDirection.swift`
+- Create: `KakuTra TranslatorTests/LookupDirectionTests.swift`
 
 **Step 1: Write the failing tests**
 
 ```swift
 import XCTest
-@testable import SnapTra_Translator
+@testable import KakuTra_Translator
 
 final class LookupDirectionTests: XCTestCase {
     func testResolvesEnglishTokenToEnglishToChinese() {
@@ -98,7 +98,7 @@ final class LookupDirectionTests: XCTestCase {
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/LookupDirectionTests"
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/LookupDirectionTests"
 ```
 
 Expected: FAIL because `LookupDirectionResolver` does not exist yet.
@@ -134,7 +134,7 @@ enum LookupDirectionResolver {
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/LookupDirectionTests"
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/LookupDirectionTests"
 ```
 
 Expected: PASS.
@@ -142,22 +142,22 @@ Expected: PASS.
 **Step 5: Commit**
 
 ```bash
-git add "SnapTra Translator/LookupDirection.swift" "SnapTra TranslatorTests/LookupDirectionTests.swift"
+git add "KakuTra Translator/LookupDirection.swift" "KakuTra TranslatorTests/LookupDirectionTests.swift"
 git commit -m "feat: add lookup direction resolver"
 ```
 
 ### Task 3: Add Translation Mode Settings and Persistence
 
 **Files:**
-- Modify: `SnapTra Translator/AppSettings.swift`
-- Modify: `SnapTra Translator/SettingsStore.swift`
-- Create: `SnapTra TranslatorTests/SettingsStoreTests.swift`
+- Modify: `KakuTra Translator/AppSettings.swift`
+- Modify: `KakuTra Translator/SettingsStore.swift`
+- Create: `KakuTra TranslatorTests/SettingsStoreTests.swift`
 
 **Step 1: Write the failing tests**
 
 ```swift
 import XCTest
-@testable import SnapTra_Translator
+@testable import KakuTra_Translator
 
 final class SettingsStoreTests: XCTestCase {
     func testDefaultsToFixedDirectionMode() {
@@ -188,7 +188,7 @@ final class SettingsStoreTests: XCTestCase {
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/SettingsStoreTests"
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/SettingsStoreTests"
 ```
 
 Expected: FAIL because the new settings do not exist.
@@ -230,8 +230,8 @@ Use conservative defaults:
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/SettingsStoreTests"
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/SettingsStoreTests"
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build
 ```
 
 Expected: tests PASS, build PASS.
@@ -239,15 +239,15 @@ Expected: tests PASS, build PASS.
 **Step 5: Commit**
 
 ```bash
-git add "SnapTra Translator/AppSettings.swift" "SnapTra Translator/SettingsStore.swift" "SnapTra TranslatorTests/SettingsStoreTests.swift"
+git add "KakuTra Translator/AppSettings.swift" "KakuTra Translator/SettingsStore.swift" "KakuTra TranslatorTests/SettingsStoreTests.swift"
 git commit -m "feat: add auto translation settings model"
 ```
 
 ### Task 4: Update Settings UI for Chinese-English Mutual Translation
 
 **Files:**
-- Modify: `SnapTra Translator/SettingsWindowView.swift`
-- Modify: `SnapTra Translator/Localizable.xcstrings`
+- Modify: `KakuTra Translator/SettingsWindowView.swift`
+- Modify: `KakuTra Translator/Localizable.xcstrings`
 
 **Step 1: Write the failing UI behavior check**
 
@@ -260,7 +260,7 @@ Build the app with the expectation that the settings UI now exposes:
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build
 ```
 
 Expected: BUILD FAIL until the UI references the new settings model correctly.
@@ -291,7 +291,7 @@ Behavior rules:
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build
 ```
 
 Expected: BUILD PASS.
@@ -299,15 +299,15 @@ Expected: BUILD PASS.
 **Step 4: Commit**
 
 ```bash
-git add "SnapTra Translator/SettingsWindowView.swift" "SnapTra Translator/Localizable.xcstrings"
+git add "KakuTra Translator/SettingsWindowView.swift" "KakuTra Translator/Localizable.xcstrings"
 git commit -m "feat: add auto mutual translation controls"
 ```
 
 ### Task 5: Refactor Translation Bridge to Honor Request-Scoped Direction
 
 **Files:**
-- Modify: `SnapTra Translator/TranslationService.swift`
-- Create: `SnapTra TranslatorTests/TranslationRequestContextTests.swift`
+- Modify: `KakuTra Translator/TranslationService.swift`
+- Create: `KakuTra TranslatorTests/TranslationRequestContextTests.swift`
 
 **Step 1: Write the failing tests**
 
@@ -315,7 +315,7 @@ Keep the unit test focused on request direction plumbing instead of the system t
 
 ```swift
 import XCTest
-@testable import SnapTra_Translator
+@testable import KakuTra_Translator
 
 final class TranslationRequestContextTests: XCTestCase {
     func testBuildsConfigurationKeyFromRequestDirection() {
@@ -334,7 +334,7 @@ final class TranslationRequestContextTests: XCTestCase {
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/TranslationRequestContextTests"
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/TranslationRequestContextTests"
 ```
 
 Expected: FAIL because `TranslationRequestContext` does not exist yet.
@@ -369,8 +369,8 @@ Implementation requirements:
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/TranslationRequestContextTests"
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/TranslationRequestContextTests"
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build
 ```
 
 Expected: PASS.
@@ -378,21 +378,21 @@ Expected: PASS.
 **Step 5: Commit**
 
 ```bash
-git add "SnapTra Translator/TranslationService.swift" "SnapTra TranslatorTests/TranslationRequestContextTests.swift"
+git add "KakuTra Translator/TranslationService.swift" "KakuTra TranslatorTests/TranslationRequestContextTests.swift"
 git commit -m "refactor: make translation bridge request scoped"
 ```
 
 ### Task 6: Upgrade OCR Tokenization for Chinese and English
 
 **Files:**
-- Modify: `SnapTra Translator/OCRService.swift`
-- Create: `SnapTra TranslatorTests/OCRTokenizationTests.swift`
+- Modify: `KakuTra Translator/OCRService.swift`
+- Create: `KakuTra TranslatorTests/OCRTokenizationTests.swift`
 
 **Step 1: Write the failing tests**
 
 ```swift
 import XCTest
-@testable import SnapTra_Translator
+@testable import KakuTra_Translator
 
 final class OCRTokenizationTests: XCTestCase {
     func testTokenizesEnglishWords() {
@@ -420,7 +420,7 @@ final class OCRTokenizationTests: XCTestCase {
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/OCRTokenizationTests"
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/OCRTokenizationTests"
 ```
 
 Expected: FAIL because the helper does not exist and the current implementation is English-only.
@@ -454,8 +454,8 @@ enum OCRTokenizationHelper {
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/OCRTokenizationTests"
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/OCRTokenizationTests"
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build
 ```
 
 Expected: PASS.
@@ -463,16 +463,16 @@ Expected: PASS.
 **Step 5: Commit**
 
 ```bash
-git add "SnapTra Translator/OCRService.swift" "SnapTra TranslatorTests/OCRTokenizationTests.swift"
+git add "KakuTra Translator/OCRService.swift" "KakuTra TranslatorTests/OCRTokenizationTests.swift"
 git commit -m "feat: support chinese and english OCR tokens"
 ```
 
 ### Task 7: Integrate Dynamic Direction into AppModel and Language-Pack Checks
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
-- Modify: `SnapTra Translator/LanguagePackManager.swift`
-- Modify: `SnapTra Translator/Snap_TranslateApp.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/LanguagePackManager.swift`
+- Modify: `KakuTra Translator/Snap_TranslateApp.swift`
 
 **Step 1: Write the failing integration-oriented unit test**
 
@@ -480,7 +480,7 @@ Create a small pure helper test around effective-direction mapping:
 
 ```swift
 import XCTest
-@testable import SnapTra_Translator
+@testable import KakuTra_Translator
 
 final class EffectiveLookupContextTests: XCTestCase {
     func testBuildsChineseToEnglishContext() {
@@ -502,7 +502,7 @@ final class EffectiveLookupContextTests: XCTestCase {
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/EffectiveLookupContextTests"
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/EffectiveLookupContextTests"
 ```
 
 Expected: FAIL because `EffectiveLookupContext` does not exist yet.
@@ -531,8 +531,8 @@ Update `LanguagePackManager.swift` and startup readiness logic so auto mode chec
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/EffectiveLookupContextTests"
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/EffectiveLookupContextTests"
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build
 ```
 
 Manual verification:
@@ -546,7 +546,7 @@ Expected: tests PASS, build PASS, manual verification succeeds.
 **Step 5: Commit**
 
 ```bash
-git add "SnapTra Translator/AppModel.swift" "SnapTra Translator/LanguagePackManager.swift" "SnapTra Translator/Snap_TranslateApp.swift"
+git add "KakuTra Translator/AppModel.swift" "KakuTra Translator/LanguagePackManager.swift" "KakuTra Translator/Snap_TranslateApp.swift"
 git commit -m "feat: add zh-en auto mutual translation flow"
 ```
 
@@ -569,8 +569,8 @@ Add short documentation for:
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test
 ```
 
 Expected: PASS.

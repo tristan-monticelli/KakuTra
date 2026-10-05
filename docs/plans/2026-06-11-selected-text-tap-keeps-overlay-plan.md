@@ -13,7 +13,7 @@
 ### Task 1: Policy Tests
 
 **Files:**
-- Modify: `SnapTra TranslatorTests/ParagraphOverlayLayoutTests.swift`
+- Modify: `KakuTra TranslatorTests/ParagraphOverlayLayoutTests.swift`
 
 - [x] **Step 1: Write failing tests**
 
@@ -21,15 +21,15 @@ Assert tap-to-keep returns true for selected-text sentence lookup when enabled a
 
 - [x] **Step 2: Run focused tests**
 
-Run: `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/ParagraphOverlayLayoutTests"`
+Run: `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/ParagraphOverlayLayoutTests"`
 
 Expected: FAIL until the policy supports selected-text lookup kinds.
 
 ### Task 2: AppModel Integration
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
-- Modify: `SnapTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/OverlayView.swift`
 
 - [x] **Step 1: Generalize the policy**
 
@@ -46,9 +46,9 @@ When a selected-text sentence bubble is kept by short tap, show close instead of
 ### Task 3: Copy And Docs
 
 **Files:**
-- Modify: `SnapTra Translator/SettingsView.swift`
-- Modify: `SnapTra Translator/SettingsWindowView.swift`
-- Modify: `SnapTra Translator/Localizable.xcstrings`
+- Modify: `KakuTra Translator/SettingsView.swift`
+- Modify: `KakuTra Translator/SettingsWindowView.swift`
+- Modify: `KakuTra Translator/Localizable.xcstrings`
 - Modify: `README.md`
 - Modify: `README.zh-CN.md`
 - Modify: `docs/README.md`
@@ -67,10 +67,10 @@ Mention that tap-to-keep applies to word lookup and selected-text sentence trans
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/ParagraphOverlayLayoutTests" -only-testing:"SnapTra TranslatorTests/SettingsStoreMigrationTests" -only-testing:"SnapTra TranslatorTests/SelectedTextLookupRoutingTests" -only-testing:"SnapTra TranslatorTests/HotkeyManagerTests"
-jq empty "SnapTra Translator/Localizable.xcstrings"
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/ParagraphOverlayLayoutTests" -only-testing:"KakuTra TranslatorTests/SettingsStoreMigrationTests" -only-testing:"KakuTra TranslatorTests/SelectedTextLookupRoutingTests" -only-testing:"KakuTra TranslatorTests/HotkeyManagerTests"
+jq empty "KakuTra Translator/Localizable.xcstrings"
 git diff --check
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build
 ```
 
 Expected: all commands succeed.

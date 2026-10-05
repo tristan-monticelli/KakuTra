@@ -13,8 +13,8 @@
 ### Task 1: Settings Model
 
 **Files:**
-- Modify: `SnapTra Translator/SettingsStore.swift`
-- Test: `SnapTra TranslatorTests/SettingsStoreTests.swift`
+- Modify: `KakuTra Translator/SettingsStore.swift`
+- Test: `KakuTra TranslatorTests/SettingsStoreTests.swift`
 
 **Steps:**
 1. Add `.zhipu` to `SentenceTranslationSource.SourceType`.
@@ -26,7 +26,7 @@
 ### Task 2: Settings UI
 
 **Files:**
-- Modify: `SnapTra Translator/SentenceSettingsView.swift`
+- Modify: `KakuTra Translator/SentenceSettingsView.swift`
 
 **Steps:**
 1. Add icon, display name, and subtitle switch cases for Zhipu.
@@ -36,8 +36,8 @@
 ### Task 3: Translation Routing
 
 **Files:**
-- Modify: `SnapTra Translator/SentenceTranslationService.swift`
-- Modify: `SnapTra Translator/SentenceLatencyTester.swift`
+- Modify: `KakuTra Translator/SentenceTranslationService.swift`
+- Modify: `KakuTra Translator/SentenceLatencyTester.swift`
 
 **Steps:**
 1. Route `.zhipu` through the OpenAI-compatible translation and streaming path.
@@ -48,8 +48,8 @@
 ### Task 4: Verification
 
 **Files:**
-- Modify: `SnapTra TranslatorTests/SmokeTests.swift`
-- Modify: `SnapTra TranslatorTests/SettingsStoreTests.swift`
+- Modify: `KakuTra TranslatorTests/SmokeTests.swift`
+- Modify: `KakuTra TranslatorTests/SettingsStoreTests.swift`
 
 **Steps:**
 1. Test default Zhipu model, URL, and region.

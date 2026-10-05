@@ -13,7 +13,7 @@
 ### Task 1: Split popup movement from popup layout refresh
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayWindowController.swift`
+- Modify: `KakuTra Translator/OverlayWindowController.swift`
 
 **Step 1: Add explicit window update paths**
 
@@ -35,15 +35,15 @@ Only apply a frame update when the delta is visually meaningful to avoid redunda
 
 **Step 4: Build-check this file through app build**
 
-Run: `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build`
+Run: `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build`
 
 Expected: build succeeds with the new controller API.
 
 ### Task 2: Coalesce overlay refreshes and clear stale requests
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
-- Modify: `SnapTra Translator/TranslationService.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/TranslationService.swift`
 
 **Step 1: Route state updates and frame refresh separately**
 
@@ -64,7 +64,7 @@ Do not batch results into a final payload. Main translation and dictionary secti
 ### Task 3: Stabilize popup shell layout
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/OverlayView.swift`
 
 **Step 1: Make popup width stable**
 
@@ -81,7 +81,7 @@ Retain section ordering and compact placeholder rows so progressive updates rema
 ### Task 4: Make OCR work cancellable
 
 **Files:**
-- Modify: `SnapTra Translator/OCRService.swift`
+- Modify: `KakuTra Translator/OCRService.swift`
 
 **Step 1: Remove detached OCR execution**
 
@@ -102,7 +102,7 @@ Confirm rapid pointer movement or quick release does not leave OCR work running 
 
 **Step 1: Build the app**
 
-Run: `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build`
+Run: `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build`
 
 Expected: `BUILD SUCCEEDED`
 

@@ -13,9 +13,9 @@
 ### Task 1: Settings Persistence
 
 **Files:**
-- Modify: `SnapTra Translator/AppSettings.swift`
-- Modify: `SnapTra Translator/SettingsStore.swift`
-- Test: `SnapTra TranslatorTests/SettingsStoreTests.swift`
+- Modify: `KakuTra Translator/AppSettings.swift`
+- Modify: `KakuTra Translator/SettingsStore.swift`
+- Test: `KakuTra TranslatorTests/SettingsStoreTests.swift`
 
 **Steps:**
 1. Add `AppSettingKey.bidirectionalTranslationEnabled`.
@@ -23,13 +23,13 @@
 3. Default it to `false`.
 4. Persist it in `didSet` and `persistAllSettings()`.
 5. Add a unit test that default is false and persistence survives reload.
-6. Run `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/SettingsStoreMigrationTests"`.
+6. Run `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/SettingsStoreMigrationTests"`.
 
 ### Task 2: Direction Resolver
 
 **Files:**
-- Modify: `SnapTra Translator/LookupDirection.swift`
-- Test: `SnapTra TranslatorTests/LookupDirectionTests.swift`
+- Modify: `KakuTra Translator/LookupDirection.swift`
+- Test: `KakuTra TranslatorTests/LookupDirectionTests.swift`
 
 **Steps:**
 1. Add a resolver that returns the configured pair when bidirectional mode is off.
@@ -37,13 +37,13 @@
 3. Resolve English text to English-to-Chinese and Chinese text to Chinese-to-English.
 4. Fall back to the configured pair for mixed or unknown text.
 5. Add tests for all branches.
-6. Run `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/OCRTokenClassifierTests"`.
+6. Run `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/OCRTokenClassifierTests"`.
 
 ### Task 3: OCR Tokenization
 
 **Files:**
-- Modify: `SnapTra Translator/OCRService.swift`
-- Test: `SnapTra TranslatorTests/OCRParagraphGroupingTests.swift`
+- Modify: `KakuTra Translator/OCRService.swift`
+- Test: `KakuTra TranslatorTests/OCRParagraphGroupingTests.swift`
 
 **Steps:**
 1. Import NaturalLanguage.
@@ -51,12 +51,12 @@
 3. Preserve CamelCase splitting for Latin tokens.
 4. Emit Han tokens from recognized text.
 5. Add tests for extracting English and Chinese tokens from plain recognized strings through test-only helper methods.
-6. Run `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/OCRParagraphGroupingTests"`.
+6. Run `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/OCRParagraphGroupingTests"`.
 
 ### Task 4: Runtime Integration
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
 
 **Steps:**
 1. Change word lookup to resolve the language pair from `selected.text`.
@@ -69,8 +69,8 @@
 ### Task 5: Settings UI
 
 **Files:**
-- Modify: `SnapTra Translator/SettingsWindowView.swift`
-- Modify: `SnapTra Translator/Localizable.xcstrings`
+- Modify: `KakuTra Translator/SettingsWindowView.swift`
+- Modify: `KakuTra Translator/Localizable.xcstrings`
 
 **Steps:**
 1. Add a source language picker beside the target picker.
@@ -82,8 +82,8 @@
 ### Task 6: Final Verification
 
 **Commands:**
-- `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test`
-- `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build`
+- `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test`
+- `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build`
 
 **Manual checks:**
 - Source English, target Chinese, bidirectional off: English translates to Chinese.

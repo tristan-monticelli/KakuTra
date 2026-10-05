@@ -237,16 +237,16 @@ Call `InPlaceTranslationStyleResolver.resolve(...)` inside this method and store
 
 Update all call sites:
 
-- Cursor single-line path around `SnapTra Translator/AppModel.swift:1275`.
-- Cursor paragraph path around `SnapTra Translator/AppModel.swift:1371`.
-- Manual region path around `SnapTra Translator/AppModel.swift:1504`.
+- Cursor single-line path around `KakuTra Translator/AppModel.swift:1275`.
+- Cursor paragraph path around `KakuTra Translator/AppModel.swift:1371`.
+- Manual region path around `KakuTra Translator/AppModel.swift:1504`.
 
 ## Task 1: Add Layout Tests For Source-Aligned Text
 
 **Files:**
 
-- Modify: `SnapTra TranslatorTests/InPlaceTranslationLayoutTests.swift`
-- Modify: `SnapTra Translator/InPlaceTranslation.swift`
+- Modify: `KakuTra TranslatorTests/InPlaceTranslationLayoutTests.swift`
+- Modify: `KakuTra Translator/InPlaceTranslation.swift`
 
 **Step 1: Add failing tests**
 
@@ -304,14 +304,14 @@ func testResolveKeepsTextFrameInsideSourceBounds() {
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test -only-testing:SnapTra_TranslatorTests/InPlaceTranslationLayoutTests
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" test -only-testing:KakuTra_TranslatorTests/InPlaceTranslationLayoutTests
 ```
 
 Expected: compile failure because `resolve` does not accept `sourceLineRects`, or test failure because `textFrame` does not exist.
 
 **Step 3: Implement minimal layout model**
 
-In `SnapTra Translator/InPlaceTranslation.swift`:
+In `KakuTra Translator/InPlaceTranslation.swift`:
 
 - Add `InPlaceTranslationTextFrame`.
 - Add `textFrame` to `InPlaceTranslationLayoutResult`.
@@ -324,7 +324,7 @@ In `SnapTra Translator/InPlaceTranslation.swift`:
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test -only-testing:SnapTra_TranslatorTests/InPlaceTranslationLayoutTests
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" test -only-testing:KakuTra_TranslatorTests/InPlaceTranslationLayoutTests
 ```
 
 Expected: all `InPlaceTranslationLayoutTests` pass.
@@ -332,7 +332,7 @@ Expected: all `InPlaceTranslationLayoutTests` pass.
 **Step 5: Commit**
 
 ```bash
-git add "SnapTra Translator/InPlaceTranslation.swift" "SnapTra TranslatorTests/InPlaceTranslationLayoutTests.swift"
+git add "KakuTra Translator/InPlaceTranslation.swift" "KakuTra TranslatorTests/InPlaceTranslationLayoutTests.swift"
 git commit -m "test(sentence): cover in-place source alignment"
 ```
 
@@ -340,8 +340,8 @@ git commit -m "test(sentence): cover in-place source alignment"
 
 **Files:**
 
-- Modify: `SnapTra Translator/InPlaceTranslation.swift`
-- Modify: `SnapTra TranslatorTests/InPlaceTranslationLayoutTests.swift`
+- Modify: `KakuTra Translator/InPlaceTranslation.swift`
+- Modify: `KakuTra TranslatorTests/InPlaceTranslationLayoutTests.swift`
 
 **Step 1: Add failing tests**
 
@@ -428,14 +428,14 @@ private extension NSColor {
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test -only-testing:SnapTra_TranslatorTests/InPlaceTranslationLayoutTests
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" test -only-testing:KakuTra_TranslatorTests/InPlaceTranslationLayoutTests
 ```
 
 Expected: compile failure because `InPlaceTranslationStyleResolver` does not exist.
 
 **Step 3: Implement style resolver**
 
-In `SnapTra Translator/InPlaceTranslation.swift`:
+In `KakuTra Translator/InPlaceTranslation.swift`:
 
 - Add `InPlaceTranslationStyle`.
 - Add `InPlaceTranslationStyleResolver`.
@@ -453,7 +453,7 @@ Implementation note: ScreenCaptureKit output uses BGRA. When reading raw data fr
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test -only-testing:SnapTra_TranslatorTests/InPlaceTranslationLayoutTests
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" test -only-testing:KakuTra_TranslatorTests/InPlaceTranslationLayoutTests
 ```
 
 Expected: all in-place layout/style tests pass.
@@ -461,7 +461,7 @@ Expected: all in-place layout/style tests pass.
 **Step 5: Commit**
 
 ```bash
-git add "SnapTra Translator/InPlaceTranslation.swift" "SnapTra TranslatorTests/InPlaceTranslationLayoutTests.swift"
+git add "KakuTra Translator/InPlaceTranslation.swift" "KakuTra TranslatorTests/InPlaceTranslationLayoutTests.swift"
 git commit -m "feat(sentence): estimate in-place overlay colors"
 ```
 
@@ -469,8 +469,8 @@ git commit -m "feat(sentence): estimate in-place overlay colors"
 
 **Files:**
 
-- Modify: `SnapTra Translator/AppModel.swift`
-- Modify: `SnapTra Translator/InPlaceTranslation.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/InPlaceTranslation.swift`
 
 **Step 1: Update content model**
 
@@ -561,7 +561,7 @@ showInPlaceTranslationLoading(
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build
 ```
 
 Expected: `BUILD SUCCEEDED`.
@@ -569,7 +569,7 @@ Expected: `BUILD SUCCEEDED`.
 **Step 5: Commit**
 
 ```bash
-git add "SnapTra Translator/AppModel.swift" "SnapTra Translator/InPlaceTranslation.swift"
+git add "KakuTra Translator/AppModel.swift" "KakuTra Translator/InPlaceTranslation.swift"
 git commit -m "feat(sentence): style in-place overlay from capture"
 ```
 
@@ -577,7 +577,7 @@ git commit -m "feat(sentence): style in-place overlay from capture"
 
 **Files:**
 
-- Modify: `SnapTra Translator/InPlaceTranslation.swift`
+- Modify: `KakuTra Translator/InPlaceTranslation.swift`
 
 **Step 1: Update `InPlaceTranslationView`**
 
@@ -618,7 +618,7 @@ var body: some View {
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test -only-testing:SnapTra_TranslatorTests/InPlaceTranslationLayoutTests
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" test -only-testing:KakuTra_TranslatorTests/InPlaceTranslationLayoutTests
 ```
 
 Expected: tests pass.
@@ -628,7 +628,7 @@ Expected: tests pass.
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build
 ```
 
 Expected: `BUILD SUCCEEDED`.
@@ -650,7 +650,7 @@ In Xcode, run the app and verify:
 **Step 5: Commit**
 
 ```bash
-git add "SnapTra Translator/InPlaceTranslation.swift"
+git add "KakuTra Translator/InPlaceTranslation.swift"
 git commit -m "feat(sentence): align in-place overlay text to source"
 ```
 
@@ -665,7 +665,7 @@ git commit -m "feat(sentence): align in-place overlay text to source"
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test -only-testing:SnapTra_TranslatorTests/SettingsStoreMigrationTests
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" test -only-testing:KakuTra_TranslatorTests/SettingsStoreMigrationTests
 ```
 
 Expected: tests pass.
@@ -675,7 +675,7 @@ Expected: tests pass.
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" test
 ```
 
 Expected: `** TEST SUCCEEDED **`.
@@ -685,7 +685,7 @@ Expected: `** TEST SUCCEEDED **`.
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build
 ```
 
 Expected: `BUILD SUCCEEDED`.

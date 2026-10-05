@@ -5,43 +5,52 @@
 - This file is intended for agentic coding assistants.
 
 ## Project Overview
-- **Xcode project**: `SnapTra Translator.xcodeproj`
+- **Xcode project**: `KakuTra Translator.xcodeproj`
 - **SwiftUI macOS app**: Menu bar (accessory) app for instant OCR translation
 - **App targets**: `KakuTra` and `KakuTra Direct`
 - **Test target**: `KakuTraTests`
 - **Minimum macOS**: 14.0 (translation features require macOS 15.0+)
+
+## Product Goal and User Journeys
+- KakuTra helps the user understand foreign text at the cursor with as little interruption as possible. Treat the user's learning or reading goal as the design constraint; do not implement isolated technical behavior without checking how it helps that journey.
+- Mode 1 is the reference cursor journey: detect the word under the pointer, show its local dictionary entry in the standard word card, and keep the card and lookup tracking consistent as the pointer moves.
+- The word card can optionally show an English translation of the OCR line containing the looked-up word. It defaults off; a one-time settings migration removes the old persisted default-on value and preserves the older sentence preference if present. It is configured under Context Sentence and is a setting within mode 1, not a separate mode or gesture.
+- Alternate Japanese readings are configured with the Japanese dictionary settings, not with the cross-language OCR context setting.
+- Mode 2 (two presses) translates supported Japanese, Chinese, and Korean OCR text on the display under the cursor. It periodically captures that display, skips Vision OCR when a reduced frame fingerprint is unchanged, and places translations over recognized text; Escape stops it. Unsupported-language-only lines should be skipped.
+- Keep the existing App Store versus Direct Accessibility/OCR routing intact unless the user explicitly asks to change it.
+- Before editing, state the user-visible journey the change serves. Prefer the smallest implementation that completes that journey using existing components and services; avoid duplicate modes, panels, or fallback paths without a demonstrated need.
 
 ## Build / Run / Test Commands
 
 ### Build (CLI)
 ```bash
 # Debug build
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "KakuTra" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra" -configuration Debug build
 
 # Release build
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "KakuTra" -configuration Release build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra" -configuration Release build
 ```
 
 ### Run
 Preferred: Open in Xcode and run (⌘R):
 ```bash
-open "SnapTra Translator.xcodeproj"
+open "KakuTra Translator.xcodeproj"
 ```
 
 ### Clean
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" clean
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" clean
 ```
 
 ### Tests
 - The `KakuTraTests` target is included in the `KakuTra` scheme.
 - Run all tests:
   ```bash
-  xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "KakuTra" test
+  xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra" test
   ```
 - Run a single test:
   ```bash
-  xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "KakuTra" test \
+  xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra" test \
     -only-testing:KakuTraTests/<TestCase>/<testMethod>
   ```
 

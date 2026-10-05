@@ -13,7 +13,7 @@
 ### Task 1: Add model actions for edited source text
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
 
 **Steps:**
 - Add `updateParagraphOriginalText(_:)` to update the current `ParagraphOverlayContent.originalText` without starting translation.
@@ -23,7 +23,7 @@
 ### Task 2: Render editable source input in pinned mode
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/OverlayView.swift`
 
 **Steps:**
 - Keep read-only source rendering for non-pinned overlays.
@@ -34,7 +34,7 @@
 ### Task 3: Add editable NSTextView wrapper
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/OverlayView.swift`
 
 **Steps:**
 - Add an `NSViewRepresentable` backed by `NSTextView`.
@@ -49,5 +49,5 @@
 - Modify: none
 
 **Steps:**
-- Run `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build`.
+- Run `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build`.
 - Manually verify temporary read-only source, pinned editing, `Return` submit, and `Shift + Return` newline.

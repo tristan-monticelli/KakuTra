@@ -1,69 +1,42 @@
 # KakuTra
 
-<p align="center">
-  <img src="docs/app-icon.png" alt="KakuTra Icon" width="128" height="128" />
-</p>
+Assistant macOS de traduction au curseur. KakuTra reconnaît localement le japonais, le chinois et le coréen, puis traduit le texte pris en charge vers l’anglais avec Apple Translation.
 
-<p align="center">
-  <strong>Assistant macOS d’immersion et d’apprentissage du japonais</strong><br>
-  <em>OCR local en japonais, chinois et coréen · Dictionnaires hors ligne · Création volontaire de cartes Anki</em>
-</p>
+## Parcours
 
-<p align="center">
-  <img src="docs/kakutra-hero.jpg" alt="Aperçu KakuTra" width="85%" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.3);" />
-</p>
+Appuyez une ou deux fois sur le raccourci configuré :
 
----
+- **Une fois** : suivre et traduire le mot sous le curseur.
+- **Deux fois** : traduire visuellement les lignes OCR japonaises, chinoises et coréennes de l’écran sous le curseur. Les autres langues sont ignorées. Appuyez sur Échap pour arrêter ce mode.
 
-## Philosophie et principes clés
+Survolez le titre du résultat pour afficher sa transcription latine : romaji depuis la lecture du dictionnaire japonais, pinyin pour le chinois et romanisation coréenne.
 
-KakuTra est conçu pour les apprenants du japonais sur macOS qui souhaitent lire confortablement (mangas, romans, articles, sous-titres) et enrichir leur vocabulaire de manière fluide et sécurisée.
+Un seul mode est actif à la fois. Sur un appui simple, la version Direct peut lire une sélection existante près du curseur et la traduire comme une phrase; sinon, comme la version App Store, elle suit le parcours OCR du mot. Le double appui utilise l’OCR dans les deux versions.
 
-1. **Zéro accès au presse-papiers** : KakuTra ne lit, n'écrit et ne simule jamais `Cmd+C` sur le presse-papiers système.
-2. **OCR local** : La reconnaissance d’image est effectuée sur le Mac. Les services de traduction tiers configurés peuvent recevoir le texte nécessaire à la traduction.
-3. **Écoute au survol avec pause explicite** : Examinez le texte sous le curseur sans maintenir obligatoirement un raccourci. Suspendez ou reprenez l'écoute en un clic depuis la barre des menus.
-4. **Dictionnaires hors ligne** : Recherche japonaise, chinoise et coréenne dans les bases locales installées ou importées dans l’application.
-5. **Cartes Anki volontaires et protection contre les doublons** :
-   - Prévisualisation complète avant ajout (terme, lecture, définition éditable, phrase de contexte extraite).
-   - Prise en charge du texte vertical (*tategaki*) et horizontal.
-   - Vérification préalable des doublons via `canAddNotes` : KakuTra n'écrase jamais silencieusement vos cartes.
-   - Création directe d'une note unique via `addNote`.
+Le mode actif et le geste de changement sont rappelés dans le menu de la barre des menus. En mode écran, l’image de l’écran sous le curseur est relue périodiquement; les traductions sont placées sur les blocs reconnus. Une traduction absente ou en échec laisse le texte source visible.
 
----
+## Fonctions
 
-## Installation et démarrage rapide
+- OCR local avec Vision et traduction avec le framework Translation d’Apple.
+- Définitions depuis les bases SQLite japonaises, chinoises et coréennes présentes dans `~/Library/Application Support/KakuTra/Dictionaries`.
+- Prononciation avec les voix Apple.
+- Ajout volontaire d’une carte à Anki via AnkiConnect depuis un résultat affiché. Les recherches ne sont pas enregistrées dans l’application.
+- Langue d’interface configurable indépendamment des langues de traduction.
 
-### Est-ce que l'installation est automatisée ?
-**Oui !** 
-- **Pour l'utilisateur final** : Téléchargez simplement `KakuTra.app` et glissez-la dans `/Applications`. Les dictionnaires fournis ou importés restent disponibles localement. AnkiConnect est utilisé lorsque vous choisissez d’ajouter une carte.
-- **Si vous compilez depuis les sources** : Un script en une ligne compile l'application, configure le bundle et installe `KakuTra.app` directement.
+## Configuration requise
+
+- macOS 14 ou ultérieur ; la traduction système nécessite macOS 15 ou ultérieur.
+- Autorisation Enregistrement de l’écran pour l’OCR du mot et la traduction visuelle de l’écran.
+- Dans la version Direct, l’autorisation Accessibilité est facultative : elle permet de lire une sélection existante pour un appui simple ; sans elle, l’OCR reste utilisé.
+- Anki et AnkiConnect uniquement pour ajouter des cartes.
+
+## Compiler
+
+Ouvrez `KakuTra Translator.xcodeproj` dans Xcode ou utilisez :
 
 ```bash
-# Compiler et installer KakuTra.app en une seule commande :
-./scripts/build_app.sh
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra" test
 ```
 
----
-
-## Prérequis
-
-1. **macOS 14.0 ou supérieur** (Apple Silicon ou Intel).
-2. **Autorisation Enregistrement d'écran** (obligatoire sur macOS pour permettre à Vision OCR de lire les caractères sous le pointeur).
-4. **Anki** avec le greffon [AnkiConnect](https://foosoft.net/projects/anki-connect/) installé (port par défaut `8765`).
-
----
-
-## Configuration
-
-Ouvrez les réglages depuis l'icône de la barre des menus :
-- **Général** : Langue de l'interface, lancement à l'ouverture de session.
-- **Dictionnaires** : Import et gestion des bases locales de japonais, chinois et coréen ; choix de la langue cible dans les réglages généraux.
-- **Anki** : Choix du paquet (*Deck*), du type de note (*Note type*), et association des champs (Terme, Lecture, Définition, Contexte, Source, Tags).
-- **Apprentissage** : Historique local hors ligne stocké dans SwiftData, avec possibilité d'export au format fichier TXT, TSV ou CSV.
-
----
-
-## Licence
-
-Projet open-source distribué sous licence MIT.
-Voir le [plan maître du projet](file:///Users/yuuzaa/Developer/KakuTra/docs/PLAN-MAITRE-KAKUTRA.md) pour les détails d'audit et la documentation d'architecture.
+Licence MIT.

@@ -13,8 +13,8 @@
 ### Task 1: Add paragraph overlay dismissal and drag plumbing
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
-- Modify: `SnapTra Translator/OverlayWindowController.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/OverlayWindowController.swift`
 
 **Step 1: Add temporary paragraph keyboard monitoring**
 
@@ -37,14 +37,14 @@
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test
 ```
 
 ### Task 2: Make paragraph body text selectable and localize loading copy
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayView.swift`
-- Modify: `SnapTra Translator/Localizable.xcstrings`
+- Modify: `KakuTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/Localizable.xcstrings`
 
 **Step 1: Add a reusable selectable text wrapper**
 
@@ -66,13 +66,13 @@ xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" 
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test
 ```
 
 ### Task 3: Add draggable paragraph header interactions
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/OverlayView.swift`
 
 **Step 1: Add a header drag gesture**
 

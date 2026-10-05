@@ -1,0 +1,713 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		246061597EB29A21F9316CDF /* SettingsStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9757C4D27EFDE23144043C9 /* SettingsStoreTests.swift */; };
+		30A44B0A26B6F7D5AB8C4031 /* CaptureExclusionRegistryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30A44B0926B6F7D5AB8C4031 /* CaptureExclusionRegistryTests.swift */; };
+		42600FB0442E5C482935C055 /* LookupDirectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6753B831E5133F53A37B1D3A /* LookupDirectionTests.swift */; };
+		49229076477461F5BCBECBC3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0878597B29F37191DDAD9BF /* Cocoa.framework */; };
+		4948C18D22CBE0101C82D281 /* SmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 423F1844E7A13D4E51660DC4 /* SmokeTests.swift */; };
+		5D5A00000000000000000001 /* ScreenTranslationPatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D5A00000000000000000002 /* ScreenTranslationPatchTests.swift */; };
+		640DFE2655144E1B8253C7CE /* SelectedTextPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC1D9ED0A1A4609A236359B /* SelectedTextPerformanceTests.swift */; };
+		ACEEECDABF8040D4B09377C9 /* LookupPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D1C751B70E94ABC9BCA765A /* LookupPerformanceTests.swift */; };
+		A7C81D2E3F405162738495A7 /* SpeechServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C81D2E3F405162738495A6 /* SpeechServiceTests.swift */; };
+		D300F5E82F67AE35007DD703 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = E1SPARKLE000000000000002 /* Sparkle */; };
+		E1A111111111111111111111 /* HotkeyManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B111111111111111111111 /* HotkeyManagerTests.swift */; };
+		E1A222222222222222222222 /* OCRParagraphGroupingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B222222222222222222222 /* OCRParagraphGroupingTests.swift */; };
+		E1A333333333333333333333 /* ParagraphOverlayLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B333333333333333333333 /* ParagraphOverlayLayoutTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		0B9ED250597902B4C19677D1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D3F4D8F62F14D1A2004035A9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D3F4D8FD2F14D1A2004035A9;
+			remoteInfo = "KakuTra";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1BC1D9ED0A1A4609A236359B /* SelectedTextPerformanceTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SelectedTextPerformanceTests.swift; sourceTree = "<group>"; };
+		30A44B0926B6F7D5AB8C4031 /* CaptureExclusionRegistryTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CaptureExclusionRegistryTests.swift; sourceTree = "<group>"; };
+		423F1844E7A13D4E51660DC4 /* SmokeTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SmokeTests.swift; sourceTree = "<group>"; };
+		4D1C751B70E94ABC9BCA765A /* LookupPerformanceTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LookupPerformanceTests.swift; sourceTree = "<group>"; };
+		5D5A00000000000000000002 /* ScreenTranslationPatchTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ScreenTranslationPatchTests.swift; sourceTree = "<group>"; };
+		6753B831E5133F53A37B1D3A /* LookupDirectionTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LookupDirectionTests.swift; sourceTree = "<group>"; };
+		A7C81D2E3F405162738495A6 /* SpeechServiceTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SpeechServiceTests.swift; sourceTree = "<group>"; };
+		A9757C4D27EFDE23144043C9 /* SettingsStoreTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SettingsStoreTests.swift; sourceTree = "<group>"; };
+		CA9FDDCF14665092D5945F0C /* KakuTraTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "KakuTraTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D0878597B29F37191DDAD9BF /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		D3F4D8FE2F14D1A2004035A9 /* KakuTra.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "KakuTra.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E1B111111111111111111111 /* HotkeyManagerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HotkeyManagerTests.swift; sourceTree = "<group>"; };
+		E1B222222222222222222222 /* OCRParagraphGroupingTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OCRParagraphGroupingTests.swift; sourceTree = "<group>"; };
+		E1B333333333333333333333 /* ParagraphOverlayLayoutTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ParagraphOverlayLayoutTests.swift; sourceTree = "<group>"; };
+		E1D111111111111111111111 /* KakuTra Direct.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "KakuTra.app"; path = "KakuTra.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		E1C444444444444444444444 /* Exceptions for "KakuTra" folder in "KakuTra" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Info-AppStore.plist",
+				"Info-Direct.plist",
+			);
+			target = D3F4D8FD2F14D1A2004035A9 /* KakuTra */;
+		};
+		E1C555555555555555555555 /* Exceptions for "KakuTra" folder in "KakuTra Direct" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Info-AppStore.plist",
+				"Info-Direct.plist",
+			);
+			target = E1D555555555555555555555 /* KakuTra Direct */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		D3F4D9002F14D1A2004035A9 /* KakuTra */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E1C444444444444444444444 /* Exceptions for "KakuTra" folder in "KakuTra" target */,
+				E1C555555555555555555555 /* Exceptions for "KakuTra" folder in "KakuTra Direct" target */,
+			);
+			path = "KakuTra";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4B19301CB96DBA9240D49A03 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				49229076477461F5BCBECBC3 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D3F4D8FB2F14D1A2004035A9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E1D222222222222222222222 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D300F5E82F67AE35007DD703 /* Sparkle in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		19CD748240B3E3D9B0E9FA7E /* OS X */ = {
+			isa = PBXGroup;
+			children = (
+				D0878597B29F37191DDAD9BF /* Cocoa.framework */,
+			);
+			name = "OS X";
+			sourceTree = "<group>";
+		};
+		3DFC401EADC873869CDA871C /* KakuTraTests */ = {
+			isa = PBXGroup;
+			children = (
+				30A44B0926B6F7D5AB8C4031 /* CaptureExclusionRegistryTests.swift */,
+				4D1C751B70E94ABC9BCA765A /* LookupPerformanceTests.swift */,
+				1BC1D9ED0A1A4609A236359B /* SelectedTextPerformanceTests.swift */,
+				423F1844E7A13D4E51660DC4 /* SmokeTests.swift */,
+				6753B831E5133F53A37B1D3A /* LookupDirectionTests.swift */,
+				A7C81D2E3F405162738495A6 /* SpeechServiceTests.swift */,
+				A9757C4D27EFDE23144043C9 /* SettingsStoreTests.swift */,
+				5D5A00000000000000000002 /* ScreenTranslationPatchTests.swift */,
+				E1B111111111111111111111 /* HotkeyManagerTests.swift */,
+				E1B222222222222222222222 /* OCRParagraphGroupingTests.swift */,
+				E1B333333333333333333333 /* ParagraphOverlayLayoutTests.swift */,
+			);
+			path = "KakuTraTests";
+			sourceTree = "<group>";
+		};
+		C7EF4C4004077096DF2DE413 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				19CD748240B3E3D9B0E9FA7E /* OS X */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D3F4D8F52F14D1A2004035A9 = {
+			isa = PBXGroup;
+			children = (
+				D3F4D9002F14D1A2004035A9 /* KakuTra */,
+				D3F4D8FF2F14D1A2004035A9 /* Products */,
+				3DFC401EADC873869CDA871C /* KakuTraTests */,
+				C7EF4C4004077096DF2DE413 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		D3F4D8FF2F14D1A2004035A9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D3F4D8FE2F14D1A2004035A9 /* KakuTra.app */,
+				E1D111111111111111111111 /* KakuTra Direct.app */,
+				CA9FDDCF14665092D5945F0C /* KakuTraTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D3F4D8FD2F14D1A2004035A9 /* KakuTra */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D3F4D9092F14D1A3004035A9 /* Build configuration list for PBXNativeTarget "KakuTra" */;
+			buildPhases = (
+				D3F4D8FA2F14D1A2004035A9 /* Sources */,
+				D3F4D8FB2F14D1A2004035A9 /* Frameworks */,
+				D3F4D8FC2F14D1A2004035A9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				D3F4D9002F14D1A2004035A9 /* KakuTra */,
+			);
+			name = "KakuTra";
+			packageProductDependencies = (
+			);
+			productName = "KakuTra";
+			productReference = D3F4D8FE2F14D1A2004035A9 /* KakuTra.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E1D555555555555555555555 /* KakuTra Direct */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E1D666666666666666666666 /* Build configuration list for PBXNativeTarget "KakuTra Direct" */;
+			buildPhases = (
+				E1D444444444444444444444 /* Sources */,
+				E1D222222222222222222222 /* Frameworks */,
+				E1D333333333333333333333 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				D3F4D9002F14D1A2004035A9 /* KakuTra */,
+			);
+			name = "KakuTra Direct";
+			packageProductDependencies = (
+				E1SPARKLE000000000000002 /* Sparkle */,
+			);
+			productName = "KakuTra";
+			productReference = E1D111111111111111111111 /* KakuTra Direct.app */;
+			productType = "com.apple.product-type.application";
+		};
+		FED1CBA877953D929370FCE6 /* KakuTraTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A936E6C5F803A6BBF2502133 /* Build configuration list for PBXNativeTarget "KakuTraTests" */;
+			buildPhases = (
+				AADE5F464D253F136729A360 /* Sources */,
+				4B19301CB96DBA9240D49A03 /* Frameworks */,
+				1774C0ED8884E4BA8473D002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B03FE28491E7A5BA3E8F8F7B /* PBXTargetDependency */,
+			);
+			name = "KakuTraTests";
+			productName = "KakuTraTests";
+			productReference = CA9FDDCF14665092D5945F0C /* KakuTraTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D3F4D8F62F14D1A2004035A9 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2620;
+				LastUpgradeCheck = 2620;
+				TargetAttributes = {
+					D3F4D8FD2F14D1A2004035A9 = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					E1D555555555555555555555 = {
+						CreatedOnToolsVersion = 26.2;
+					};
+				};
+			};
+			buildConfigurationList = D3F4D8F92F14D1A2004035A9 /* Build configuration list for PBXProject "KakuTra" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				ja,
+				ko,
+				"zh-Hans",
+				"zh-Hant",
+			);
+			mainGroup = D3F4D8F52F14D1A2004035A9;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				E1SPARKLE000000000000001 /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = D3F4D8FF2F14D1A2004035A9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D3F4D8FD2F14D1A2004035A9 /* KakuTra */,
+				E1D555555555555555555555 /* KakuTra Direct */,
+				FED1CBA877953D929370FCE6 /* KakuTraTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1774C0ED8884E4BA8473D002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D3F4D8FC2F14D1A2004035A9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E1D333333333333333333333 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AADE5F464D253F136729A360 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				30A44B0A26B6F7D5AB8C4031 /* CaptureExclusionRegistryTests.swift in Sources */,
+				ACEEECDABF8040D4B09377C9 /* LookupPerformanceTests.swift in Sources */,
+				640DFE2655144E1B8253C7CE /* SelectedTextPerformanceTests.swift in Sources */,
+				4948C18D22CBE0101C82D281 /* SmokeTests.swift in Sources */,
+				42600FB0442E5C482935C055 /* LookupDirectionTests.swift in Sources */,
+				5D5A00000000000000000001 /* ScreenTranslationPatchTests.swift in Sources */,
+				A7C81D2E3F405162738495A7 /* SpeechServiceTests.swift in Sources */,
+				246061597EB29A21F9316CDF /* SettingsStoreTests.swift in Sources */,
+				E1A111111111111111111111 /* HotkeyManagerTests.swift in Sources */,
+				E1A222222222222222222222 /* OCRParagraphGroupingTests.swift in Sources */,
+				E1A333333333333333333333 /* ParagraphOverlayLayoutTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D3F4D8FA2F14D1A2004035A9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E1D444444444444444444444 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B03FE28491E7A5BA3E8F8F7B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "KakuTra";
+			target = D3F4D8FD2F14D1A2004035A9 /* KakuTra */;
+			targetProxy = 0B9ED250597902B4C19677D1 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0FAEB8F97B598EFB7D39DB94 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/KakuTra.app/Contents/MacOS/KakuTra";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tristanmonticelli.KakuTraTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KakuTra.app/Contents/MacOS/KakuTra";
+			};
+			name = Debug;
+		};
+		998FCF38ACDD712A119D9D87 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/KakuTra.app/Contents/MacOS/KakuTra";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tristanmonticelli.KakuTraTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KakuTra.app/Contents/MacOS/KakuTra";
+			};
+			name = Release;
+		};
+		D3F4D9072F14D1A3004035A9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		D3F4D9082F14D1A3004035A9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		D3F4D90A2F14D1A3004035A9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "KakuTra/KakuTra Direct.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "KakuTra/Info-AppStore.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "KakuTra";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSScreenCaptureUsageDescription = "KakuTra needs screen recording to detect words under the cursor.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tristanmonticelli.KakuTra;
+				PRODUCT_NAME = "KakuTra";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "KakuTra/Snap_Translate-Bridging-Header.h";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D3F4D90B2F14D1A3004035A9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "KakuTra/KakuTra AppStore.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readwrite;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "KakuTra/Info-AppStore.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "KakuTra";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSScreenCaptureUsageDescription = "KakuTra needs screen recording to detect words under the cursor.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tristanmonticelli.KakuTra;
+				PRODUCT_NAME = "KakuTra";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "KakuTra/Snap_Translate-Bridging-Header.h";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		E1D777777777777777777777 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "KakuTra/KakuTra Direct.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "KakuTra/Info-Direct.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "KakuTra";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSScreenCaptureUsageDescription = "KakuTra needs screen recording to detect words under the cursor.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tristanmonticelli.KakuTra;
+				PRODUCT_NAME = "KakuTra";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DIRECT_DISTRIBUTION $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "KakuTra/Snap_Translate-Bridging-Header.h";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		E1D888888888888888888888 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "KakuTra/KakuTra Direct.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "KakuTra/Info-Direct.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "KakuTra";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSScreenCaptureUsageDescription = "KakuTra needs screen recording to detect words under the cursor.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tristanmonticelli.KakuTra;
+				PRODUCT_NAME = "KakuTra";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DIRECT_DISTRIBUTION $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "KakuTra/Snap_Translate-Bridging-Header.h";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A936E6C5F803A6BBF2502133 /* Build configuration list for PBXNativeTarget "KakuTraTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				998FCF38ACDD712A119D9D87 /* Release */,
+				0FAEB8F97B598EFB7D39DB94 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D3F4D8F92F14D1A2004035A9 /* Build configuration list for PBXProject "KakuTra" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D3F4D9072F14D1A3004035A9 /* Debug */,
+				D3F4D9082F14D1A3004035A9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D3F4D9092F14D1A3004035A9 /* Build configuration list for PBXNativeTarget "KakuTra" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D3F4D90A2F14D1A3004035A9 /* Debug */,
+				D3F4D90B2F14D1A3004035A9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E1D666666666666666666666 /* Build configuration list for PBXNativeTarget "KakuTra Direct" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E1D777777777777777777777 /* Debug */,
+				E1D888888888888888888888 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E1SPARKLE000000000000001 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.6.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E1SPARKLE000000000000002 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1SPARKLE000000000000001 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = D3F4D8F62F14D1A2004035A9 /* Project object */;
+}

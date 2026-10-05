@@ -198,12 +198,12 @@ Reasoning:
 
 ## Files Likely to Change
 
-- `SnapTra Translator/DictionarySettingsView.swift`
-- `SnapTra Translator/SettingsStore.swift`
-- `SnapTra Translator/DictionaryEntry.swift`
-- `SnapTra Translator/DictionaryService.swift`
-- `SnapTra Translator/OverlayView.swift`
-- `SnapTra Translator/Localizable.xcstrings`
+- `KakuTra Translator/DictionarySettingsView.swift`
+- `KakuTra Translator/SettingsStore.swift`
+- `KakuTra Translator/DictionaryEntry.swift`
+- `KakuTra Translator/DictionaryService.swift`
+- `KakuTra Translator/OverlayView.swift`
+- `KakuTra Translator/Localizable.xcstrings`
 - new online dictionary service / parser file
 - parser and settings migration tests
 

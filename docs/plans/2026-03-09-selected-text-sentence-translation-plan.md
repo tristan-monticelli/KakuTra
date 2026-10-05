@@ -13,9 +13,9 @@
 ### Task 1: Add Accessibility Permission State
 
 **Files:**
-- Modify: `SnapTra Translator/PermissionManager.swift`
-- Modify: `SnapTra Translator/SettingsView.swift`
-- Modify: `SnapTra Translator/Localizable.xcstrings`
+- Modify: `KakuTra Translator/PermissionManager.swift`
+- Modify: `KakuTra Translator/SettingsView.swift`
+- Modify: `KakuTra Translator/Localizable.xcstrings`
 
 **Steps:**
 
@@ -27,14 +27,14 @@
 6. Commit:
 
 ```bash
-git add "SnapTra Translator/PermissionManager.swift" "SnapTra Translator/SettingsView.swift" "SnapTra Translator/Localizable.xcstrings"
+git add "KakuTra Translator/PermissionManager.swift" "KakuTra Translator/SettingsView.swift" "KakuTra Translator/Localizable.xcstrings"
 git commit -m "feat: add accessibility permission support"
 ```
 
 ### Task 2: Add SelectedTextService
 
 **Files:**
-- Create: `SnapTra Translator/SelectedTextService.swift`
+- Create: `KakuTra Translator/SelectedTextService.swift`
 
 **Steps:**
 
@@ -47,16 +47,16 @@ git commit -m "feat: add accessibility permission support"
 7. Commit:
 
 ```bash
-git add "SnapTra Translator/SelectedTextService.swift"
+git add "KakuTra Translator/SelectedTextService.swift"
 git commit -m "feat: add selected text accessibility service"
 ```
 
 ### Task 3: Add Lookup Routing Model
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
-- Create if needed: `SnapTra Translator/LookupIntent.swift`
-- Test: `SnapTra TranslatorTests/SelectedTextLookupRoutingTests.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
+- Create if needed: `KakuTra Translator/LookupIntent.swift`
+- Test: `KakuTra TranslatorTests/SelectedTextLookupRoutingTests.swift`
 
 **Steps:**
 
@@ -66,21 +66,21 @@ git commit -m "feat: add selected text accessibility service"
 4. Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/SelectedTextLookupRoutingTests"
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/SelectedTextLookupRoutingTests"
 ```
 
 5. Fix compilation or test failures until the routing helper is stable.
 6. Commit:
 
 ```bash
-git add "SnapTra Translator/AppModel.swift" "SnapTra Translator/LookupIntent.swift" "SnapTra TranslatorTests/SelectedTextLookupRoutingTests.swift"
+git add "KakuTra Translator/AppModel.swift" "KakuTra Translator/LookupIntent.swift" "KakuTra TranslatorTests/SelectedTextLookupRoutingTests.swift"
 git commit -m "feat: add selection-first lookup routing"
 ```
 
 ### Task 4: Split AppModel Into Sentence and OCR Paths
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
 
 **Steps:**
 
@@ -93,17 +93,17 @@ git commit -m "feat: add selection-first lookup routing"
 7. Commit:
 
 ```bash
-git add "SnapTra Translator/AppModel.swift"
+git add "KakuTra Translator/AppModel.swift"
 git commit -m "feat: route shortcut lookups by selection or OCR"
 ```
 
 ### Task 5: Separate Dictionary and Translation Provider Configuration
 
 **Files:**
-- Modify: `SnapTra Translator/DictionarySettingsView.swift`
-- Modify: `SnapTra Translator/SettingsStore.swift`
-- Modify: `SnapTra Translator/AppSettings.swift`
-- Test: `SnapTra TranslatorTests/SettingsStoreTests.swift`
+- Modify: `KakuTra Translator/DictionarySettingsView.swift`
+- Modify: `KakuTra Translator/SettingsStore.swift`
+- Modify: `KakuTra Translator/AppSettings.swift`
+- Test: `KakuTra TranslatorTests/SettingsStoreTests.swift`
 
 **Steps:**
 
@@ -114,22 +114,22 @@ git commit -m "feat: route shortcut lookups by selection or OCR"
 5. Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/SettingsStoreTests"
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/SettingsStoreTests"
 ```
 
 6. Commit:
 
 ```bash
-git add "SnapTra Translator/DictionarySettingsView.swift" "SnapTra Translator/SettingsStore.swift" "SnapTra Translator/AppSettings.swift" "SnapTra TranslatorTests/SettingsStoreTests.swift"
+git add "KakuTra Translator/DictionarySettingsView.swift" "KakuTra Translator/SettingsStore.swift" "KakuTra Translator/AppSettings.swift" "KakuTra TranslatorTests/SettingsStoreTests.swift"
 git commit -m "refactor: separate dictionary and translation provider settings"
 ```
 
 ### Task 6: Add Sentence Translation Service Boundary
 
 **Files:**
-- Modify: `SnapTra Translator/TranslationService.swift`
-- Create if needed: `SnapTra Translator/SentenceTranslationService.swift`
-- Modify: `SnapTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/TranslationService.swift`
+- Create if needed: `KakuTra Translator/SentenceTranslationService.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
 
 **Steps:**
 
@@ -141,15 +141,15 @@ git commit -m "refactor: separate dictionary and translation provider settings"
 6. Commit:
 
 ```bash
-git add "SnapTra Translator/TranslationService.swift" "SnapTra Translator/SentenceTranslationService.swift" "SnapTra Translator/AppModel.swift"
+git add "KakuTra Translator/TranslationService.swift" "KakuTra Translator/SentenceTranslationService.swift" "KakuTra Translator/AppModel.swift"
 git commit -m "refactor: add sentence translation service boundary"
 ```
 
 ### Task 7: Add Sentence Overlay Presentation
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
-- Modify: `SnapTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/OverlayView.swift`
 
 **Steps:**
 
@@ -161,14 +161,14 @@ git commit -m "refactor: add sentence translation service boundary"
 6. Commit:
 
 ```bash
-git add "SnapTra Translator/AppModel.swift" "SnapTra Translator/OverlayView.swift"
+git add "KakuTra Translator/AppModel.swift" "KakuTra Translator/OverlayView.swift"
 git commit -m "feat: add sentence translation overlay mode"
 ```
 
 ### Task 8: Verify End-to-End Behavior
 
 **Files:**
-- Modify if needed: `SnapTra TranslatorTests/*`
+- Modify if needed: `KakuTra TranslatorTests/*`
 - Modify if needed: `README*.md`
 
 **Steps:**
@@ -176,13 +176,13 @@ git commit -m "feat: add sentence translation overlay mode"
 1. Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build
 ```
 
 2. Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test
 ```
 
 3. Manually verify:
@@ -194,7 +194,7 @@ xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" 
 5. Commit:
 
 ```bash
-git add "SnapTra TranslatorTests" "README.md" "README.zh-CN.md" "README.ja.md" "README.ko.md"
+git add "KakuTra TranslatorTests" "README.md" "README.zh-CN.md" "README.ja.md" "README.ko.md"
 git commit -m "test: verify selected text sentence translation flow"
 ```
 

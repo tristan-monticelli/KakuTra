@@ -13,8 +13,8 @@
 ### Task 1: Rebuild paragraph overlay information hierarchy
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayView.swift`
-- Modify: `SnapTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
 
 **Step 1: Define the visible information model**
 
@@ -41,13 +41,13 @@
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test
 ```
 
 ### Task 2: Improve grouping, spacing, and reading typography
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/OverlayView.swift`
 
 **Step 1: Add softer section containers**
 
@@ -73,8 +73,8 @@ Run the same `xcodebuild ... test` command.
 ### Task 3: Make copy semantics explicit
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayView.swift`
-- Modify: `SnapTra Translator/Localizable.xcstrings`
+- Modify: `KakuTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/Localizable.xcstrings`
 
 **Step 1: Add per-section copy buttons**
 
@@ -103,8 +103,8 @@ Run the same `xcodebuild ... test` command.
 ### Task 4: Add language-aware section titles
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayView.swift`
-- Modify: `SnapTra Translator/AppModel.swift` (if helper exposure is cleaner there)
+- Modify: `KakuTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/AppModel.swift` (if helper exposure is cleaner there)
 
 **Step 1: Reuse existing language-name mappings where possible**
 

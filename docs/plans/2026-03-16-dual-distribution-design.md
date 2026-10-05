@@ -19,8 +19,8 @@ Those settings are correct for sandboxed direct distribution, but they should no
 
 Split the app into two build targets that share the same source files and UI:
 
-1. `SnapTra Translator App Store`
-2. `SnapTra Translator Direct`
+1. `KakuTra Translator App Store`
+2. `KakuTra Translator Direct`
 
 The Direct target links Sparkle and keeps the current Sparkle-based update flow. The App Store target does not link Sparkle at all and uses a lightweight updater implementation that redirects users to the Mac App Store.
 

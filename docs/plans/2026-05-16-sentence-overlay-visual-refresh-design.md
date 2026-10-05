@@ -27,7 +27,7 @@ Use one refined floating surface with soft material-like layering. The header be
 
 ## Implementation Scope
 
-- Primary file: `SnapTra Translator/OverlayView.swift`.
+- Primary file: `KakuTra Translator/OverlayView.swift`.
 - Keep data flow and model methods unchanged.
 - Reuse the current `EditableParagraphTextView` and `SelectableTextView` wrappers.
 - Add small SwiftUI helper views/properties only when they reduce duplication or clarify visual intent.

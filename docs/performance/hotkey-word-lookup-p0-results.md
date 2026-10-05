@@ -35,10 +35,10 @@
 
 Before 曾生成一份原始 Instruments trace：
 
-- `/tmp/snaptra-p0-before-appstore-7eee33f.trace`
+- `/tmp/KakuTra-p0-before-appstore-7eee33f.trace`
 - trace 模板数据约 18 MB，但没有有效 lookup 样本。
 
-After 未重复生成无效 trace。为避免替换或重签名用户当前 `/Applications/SnapTra Translator.app`，本轮保留现有已授权应用，不修改 TCC 状态。
+After 未重复生成无效 trace。为避免替换或重签名用户当前 `/Applications/KakuTra Translator.app`，本轮保留现有已授权应用，不修改 TCC 状态。
 
 ## Before 基线
 
@@ -107,10 +107,10 @@ P0 的功能、并发、取消和持久化边界已经通过自动化验收；�
 
 ## 原始证据与例外
 
-- Before builds：`/tmp/snaptra-p0-before-appstore`、`/tmp/snaptra-p0-before-direct`。
-- After builds：`/tmp/snaptra-p0-after-appstore-final`、`/tmp/snaptra-p0-after-direct-final`。
-- Full test result：`/tmp/snaptra-p0-tests-final/Logs/Test/Test-SnapTra Translator-2026.07.16_12-22-32-+0800.xcresult`。
-- TTS 5 轮 result：`/tmp/snaptra-p0-tts-repeat/Logs/Test/Test-SnapTra Translator-2026.07.16_12-13-39-+0800.xcresult`。
+- Before builds：`/tmp/KakuTra-p0-before-appstore`、`/tmp/KakuTra-p0-before-direct`。
+- After builds：`/tmp/KakuTra-p0-after-appstore-final`、`/tmp/KakuTra-p0-after-direct-final`。
+- Full test result：`/tmp/KakuTra-p0-tests-final/Logs/Test/Test-KakuTra Translator-2026.07.16_12-22-32-+0800.xcresult`。
+- TTS 5 轮 result：`/tmp/KakuTra-p0-tts-repeat/Logs/Test/Test-KakuTra Translator-2026.07.16_12-13-39-+0800.xcresult`。
 - 已知既有 warning：项目仍有 Swift 6 actor-isolation 迁移 warning；本轮没有新增编译错误。
 - Xcode 26.5 Release 构建会输出一条 `withThrowingTaskGroup` 类型查找诊断，但两个 scheme 均以 exit 0 完成并产出约 8 MB 可执行文件。
 - 未排除任何有效样本；本轮是没有有效授权态样本，而不是删除异常值。

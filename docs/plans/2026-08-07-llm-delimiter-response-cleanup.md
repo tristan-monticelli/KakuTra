@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Prevent request-specific `SNAPTRA_TRANSLATION_TEXT` delimiters echoed by LLMs from appearing in final or streaming translation results.
+**Goal:** Prevent request-specific `KakuTra_TRANSLATION_TEXT` delimiters echoed by LLMs from appearing in final or streaming translation results.
 
 **Architecture:** Keep the exact begin and end delimiters on each `LLMTranslationPrompt` and pass them to a shared response filter. The filter removes only those exact delimiters at response boundaries, buffers possible delimiter prefixes during streaming, and leaves unrelated or inline text unchanged.
 
@@ -13,7 +13,7 @@
 ### Task 1: Add delimiter echo regression tests
 
 **Files:**
-- Modify: `SnapTra TranslatorTests/SmokeTests.swift`
+- Modify: `KakuTra TranslatorTests/SmokeTests.swift`
 
 **Steps:**
 1. Add an OpenAI-compatible streaming test whose response echoes the request delimiter across multiple SSE chunks.
@@ -25,7 +25,7 @@
 ### Task 2: Preserve request delimiters and add the shared filter
 
 **Files:**
-- Modify: `SnapTra Translator/SentenceTranslationService.swift:383-1022`
+- Modify: `KakuTra Translator/SentenceTranslationService.swift:383-1022`
 
 **Steps:**
 1. Add `beginDelimiter` and `endDelimiter` to `LLMTranslationPrompt`.
@@ -38,7 +38,7 @@
 ### Task 3: Integrate all LLM provider paths
 
 **Files:**
-- Modify: `SnapTra Translator/SentenceTranslationService.swift:383-861`
+- Modify: `KakuTra Translator/SentenceTranslationService.swift:383-861`
 
 **Steps:**
 1. Apply finalized filtering to OpenAI-compatible, Anthropic, and Gemini non-streaming responses.
@@ -49,7 +49,7 @@
 ### Task 4: Verify behavior
 
 **Files:**
-- Test: `SnapTra TranslatorTests/SmokeTests.swift`
+- Test: `KakuTra TranslatorTests/SmokeTests.swift`
 
 **Steps:**
 1. Run the focused `SentenceTranslationServiceStreamingTests` suite.

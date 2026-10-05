@@ -13,8 +13,8 @@
 ### Task 1: Capture the failing configuration
 
 **Files:**
-- Verify: `SnapTra Translator/SnapTra AppStore.entitlements`
-- Verify: `SnapTra Translator.xcodeproj/project.pbxproj`
+- Verify: `KakuTra Translator/KakuTra AppStore.entitlements`
+- Verify: `KakuTra Translator.xcodeproj/project.pbxproj`
 
 **Step 1:** Assert that `com.apple.security.files.user-selected.read-write` is absent from the App Store entitlement file.
 
@@ -23,8 +23,8 @@
 ### Task 2: Grant user-selected file write access
 
 **Files:**
-- Modify: `SnapTra Translator/SnapTra AppStore.entitlements`
-- Modify: `SnapTra Translator.xcodeproj/project.pbxproj`
+- Modify: `KakuTra Translator/KakuTra AppStore.entitlements`
+- Modify: `KakuTra Translator.xcodeproj/project.pbxproj`
 
 **Step 1:** Replace `com.apple.security.files.user-selected.read-only` with `com.apple.security.files.user-selected.read-write`.
 

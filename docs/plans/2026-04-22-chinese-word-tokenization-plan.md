@@ -13,7 +13,7 @@
 ### Task 1: OCR Tokenization Update
 
 **Files:**
-- Modify: `SnapTra Translator/OCRService.swift`
+- Modify: `KakuTra Translator/OCRService.swift`
 
 **Steps:**
 1. Import `NaturalLanguage`.
@@ -25,7 +25,7 @@
 ### Task 2: OCR Tokenization Tests
 
 **Files:**
-- Modify: `SnapTra TranslatorTests/OCRParagraphGroupingTests.swift`
+- Modify: `KakuTra TranslatorTests/OCRParagraphGroupingTests.swift`
 
 **Steps:**
 1. Add a Chinese sentence tokenization test with `language: "zh-Hans"`.
@@ -36,8 +36,8 @@
 ### Task 3: Verification
 
 **Commands:**
-- `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/OCRParagraphGroupingTests"`
-- `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build`
+- `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/OCRParagraphGroupingTests"`
+- `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build`
 
 **Manual checks:**
 - Source language set to Chinese, hover on a long Chinese sentence, and trigger the shortcut: only the hovered Chinese word should be translated.

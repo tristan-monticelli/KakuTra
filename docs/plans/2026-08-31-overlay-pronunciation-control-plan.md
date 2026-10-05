@@ -13,8 +13,8 @@
 ### Task 1: Define and test the speech playback lifecycle
 
 **Files:**
-- Modify: `SnapTra Translator/SpeechService.swift:17-28, 61-125, 127-376`
-- Test: `SnapTra TranslatorTests/SpeechServiceTests.swift:278-442, 503-590`
+- Modify: `KakuTra Translator/SpeechService.swift:17-28, 61-125, 127-376`
+- Test: `KakuTra TranslatorTests/SpeechServiceTests.swift:278-442, 503-590`
 
 **Step 1: Write failing lifecycle tests**
 
@@ -35,8 +35,8 @@ Use the existing `ControlledTTSFetcher` and extend `SpeechAudioOutputSpy` with c
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test \
-  -only-testing:SnapTra_TranslatorTests/SpeechServiceTests
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" test \
+  -only-testing:KakuTra_TranslatorTests/SpeechServiceTests
 ```
 
 Expected: the new tests fail because `SpeechService` does not expose playback state or natural-completion callbacks.
@@ -139,15 +139,15 @@ Expected: all `SpeechServiceTests` pass, including existing cancellation, fallba
 Only when explicitly requested by the user:
 
 ```bash
-git add "SnapTra Translator/SpeechService.swift" "SnapTra TranslatorTests/SpeechServiceTests.swift"
+git add "KakuTra Translator/SpeechService.swift" "KakuTra TranslatorTests/SpeechServiceTests.swift"
 git commit -m "feat(tts): expose playback lifecycle"
 ```
 
 ### Task 2: Add context-aware pronunciation actions to AppModel
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift:9-73, 156-197, 456-490, 1248-1277, 1450-1471, 1580-1605, 1690-1715, 1868-1890, 3581-3617`
-- Test: `SnapTra TranslatorTests/LookupDirectionTests.swift`
+- Modify: `KakuTra Translator/AppModel.swift:9-73, 156-197, 456-490, 1248-1277, 1450-1471, 1580-1605, 1690-1715, 1868-1890, 3581-3617`
+- Test: `KakuTra TranslatorTests/LookupDirectionTests.swift`
 
 **Step 1: Write failing request-context policy tests**
 
@@ -167,8 +167,8 @@ Keep these tests independent from windows, OCR, networking, and AVFoundation by 
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test \
-  -only-testing:SnapTra_TranslatorTests/LookupDirectionTests
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" test \
+  -only-testing:KakuTra_TranslatorTests/LookupDirectionTests
 ```
 
 Expected: failure because no overlay pronunciation request or matching policy exists.
@@ -248,15 +248,15 @@ Expected: all request resolution and matching tests pass.
 Only when explicitly requested by the user:
 
 ```bash
-git add "SnapTra Translator/AppModel.swift" "SnapTra TranslatorTests/LookupDirectionTests.swift"
+git add "KakuTra Translator/AppModel.swift" "KakuTra TranslatorTests/LookupDirectionTests.swift"
 git commit -m "feat(overlay): add pronunciation actions"
 ```
 
 ### Task 3: Build the reusable two-zone pronunciation capsule
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayView.swift:15-22, 782-844, 1123-1145, 1220-1238, 1773-1802`
-- Test: `SnapTra TranslatorTests/ParagraphOverlayLayoutTests.swift`
+- Modify: `KakuTra Translator/OverlayView.swift:15-22, 782-844, 1123-1145, 1220-1238, 1773-1802`
+- Test: `KakuTra TranslatorTests/ParagraphOverlayLayoutTests.swift`
 
 **Step 1: Write failing presentation-policy tests**
 
@@ -277,8 +277,8 @@ The resolver should return semantic icon/help/accessibility values, not `Color` 
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test \
-  -only-testing:SnapTra_TranslatorTests/ParagraphOverlayLayoutTests
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" test \
+  -only-testing:KakuTra_TranslatorTests/ParagraphOverlayLayoutTests
 ```
 
 Expected: failure because the pronunciation presentation policy does not exist.
@@ -346,7 +346,7 @@ When original text is hidden, continue deriving playback from `ParagraphOverlayC
 **Step 7: Add localization keys**
 
 **Files:**
-- Modify: `SnapTra Translator/Localizable.xcstrings`
+- Modify: `KakuTra Translator/Localizable.xcstrings`
 
 Add English and Simplified Chinese values for at least:
 
@@ -373,16 +373,16 @@ Expected: all `ParagraphOverlayLayoutTests` pass.
 Only when explicitly requested by the user:
 
 ```bash
-git add "SnapTra Translator/OverlayView.swift" "SnapTra Translator/Localizable.xcstrings" "SnapTra TranslatorTests/ParagraphOverlayLayoutTests.swift"
+git add "KakuTra Translator/OverlayView.swift" "KakuTra Translator/Localizable.xcstrings" "KakuTra TranslatorTests/ParagraphOverlayLayoutTests.swift"
 git commit -m "feat(overlay): add pronunciation control"
 ```
 
 ### Task 4: Verify synchronization, races, and build integrity
 
 **Files:**
-- Modify if needed: `SnapTra Translator/SpeechService.swift`
-- Modify if needed: `SnapTra Translator/AppModel.swift`
-- Modify if needed: `SnapTra Translator/OverlayView.swift`
+- Modify if needed: `KakuTra Translator/SpeechService.swift`
+- Modify if needed: `KakuTra Translator/AppModel.swift`
+- Modify if needed: `KakuTra Translator/OverlayView.swift`
 - Modify if needed: corresponding focused test files
 
 **Step 1: Run the complete test suite**
@@ -390,7 +390,7 @@ git commit -m "feat(overlay): add pronunciation control"
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" test
 ```
 
 Expected: all tests pass. Fix only regressions caused by this feature.
@@ -400,7 +400,7 @@ Expected: all tests pass. Fix only regressions caused by this feature.
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build
 ```
 
 Expected: `BUILD SUCCEEDED` with no Swift concurrency or actor-isolation errors.
@@ -437,6 +437,6 @@ Expected: only the planned implementation, tests, localization, and plan documen
 Only when explicitly requested by the user and only if the work was not already committed task-by-task:
 
 ```bash
-git add "SnapTra Translator/SpeechService.swift" "SnapTra Translator/AppModel.swift" "SnapTra Translator/OverlayView.swift" "SnapTra Translator/Localizable.xcstrings" "SnapTra TranslatorTests/SpeechServiceTests.swift" "SnapTra TranslatorTests/LookupDirectionTests.swift" "SnapTra TranslatorTests/ParagraphOverlayLayoutTests.swift" "docs/plans/2026-08-31-overlay-pronunciation-control-design.md" "docs/plans/2026-08-31-overlay-pronunciation-control-plan.md"
+git add "KakuTra Translator/SpeechService.swift" "KakuTra Translator/AppModel.swift" "KakuTra Translator/OverlayView.swift" "KakuTra Translator/Localizable.xcstrings" "KakuTra TranslatorTests/SpeechServiceTests.swift" "KakuTra TranslatorTests/LookupDirectionTests.swift" "KakuTra TranslatorTests/ParagraphOverlayLayoutTests.swift" "docs/plans/2026-08-31-overlay-pronunciation-control-design.md" "docs/plans/2026-08-31-overlay-pronunciation-control-plan.md"
 git commit -m "feat(overlay): add pronunciation playback controls"
 ```

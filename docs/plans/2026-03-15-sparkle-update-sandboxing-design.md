@@ -33,7 +33,7 @@ This keeps the fix narrow:
 
 **Implementation Shape**
 
-1. Add `SnapTra Translator/Info.plist` with:
+1. Add `KakuTra Translator/Info.plist` with:
    - standard bundle metadata
    - `SUPublicEDKey`
    - `SUEnableInstallerLauncherService`

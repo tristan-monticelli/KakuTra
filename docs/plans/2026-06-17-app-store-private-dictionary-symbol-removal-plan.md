@@ -17,14 +17,14 @@
 
 **Steps:**
 1. Build the Release app.
-2. Run `nm -u` against `SnapTra Translator.app/Contents/MacOS/SnapTra Translator`.
+2. Run `nm -u` against `KakuTra Translator.app/Contents/MacOS/KakuTra Translator`.
 3. Confirm `_DCSCopyAvailableDictionaries` is present before the fix.
 
 ### Task 2: Remove Private Dictionary Enumeration
 
 **Files:**
-- Modify: `SnapTra Translator/Snap_Translate-Bridging-Header.h`
-- Modify: `SnapTra Translator/DictionaryService.swift`
+- Modify: `KakuTra Translator/Snap_Translate-Bridging-Header.h`
+- Modify: `KakuTra Translator/DictionaryService.swift`
 
 **Steps:**
 1. Remove manual declarations for `DCSCopyAvailableDictionaries` and `DCSDictionaryGetName`.
@@ -48,9 +48,9 @@
 **Commands:**
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Release build
-bash scripts/build/check-app-store-symbols.sh "/Users/yelog/Library/Developer/Xcode/DerivedData/SnapTra_Translator-breahagozdqrclcsibxrjnuamiff/Build/Products/Release/SnapTra Translator.app"
-rg -n "DCSCopyAvailableDictionaries|DCSDictionaryGetName" "SnapTra Translator"
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Release build
+bash scripts/build/check-app-store-symbols.sh "/Users/yelog/Library/Developer/Xcode/DerivedData/KakuTra_Translator-breahagozdqrclcsibxrjnuamiff/Build/Products/Release/KakuTra Translator.app"
+rg -n "DCSCopyAvailableDictionaries|DCSDictionaryGetName" "KakuTra Translator"
 git diff --check
 ```
 

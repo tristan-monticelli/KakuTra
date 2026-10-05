@@ -13,9 +13,9 @@
 ### Task 1: Persist Definition Snapshots
 
 **Files:**
-- Modify: `SnapTra Translator/WordRecord.swift`
-- Modify: `SnapTra Translator/LearningService.swift`
-- Modify: `SnapTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/WordRecord.swift`
+- Modify: `KakuTra Translator/LearningService.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
 
 **Steps:**
 1. Add optional `definitionText` to `WordRecord`.
@@ -27,8 +27,8 @@
 ### Task 2: Add Export Service
 
 **Files:**
-- Create: `SnapTra Translator/LearningExportService.swift`
-- Modify: `SnapTra TranslatorTests/SettingsStoreTests.swift`
+- Create: `KakuTra Translator/LearningExportService.swift`
+- Modify: `KakuTra TranslatorTests/SettingsStoreTests.swift`
 
 **Steps:**
 1. Add `LearningExportFormat` with `.ankiTSV` and `.csv`.
@@ -39,7 +39,7 @@
 ### Task 3: Add Learning Page Export UI
 
 **Files:**
-- Modify: `SnapTra Translator/LearningSettingsView.swift`
+- Modify: `KakuTra Translator/LearningSettingsView.swift`
 
 **Steps:**
 1. Add export status state.
@@ -50,8 +50,8 @@
 ### Task 4: Verify
 
 **Commands:**
-- `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build`
-- `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test`
+- `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build`
+- `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" test`
 
 **Expected:**
 Build succeeds. Tests pass or report only environment/signing constraints unrelated to the implementation.

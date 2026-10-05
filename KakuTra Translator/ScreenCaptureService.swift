@@ -1,0 +1,385 @@
+import AppKit
+import Foundation
+import OSLog
+import ScreenCaptureKit
+
+struct CaptureRegion {
+    var rect: CGRect
+    var screen: NSScreen
+    var displayID: CGDirectDisplayID
+    var scaleFactor: CGFloat
+}
+
+struct ScreenCaptureFrameFingerprint: Equatable {
+    private static let sampleSize = CGSize(width: 512, height: 288)
+    let value: UInt64
+
+    static func make(from image: CGImage) -> ScreenCaptureFrameFingerprint? {
+        let width = Int(sampleSize.width)
+        let height = Int(sampleSize.height)
+        let colorSpace = CGColorSpace(name: CGColorSpace.sRGB) ?? CGColorSpaceCreateDeviceRGB()
+        guard let context = CGContext(
+            data: nil,
+            width: width,
+            height: height,
+            bitsPerComponent: 8,
+            bytesPerRow: width * 4,
+            space: colorSpace,
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ) else {
+            return nil
+        }
+
+        context.interpolationQuality = .low
+        context.draw(image, in: CGRect(origin: .zero, size: sampleSize))
+        guard let data = context.data else { return nil }
+
+        // Hash a reduced, full-screen image. This preserves sensitivity to small
+        // text changes while keeping the per-frame comparison much cheaper than OCR.
+        var hash: UInt64 = 14_695_981_039_346_656_037
+        let bytes = data.assumingMemoryBound(to: UInt8.self)
+        for index in 0..<(width * height * 4) {
+            hash ^= UInt64(bytes[index])
+            hash &*= 1_099_511_628_211
+        }
+        hash ^= UInt64(image.width)
+        hash &*= 1_099_511_628_211
+        hash ^= UInt64(image.height)
+        return ScreenCaptureFrameFingerprint(value: hash)
+    }
+}
+
+final class ScreenCaptureService {
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier ?? "KakuTra",
+        category: "ScreenCapture"
+    )
+
+    private typealias ContentSnapshot = ScreenCaptureMetadataSnapshot<SCDisplay, SCWindow>
+
+    private struct CaptureSourceMetadata: @unchecked Sendable {
+        let display: SCDisplay
+        let excludedWindows: [SCWindow]
+    }
+
+    let captureSize = CGSize(width: 520, height: 140)
+    let paragraphCaptureScale: CGFloat = 0.6
+
+    private let exclusionRegistry: CaptureExclusionRegistry
+    private let contentCache: ScreenCaptureContentCache<ContentSnapshot>
+    private let fullDisplayCaptureMetricsLock = NSLock()
+    private var fullDisplayCaptureSamples: [Double] = []
+
+    @MainActor
+    init() {
+        self.exclusionRegistry = CaptureExclusionRegistry.shared
+        self.contentCache = Self.makeContentCache()
+    }
+
+    @MainActor
+    init(exclusionRegistry: CaptureExclusionRegistry) {
+        self.exclusionRegistry = exclusionRegistry
+        self.contentCache = Self.makeContentCache()
+    }
+
+    func captureAroundCursor(
+        at mouseLocation: CGPoint,
+        performance: LookupPerformanceContext? = nil
+    ) async -> (image: CGImage, region: CaptureRegion)? {
+        guard let screen = screen(containing: mouseLocation) else {
+            Self.logger.error("Capture failed: no screen contains cursor")
+            return nil
+        }
+        guard let displayNumber = screen.deviceDescription[.init("NSScreenNumber")] as? NSNumber else {
+            Self.logger.error("Capture failed: screen has no display number")
+            return nil
+        }
+        let displayID = CGDirectDisplayID(displayNumber.int32Value)
+        let scaleFactor = screen.backingScaleFactor
+        let rectInScreen = captureRect(for: mouseLocation, in: screen.frame, size: captureSize)
+        let cgRect = convertToDisplayLocalCoordinates(rectInScreen, screen: screen)
+
+        do {
+            let configuration = makeConfiguration(for: cgRect, scaleFactor: scaleFactor)
+            guard let image = try await captureImage(
+                displayID: displayID,
+                configuration: configuration,
+                performance: performance
+            ) else {
+                Self.logger.error("Capture failed: screenshot returned no image")
+                return nil
+            }
+            return (image, CaptureRegion(rect: rectInScreen, screen: screen, displayID: displayID, scaleFactor: scaleFactor))
+        } catch {
+            Self.logger.error(
+                "Cursor capture failed domain=\((error as NSError).domain, privacy: .public) code=\((error as NSError).code, privacy: .public) description=\(error.localizedDescription, privacy: .public)"
+            )
+            return nil
+        }
+    }
+
+    func captureCurrentDisplay() async -> (image: CGImage, region: CaptureRegion)? {
+        let mouseLocation = NSEvent.mouseLocation
+        guard let screen = screen(containing: mouseLocation) else {
+            Self.logger.error("Display capture failed: no screen contains cursor")
+            return nil
+        }
+        guard let displayNumber = screen.deviceDescription[.init("NSScreenNumber")] as? NSNumber else {
+            Self.logger.error("Display capture failed: screen has no display number")
+            return nil
+        }
+
+        let displayID = CGDirectDisplayID(displayNumber.int32Value)
+        let scaleFactor = screen.backingScaleFactor
+        let rectInScreen = screen.frame
+        let cgRect = convertToDisplayLocalCoordinates(rectInScreen, screen: screen)
+
+        do {
+            let configuration = makeConfiguration(
+                for: cgRect,
+                scaleFactor: scaleFactor,
+                resolutionScale: paragraphCaptureScale
+            )
+            let captureStart = ProcessInfo.processInfo.systemUptime
+            guard let image = try await captureImage(
+                displayID: displayID,
+                configuration: configuration
+            ) else {
+                Self.logger.error("Display capture failed: screenshot returned no image")
+                return nil
+            }
+            recordFullDisplayCaptureDuration(
+                (ProcessInfo.processInfo.systemUptime - captureStart) * 1_000
+            )
+            return (image, CaptureRegion(rect: rectInScreen, screen: screen, displayID: displayID, scaleFactor: scaleFactor))
+        } catch {
+            Self.logger.error(
+                "Display capture failed domain=\((error as NSError).domain, privacy: .public) code=\((error as NSError).code, privacy: .public) description=\(error.localizedDescription, privacy: .public)"
+            )
+            return nil
+        }
+    }
+
+    func capture(rect requestedRect: CGRect) async -> (image: CGImage, region: CaptureRegion)? {
+        guard requestedRect.width > 0, requestedRect.height > 0 else {
+            Self.logger.error("Region capture failed: requested rectangle is empty")
+            return nil
+        }
+
+        let midpoint = CGPoint(x: requestedRect.midX, y: requestedRect.midY)
+        guard let screen = screen(containing: midpoint) else {
+            Self.logger.error("Region capture failed: no screen contains rectangle midpoint")
+            return nil
+        }
+        guard let displayNumber = screen.deviceDescription[.init("NSScreenNumber")] as? NSNumber else {
+            Self.logger.error("Region capture failed: screen has no display number")
+            return nil
+        }
+
+        let rectInScreen = requestedRect.intersection(screen.frame)
+        guard rectInScreen.width > 1, rectInScreen.height > 1 else {
+            Self.logger.error("Region capture failed: rectangle is outside screen bounds")
+            return nil
+        }
+
+        let displayID = CGDirectDisplayID(displayNumber.int32Value)
+        let scaleFactor = screen.backingScaleFactor
+        let cgRect = convertToDisplayLocalCoordinates(rectInScreen, screen: screen)
+
+        do {
+            let configuration = makeConfiguration(for: cgRect, scaleFactor: scaleFactor)
+            guard let image = try await captureImage(
+                displayID: displayID,
+                configuration: configuration
+            ) else {
+                Self.logger.error("Region capture failed: screenshot returned no image")
+                return nil
+            }
+            return (image, CaptureRegion(rect: rectInScreen, screen: screen, displayID: displayID, scaleFactor: scaleFactor))
+        } catch {
+            Self.logger.error(
+                "Region capture failed domain=\((error as NSError).domain, privacy: .public) code=\((error as NSError).code, privacy: .public) description=\(error.localizedDescription, privacy: .public)"
+            )
+            return nil
+        }
+    }
+
+    func invalidateCache() {
+        contentCache.invalidate()
+    }
+
+    private func captureImage(
+        displayID: CGDirectDisplayID,
+        configuration: SCStreamConfiguration,
+        performance: LookupPerformanceContext? = nil
+    ) async throws -> CGImage? {
+        let captureStart = ProcessInfo.processInfo.systemUptime
+        var refreshBudget = ScreenCaptureRefreshBudget()
+
+        while true {
+            try Task.checkCancellation()
+            performance?.begin(.captureMetadata)
+
+            let exclusionSnapshot = await MainActor.run {
+                exclusionRegistry.snapshot()
+            }
+            let metadata: ScreenCaptureContentCacheResult<CaptureSourceMetadata>?
+            do {
+                metadata = try await contentCache.resolvedContent(
+                    exclusionGeneration: exclusionSnapshot.generation,
+                    refreshBudget: &refreshBudget
+                ) { content in
+                    guard let display = content.display(for: displayID) else {
+                        return nil
+                    }
+                    return CaptureSourceMetadata(
+                        display: display,
+                        excludedWindows: content.windows(
+                            withNumbers: exclusionSnapshot.windowNumbers
+                        )
+                    )
+                }
+            } catch {
+                performance?.end(
+                    .captureMetadata,
+                    outcome: Self.isCancellation(error) ? .cancelled : .failed
+                )
+                throw error
+            }
+
+            guard let metadata else {
+                performance?.end(
+                    .captureMetadata,
+                    outcome: Task.isCancelled ? .cancelled : .failed
+                )
+                return nil
+            }
+            guard !Task.isCancelled else {
+                performance?.end(.captureMetadata, outcome: .cancelled)
+                throw CancellationError()
+            }
+            performance?.end(
+                .captureMetadata,
+                outcome: metadata.source == .cacheHit ? .cacheHit : .cacheMiss
+            )
+
+            try Task.checkCancellation()
+            let filter = SCContentFilter(
+                display: metadata.value.display,
+                excludingWindows: metadata.value.excludedWindows
+            )
+            performance?.begin(.screenshot)
+            do {
+                let image = try await SCScreenshotManager.captureImage(
+                    contentFilter: filter,
+                    configuration: configuration
+                )
+                try Task.checkCancellation()
+                let captureMilliseconds = (ProcessInfo.processInfo.systemUptime - captureStart) * 1_000
+                Self.logger.debug(
+                    "Screenshot succeeded width=\(image.width, privacy: .public) height=\(image.height, privacy: .public) totalCaptureMs=\(captureMilliseconds, privacy: .public)"
+                )
+                performance?.end(.screenshot, outcome: .succeeded)
+                return image
+            } catch {
+                let isCancellation = Self.isCancellation(error)
+                performance?.end(
+                    .screenshot,
+                    outcome: isCancellation ? .cancelled : .failed
+                )
+                Self.logger.error(
+                    "Screenshot failed domain=\((error as NSError).domain, privacy: .public) code=\((error as NSError).code, privacy: .public) description=\(error.localizedDescription, privacy: .public)"
+                )
+                guard !isCancellation else { throw error }
+                guard Self.isStaleCaptureSourceError(error),
+                      refreshBudget.consumeRefresh() else {
+                    throw error
+                }
+                contentCache.invalidate()
+            }
+        }
+    }
+
+    private func recordFullDisplayCaptureDuration(_ durationMilliseconds: Double) {
+        fullDisplayCaptureMetricsLock.lock()
+        fullDisplayCaptureSamples.append(durationMilliseconds)
+        guard fullDisplayCaptureSamples.count >= 10 else {
+            fullDisplayCaptureMetricsLock.unlock()
+            return
+        }
+
+        let samples = fullDisplayCaptureSamples
+        fullDisplayCaptureSamples.removeAll(keepingCapacity: true)
+        fullDisplayCaptureMetricsLock.unlock()
+
+        let average = samples.reduce(0, +) / Double(samples.count)
+        let maximum = samples.max() ?? average
+        Self.logger.info(
+            "Full display capture metrics samples=\(samples.count, privacy: .public) averageMs=\(average, privacy: .public) maximumMs=\(maximum, privacy: .public)"
+        )
+    }
+
+    private static func makeContentCache() -> ScreenCaptureContentCache<ContentSnapshot> {
+        ScreenCaptureContentCache {
+            let content = try await SCShareableContent.excludingDesktopWindows(
+                false,
+                onScreenWindowsOnly: false
+            )
+            return ContentSnapshot(
+                displays: content.displays.map { ($0.displayID, $0) },
+                windows: content.windows.map { (Int($0.windowID), $0) }
+            )
+        }
+    }
+
+    private nonisolated static func isStaleCaptureSourceError(_ error: Error) -> Bool {
+        let nsError = error as NSError
+        guard nsError.domain == SCStreamErrorDomain else { return false }
+        return [-3813, -3814, -3815].contains(nsError.code)
+    }
+
+    private nonisolated static func isCancellation(_ error: Error) -> Bool {
+        if error is CancellationError { return true }
+        if let urlError = error as? URLError, urlError.code == .cancelled { return true }
+        return Task.isCancelled
+    }
+
+    private func screen(containing point: CGPoint) -> NSScreen? {
+        NSScreen.screens.first(where: { NSMouseInRect(point, $0.frame, false) })
+    }
+
+    private func captureRect(for point: CGPoint, in screenFrame: CGRect, size: CGSize) -> CGRect {
+        let origin = CGPoint(x: point.x - size.width / 2, y: point.y - size.height / 2)
+        let rawRect = CGRect(origin: origin, size: size)
+        return rawRect.intersection(screenFrame)
+    }
+
+    private func convertToDisplayLocalCoordinates(_ rect: CGRect, screen: NSScreen) -> CGRect {
+        let screenFrame = screen.frame
+        let localX = rect.minX - screenFrame.minX
+        let localY = rect.minY - screenFrame.minY
+        let flippedY = screenFrame.height - (localY + rect.height)
+        return CGRect(x: localX, y: flippedY, width: rect.width, height: rect.height)
+    }
+
+    private func makeConfiguration(
+        for rect: CGRect,
+        scaleFactor: CGFloat,
+        resolutionScale: CGFloat = 1
+    ) -> SCStreamConfiguration {
+        let configuration = SCStreamConfiguration()
+        configuration.sourceRect = rect
+        let clampedScale = max(resolutionScale, 0.1)
+        let pixelWidth = max(Int(rect.width * scaleFactor * clampedScale), 1)
+        let pixelHeight = max(Int(rect.height * scaleFactor * clampedScale), 1)
+        configuration.width = pixelWidth
+        configuration.height = pixelHeight
+        configuration.queueDepth = 1
+        configuration.pixelFormat = kCVPixelFormatType_32BGRA
+        configuration.showsCursor = false
+        if #available(macOS 14.0, *) {
+            configuration.captureResolution = .best
+        }
+        return configuration
+    }
+}

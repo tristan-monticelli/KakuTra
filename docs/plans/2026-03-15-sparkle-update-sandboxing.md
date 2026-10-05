@@ -13,12 +13,12 @@
 ### Task 1: Make Sparkle host keys explicit in the app bundle
 
 **Files:**
-- Create: `SnapTra Translator/Info.plist`
-- Modify: `SnapTra Translator.xcodeproj/project.pbxproj`
+- Create: `KakuTra Translator/Info.plist`
+- Modify: `KakuTra Translator.xcodeproj/project.pbxproj`
 
 **Step 1: Add an explicit app Info.plist**
 
-Create `SnapTra Translator/Info.plist` with:
+Create `KakuTra Translator/Info.plist` with:
 
 - `CFBundleDisplayName = $(PRODUCT_NAME)`
 - `CFBundleIdentifier = $(PRODUCT_BUNDLE_IDENTIFIER)`
@@ -32,29 +32,29 @@ Create `SnapTra Translator/Info.plist` with:
 
 **Step 2: Point the app target at the explicit plist**
 
-Modify the app target build settings in `SnapTra Translator.xcodeproj/project.pbxproj`:
+Modify the app target build settings in `KakuTra Translator.xcodeproj/project.pbxproj`:
 
 - set `GENERATE_INFOPLIST_FILE = NO`
-- set `INFOPLIST_FILE = "SnapTra Translator/Info.plist"`
+- set `INFOPLIST_FILE = "KakuTra Translator/Info.plist"`
 
 **Step 3: Build the Release app**
 
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Release -destination "platform=macOS" -derivedDataPath /tmp/snaptra-dd build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Release -destination "platform=macOS" -derivedDataPath /tmp/KakuTra-dd build
 ```
 
 Expected:
 
 - build succeeds
-- `/tmp/snaptra-dd/Build/Products/Release/SnapTra Translator.app/Contents/Info.plist` contains `SUPublicEDKey`
+- `/tmp/KakuTra-dd/Build/Products/Release/KakuTra Translator.app/Contents/Info.plist` contains `SUPublicEDKey`
 - the same plist contains `SUEnableInstallerLauncherService = true`
 
 ### Task 2: Add Sparkle sandbox communication entitlements
 
 **Files:**
-- Modify: `SnapTra Translator/Snap Translate.entitlements`
+- Modify: `KakuTra Translator/Snap Translate.entitlements`
 
 **Step 1: Add Sparkle mach lookup exceptions**
 
@@ -73,8 +73,8 @@ Add:
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Release -destination "platform=macOS" -derivedDataPath /tmp/snaptra-dd build
-codesign -d --entitlements :- "/tmp/snaptra-dd/Build/Products/Release/SnapTra Translator.app" 2>/dev/null
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Release -destination "platform=macOS" -derivedDataPath /tmp/KakuTra-dd build
+codesign -d --entitlements :- "/tmp/KakuTra-dd/Build/Products/Release/KakuTra Translator.app" 2>/dev/null
 ```
 
 Expected:
@@ -107,8 +107,8 @@ Add a short comment explaining Sparkle helper signatures must be preserved.
 Run:
 
 ```bash
-bash "scripts/build/codesign-and-notarize.sh" sign "/tmp/snaptra-dd/Build/Products/Release/SnapTra Translator.app"
-codesign --verify --deep --strict --verbose=2 "/tmp/snaptra-dd/Build/Products/Release/SnapTra Translator.app"
+bash "scripts/build/codesign-and-notarize.sh" sign "/tmp/KakuTra-dd/Build/Products/Release/KakuTra Translator.app"
+codesign --verify --deep --strict --verbose=2 "/tmp/KakuTra-dd/Build/Products/Release/KakuTra Translator.app"
 ```
 
 Expected:
@@ -143,7 +143,7 @@ Expected:
 
 - build succeeds
 - script does not fail the Sparkle validation step
-- `dist/DerivedData/Build/Products/Release/SnapTra Translator.app/Contents/Info.plist` contains both required Sparkle keys
+- `dist/DerivedData/Build/Products/Release/KakuTra Translator.app/Contents/Info.plist` contains both required Sparkle keys
 
 ### Task 5: Perform final release-bundle verification
 
@@ -155,7 +155,7 @@ Expected:
 Run:
 
 ```bash
-bash "scripts/build/codesign-and-notarize.sh" sign "dist/DerivedData/Build/Products/Release/SnapTra Translator.app"
+bash "scripts/build/codesign-and-notarize.sh" sign "dist/DerivedData/Build/Products/Release/KakuTra Translator.app"
 ```
 
 **Step 2: Inspect the final bundle**
@@ -163,10 +163,10 @@ bash "scripts/build/codesign-and-notarize.sh" sign "dist/DerivedData/Build/Produ
 Run:
 
 ```bash
-/usr/libexec/PlistBuddy -c "Print :SUEnableInstallerLauncherService" "dist/DerivedData/Build/Products/Release/SnapTra Translator.app/Contents/Info.plist"
-/usr/libexec/PlistBuddy -c "Print :SUPublicEDKey" "dist/DerivedData/Build/Products/Release/SnapTra Translator.app/Contents/Info.plist"
-codesign -d --entitlements :- "dist/DerivedData/Build/Products/Release/SnapTra Translator.app" 2>/dev/null
-codesign --verify --deep --strict --verbose=2 "dist/DerivedData/Build/Products/Release/SnapTra Translator.app"
+/usr/libexec/PlistBuddy -c "Print :SUEnableInstallerLauncherService" "dist/DerivedData/Build/Products/Release/KakuTra Translator.app/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Print :SUPublicEDKey" "dist/DerivedData/Build/Products/Release/KakuTra Translator.app/Contents/Info.plist"
+codesign -d --entitlements :- "dist/DerivedData/Build/Products/Release/KakuTra Translator.app" 2>/dev/null
+codesign --verify --deep --strict --verbose=2 "dist/DerivedData/Build/Products/Release/KakuTra Translator.app"
 ```
 
 Expected:

@@ -6,14 +6,14 @@
 
 **Architecture:** Apple exposes directional pair-level availability, but the settings UI needs language-level indicators. Add UI-only probe pairs for each selected language against common languages, infer a selected language as installed when any probe involving that language is installed, and keep required-pair logic for actual translation readiness and alert priority.
 
-**Tech Stack:** Swift, SwiftUI, Apple Translation framework status values, macOS app target `SnapTra Translator`.
+**Tech Stack:** Swift, SwiftUI, Apple Translation framework status values, macOS app target `KakuTra Translator`.
 
 ---
 
 ### Task 1: Always-Two-Row Status Rendering
 
 **Files:**
-- Modify: `SnapTra Translator/SettingsWindowView.swift:717-940`
+- Modify: `KakuTra Translator/SettingsWindowView.swift:717-940`
 
 **Step 1: Add source-row indicator**
 
@@ -50,7 +50,7 @@ Track an active refresh count for the whole probe pass. While the count is great
 
 **Step 1: Run Debug build**
 
-Run: `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build`
+Run: `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build`
 
 Expected: `BUILD SUCCEEDED`.
 

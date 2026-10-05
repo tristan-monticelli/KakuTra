@@ -13,8 +13,8 @@
 ### Task 1: Add structured paragraph block parsing
 
 **Files:**
-- Create: `SnapTra Translator/ParagraphTextStructure.swift`
-- Test: `SnapTra TranslatorTests/ParagraphTextStructureTests.swift`
+- Create: `KakuTra Translator/ParagraphTextStructure.swift`
+- Test: `KakuTra TranslatorTests/ParagraphTextStructureTests.swift`
 
 **Step 1: Write the failing parser tests**
 
@@ -29,7 +29,7 @@ Add tests for:
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:'SnapTra TranslatorTests/ParagraphTextStructureTests'
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:'KakuTra TranslatorTests/ParagraphTextStructureTests'
 ```
 
 Expected: FAIL because the parser and block model do not exist yet.
@@ -49,17 +49,17 @@ Run the same command and expect PASS.
 **Step 5: Commit**
 
 ```bash
-git add "SnapTra Translator/ParagraphTextStructure.swift" "SnapTra TranslatorTests/ParagraphTextStructureTests.swift"
+git add "KakuTra Translator/ParagraphTextStructure.swift" "KakuTra TranslatorTests/ParagraphTextStructureTests.swift"
 git commit -m "feat: add paragraph structure parser"
 ```
 
 ### Task 2: Batch-translate structured blocks with the system translator
 
 **Files:**
-- Modify: `SnapTra Translator/TranslationService.swift`
-- Modify: `SnapTra Translator/AppModel.swift`
-- Modify: `SnapTra Translator/OverlayView.swift`
-- Test: `SnapTra TranslatorTests/ParagraphNativeTranslationTests.swift`
+- Modify: `KakuTra Translator/TranslationService.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/OverlayView.swift`
+- Test: `KakuTra TranslatorTests/ParagraphNativeTranslationTests.swift`
 
 **Step 1: Write failing translation orchestration tests**
 
@@ -73,7 +73,7 @@ Add tests for:
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:'SnapTra TranslatorTests/ParagraphNativeTranslationTests'
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:'KakuTra TranslatorTests/ParagraphNativeTranslationTests'
 ```
 
 Expected: FAIL because the bridge only exposes single-string translation and the paragraph flow still replaces `\n` with spaces.
@@ -93,15 +93,15 @@ Run the same command and expect PASS.
 **Step 5: Commit**
 
 ```bash
-git add "SnapTra Translator/TranslationService.swift" "SnapTra Translator/AppModel.swift" "SnapTra Translator/OverlayView.swift" "SnapTra TranslatorTests/ParagraphNativeTranslationTests.swift"
+git add "KakuTra Translator/TranslationService.swift" "KakuTra Translator/AppModel.swift" "KakuTra Translator/OverlayView.swift" "KakuTra TranslatorTests/ParagraphNativeTranslationTests.swift"
 git commit -m "feat: preserve paragraph structure in native translation"
 ```
 
 ### Task 3: Render translated lists with hanging indentation
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayView.swift`
-- Test: `SnapTra TranslatorTests/ParagraphTextRenderingTests.swift`
+- Modify: `KakuTra Translator/OverlayView.swift`
+- Test: `KakuTra TranslatorTests/ParagraphTextRenderingTests.swift`
 
 **Step 1: Write failing rendering tests**
 
@@ -115,7 +115,7 @@ Add tests for:
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:'SnapTra TranslatorTests/ParagraphTextRenderingTests'
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:'KakuTra TranslatorTests/ParagraphTextRenderingTests'
 ```
 
 Expected: FAIL because `SelectableTextView` currently applies one paragraph style to the whole string.
@@ -135,7 +135,7 @@ Run the same command and expect PASS.
 **Step 5: Commit**
 
 ```bash
-git add "SnapTra Translator/OverlayView.swift" "SnapTra TranslatorTests/ParagraphTextRenderingTests.swift"
+git add "KakuTra Translator/OverlayView.swift" "KakuTra TranslatorTests/ParagraphTextRenderingTests.swift"
 git commit -m "feat: render paragraph lists with hanging indentation"
 ```
 
@@ -149,7 +149,7 @@ git commit -m "feat: render paragraph lists with hanging indentation"
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:'SnapTra TranslatorTests/ParagraphTextStructureTests' -only-testing:'SnapTra TranslatorTests/ParagraphNativeTranslationTests' -only-testing:'SnapTra TranslatorTests/ParagraphTextRenderingTests' -only-testing:'SnapTra TranslatorTests/OCRParagraphGroupingTests' -only-testing:'SnapTra TranslatorTests/ParagraphOverlayLayoutTests'
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:'KakuTra TranslatorTests/ParagraphTextStructureTests' -only-testing:'KakuTra TranslatorTests/ParagraphNativeTranslationTests' -only-testing:'KakuTra TranslatorTests/ParagraphTextRenderingTests' -only-testing:'KakuTra TranslatorTests/OCRParagraphGroupingTests' -only-testing:'KakuTra TranslatorTests/ParagraphOverlayLayoutTests'
 ```
 
 Expected: PASS.
@@ -159,7 +159,7 @@ Expected: PASS.
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test
 ```
 
 Expected: PASS.

@@ -13,7 +13,7 @@
 ### Task 1: 调整段落结果态顶部栏
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/OverlayView.swift`
 
 **Step 1: 新增原文标题栏视图**
 
@@ -31,7 +31,7 @@
 ### Task 2: 压缩原文区域顶部留白
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/OverlayView.swift`
 
 **Step 1: 删除正文中的重复原文标题行**
 
@@ -52,7 +52,7 @@
 
 Run:
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build
 ```
 
 Expected:

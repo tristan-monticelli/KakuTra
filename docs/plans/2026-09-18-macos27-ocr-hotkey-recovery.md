@@ -13,17 +13,17 @@
 ### Task 1: Harden OCR input and diagnostics
 
 **Files:**
-- Modify: `SnapTra Translator/OCRService.swift`
-- Modify: `SnapTra Translator/ScreenCaptureService.swift`
-- Modify: `SnapTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/OCRService.swift`
+- Modify: `KakuTra Translator/ScreenCaptureService.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
 
 Add standard bitmap normalization, OCR request metadata logging, and capture error propagation/logging without exposing recognized text or credentials.
 
 ### Task 2: Fix physical modifier hotkey state
 
 **Files:**
-- Modify: `SnapTra Translator/HotkeyManager.swift`
-- Modify: `SnapTra TranslatorTests/HotkeyManagerTests.swift`
+- Modify: `KakuTra Translator/HotkeyManager.swift`
+- Modify: `KakuTra TranslatorTests/HotkeyManagerTests.swift`
 
 Use the configured modifier key's keyCode as the source of truth for press/release and add recovery when a release event is lost.
 

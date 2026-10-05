@@ -13,18 +13,18 @@
 ### Task 1: Add Manual Selection Overlay
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayWindowController.swift`
+- Modify: `KakuTra Translator/OverlayWindowController.swift`
 
 **Steps:**
 1. Add a SwiftUI selection view with dimmed background, drag rectangle, and hint text.
 2. Add an `NSViewRepresentable` mouse interaction layer to track drag start/update/end and Escape.
 3. Add `ManualRegionSelectionWindowController` that shows one borderless panel per active screen and returns the selected `CGRect`.
-4. Register the selection panels with `CaptureExclusionRegistry` so selected captures do not include SnapTra overlays.
+4. Register the selection panels with `CaptureExclusionRegistry` so selected captures do not include KakuTra overlays.
 
 ### Task 2: Wire AppModel
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
 
 **Steps:**
 1. Add a `manualRegionSelectionWindowController` property.
@@ -36,7 +36,7 @@
 ### Task 3: Add Paragraph Panel Action
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/OverlayView.swift`
 
 **Steps:**
 1. Add a compact `selection` or `crop` control button before pin/close in paragraph top bars.
@@ -46,8 +46,8 @@
 ### Task 4: Verify
 
 **Commands:**
-- Run: `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build`
-- Run relevant tests if build succeeds: `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test`
+- Run: `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build`
+- Run relevant tests if build succeeds: `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" test`
 
 **Manual QA:**
 1. Double-tap shortcut still translates the sentence under cursor.

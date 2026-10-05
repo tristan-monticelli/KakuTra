@@ -13,7 +13,7 @@
 ### Task 1: Add Box Resolution Regression Coverage
 
 **Files:**
-- Modify: `SnapTra TranslatorTests/OCRParagraphGroupingTests.swift`
+- Modify: `KakuTra TranslatorTests/OCRParagraphGroupingTests.swift`
 
 **Steps:**
 1. Add a test where a valid precise box for `部署` is far from a drifted fallback box but still inside the parent line.
@@ -23,7 +23,7 @@
 ### Task 2: Relax Subrange Box Compatibility
 
 **Files:**
-- Modify: `SnapTra Translator/OCRService.swift`
+- Modify: `KakuTra Translator/OCRService.swift`
 
 **Steps:**
 1. Keep rejecting empty or parent-escaping precise boxes.
@@ -34,8 +34,8 @@
 ### Task 3: Verify
 
 **Commands:**
-- `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/OCRParagraphGroupingTests"`
-- `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build`
+- `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/OCRParagraphGroupingTests"`
+- `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build`
 
 **Expected:**
 - OCR regression tests pass.

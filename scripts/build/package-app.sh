@@ -7,7 +7,7 @@ DIST_DIR="$REPO_ROOT/dist"
 APP_NAME="KakuTra"
 BUNDLE_ID="com.tristanmonticelli.KakuTra"
 SCHEME="${SCHEME:-KakuTra Direct}"
-PROJECT="$REPO_ROOT/SnapTra Translator.xcodeproj"
+PROJECT="$REPO_ROOT/KakuTra.xcodeproj"
 
 source "$SCRIPT_DIR/sparkle-release-utils.sh"
 

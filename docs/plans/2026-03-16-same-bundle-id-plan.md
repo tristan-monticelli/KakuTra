@@ -13,8 +13,8 @@
 ### Task 1: Document the distribution identity change
 
 **Files:**
-- Create: `/Users/yelog/workspace/swift/SnapTra Translator/docs/plans/2026-03-16-same-bundle-id-design.md`
-- Create: `/Users/yelog/workspace/swift/SnapTra Translator/docs/plans/2026-03-16-same-bundle-id-plan.md`
+- Create: `/Users/yelog/workspace/swift/KakuTra Translator/docs/plans/2026-03-16-same-bundle-id-design.md`
+- Create: `/Users/yelog/workspace/swift/KakuTra Translator/docs/plans/2026-03-16-same-bundle-id-plan.md`
 
 **Step 1: Write the design note**
 
@@ -27,20 +27,20 @@ Record the exact project file to update and the build validations required after
 ### Task 2: Restore the production bundle identifier for the direct target
 
 **Files:**
-- Modify: `/Users/yelog/workspace/swift/SnapTra Translator/SnapTra Translator.xcodeproj/project.pbxproj`
+- Modify: `/Users/yelog/workspace/swift/KakuTra Translator/KakuTra Translator.xcodeproj/project.pbxproj`
 
 **Step 1: Update direct target Debug bundle identifier**
 
 Change:
 
 ```text
-PRODUCT_BUNDLE_IDENTIFIER = org.yelog.SnapTraTranslate.direct;
+PRODUCT_BUNDLE_IDENTIFIER = org.yelog.KakuTraTranslate.direct;
 ```
 
 to:
 
 ```text
-PRODUCT_BUNDLE_IDENTIFIER = org.yelog.SnapTraTranslate;
+PRODUCT_BUNDLE_IDENTIFIER = org.yelog.KakuTraTranslate;
 ```
 
 **Step 2: Update direct target Release bundle identifier**
@@ -51,23 +51,23 @@ Apply the same identifier change to the direct target Release configuration.
 
 Confirm the direct target still points to:
 
-- `SnapTra Translator/Info-Direct.plist`
-- `SnapTra Translator/SnapTra Direct.entitlements`
+- `KakuTra Translator/Info-Direct.plist`
+- `KakuTra Translator/KakuTra Direct.entitlements`
 - `SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DIRECT_DISTRIBUTION $(inherited)"`
 
 ### Task 3: Rebuild both distribution schemes
 
 **Files:**
-- Verify: `/Users/yelog/workspace/swift/SnapTra Translator/SnapTra Translator.xcodeproj/project.pbxproj`
-- Verify: `/Users/yelog/workspace/swift/SnapTra Translator/SnapTra Translator/Info-AppStore.plist`
-- Verify: `/Users/yelog/workspace/swift/SnapTra Translator/SnapTra Translator/Info-Direct.plist`
+- Verify: `/Users/yelog/workspace/swift/KakuTra Translator/KakuTra Translator.xcodeproj/project.pbxproj`
+- Verify: `/Users/yelog/workspace/swift/KakuTra Translator/KakuTra Translator/Info-AppStore.plist`
+- Verify: `/Users/yelog/workspace/swift/KakuTra Translator/KakuTra Translator/Info-Direct.plist`
 
 **Step 1: Build the App Store scheme**
 
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Release -destination "platform=macOS" -derivedDataPath /tmp/snaptra-appstore-same-bundle CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=NO build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Release -destination "platform=macOS" -derivedDataPath /tmp/KakuTra-appstore-same-bundle CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=NO build
 ```
 
 Expected:
@@ -80,14 +80,14 @@ Expected:
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator Direct" -configuration Release -destination "platform=macOS" -derivedDataPath /tmp/snaptra-direct-same-bundle CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=NO build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator Direct" -configuration Release -destination "platform=macOS" -derivedDataPath /tmp/KakuTra-direct-same-bundle CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=NO build
 ```
 
 Expected:
 
 - build succeeds
 - app bundle contains `Sparkle.framework`
-- built direct app resolves `CFBundleIdentifier` to `org.yelog.SnapTraTranslate`
+- built direct app resolves `CFBundleIdentifier` to `org.yelog.KakuTraTranslate`
 
 **Step 3: Inspect the built artifacts**
 

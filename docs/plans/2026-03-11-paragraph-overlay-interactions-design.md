@@ -61,7 +61,7 @@
 
 - Add unit coverage for the new paragraph loading localization keys if practical through existing catalog compilation.
 - Add a window-controller geometry test for drag offset application if it can be isolated cheaply.
-- Run the full `SnapTra TranslatorTests` suite plus a manual smoke check for:
+- Run the full `KakuTra TranslatorTests` suite plus a manual smoke check for:
   - `Esc` closes paragraph overlay
   - body text is selectable and copyable
   - loading strings follow app language

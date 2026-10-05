@@ -13,9 +13,9 @@
 ### Task 1: Add Setting Model
 
 **Files:**
-- Modify: `SnapTra Translator/AppSettings.swift`
-- Modify: `SnapTra Translator/SettingsStore.swift`
-- Test: `SnapTra TranslatorTests/SettingsStoreTests.swift`
+- Modify: `KakuTra Translator/AppSettings.swift`
+- Modify: `KakuTra Translator/SettingsStore.swift`
+- Test: `KakuTra TranslatorTests/SettingsStoreTests.swift`
 
 **Steps:**
 - Add `MenuBarIconStyle: String, CaseIterable, Identifiable` with `auto`, `black`, and `white`.
@@ -27,7 +27,7 @@
 ### Task 2: Render Status Item Image From Setting
 
 **Files:**
-- Modify: `SnapTra Translator/Snap_TranslateApp.swift`
+- Modify: `KakuTra Translator/Snap_TranslateApp.swift`
 
 **Steps:**
 - Subscribe to `$menuBarIconStyle` changes in `applicationDidFinishLaunching`.
@@ -38,7 +38,7 @@
 ### Task 3: Add Settings UI
 
 **Files:**
-- Modify: `SnapTra Translator/SettingsWindowView.swift`
+- Modify: `KakuTra Translator/SettingsWindowView.swift`
 
 **Steps:**
 - Add a `MenuBarIconStylePickerRow` with a menu picker.
@@ -47,7 +47,7 @@
 ### Task 4: Verify
 
 **Commands:**
-- `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test`
-- `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build`
+- `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" test`
+- `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build`
 
 **Expected:** Tests and Debug build pass.

@@ -13,8 +13,8 @@
 ### Task 1: Add TXT Export Formatting
 
 **Files:**
-- Modify: `SnapTra Translator/LearningExportService.swift`
-- Test: `SnapTra TranslatorTests/SettingsStoreTests.swift`
+- Modify: `KakuTra Translator/LearningExportService.swift`
+- Test: `KakuTra TranslatorTests/SettingsStoreTests.swift`
 
 **Step 1: Write the failing test**
 
@@ -38,7 +38,7 @@ func testPlainTextExportWritesOneWordPerLine() {
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test -only-testing:SnapTra_TranslatorTests/LearningExportServiceTests
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" test -only-testing:KakuTra_TranslatorTests/LearningExportServiceTests
 ```
 
 Expected: fails because `.plainText` does not exist yet.
@@ -54,8 +54,8 @@ Run the same command. Expected: pass.
 ### Task 2: Add TXT UI Entry
 
 **Files:**
-- Modify: `SnapTra Translator/LearningSettingsView.swift`
-- Modify: `SnapTra Translator/Localizable.xcstrings`
+- Modify: `KakuTra Translator/LearningSettingsView.swift`
+- Modify: `KakuTra Translator/Localizable.xcstrings`
 
 **Step 1: Add the TXT button**
 
@@ -74,8 +74,8 @@ Add localization entries for the new help text. Existing labels that are file fo
 **Commands:**
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test -only-testing:SnapTra_TranslatorTests/LearningExportServiceTests
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" test -only-testing:KakuTra_TranslatorTests/LearningExportServiceTests
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build
 ```
 
 **Expected:** Focused tests pass and the Debug build succeeds.

@@ -13,8 +13,8 @@
 ### Task 1: Cover unified dismissal policy
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
-- Test: `SnapTra TranslatorTests/ParagraphOverlayLayoutTests.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
+- Test: `KakuTra TranslatorTests/ParagraphOverlayLayoutTests.swift`
 
 1. Add failing tests for in-place presentation, protected in-place frames, and non-presented sessions.
 2. Run the focused test suite and verify the new cases fail.
@@ -24,8 +24,8 @@
 ### Task 2: Unify presentation and monitoring state
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
-- Modify: `SnapTra Translator/InPlaceTranslation.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/InPlaceTranslation.swift`
 
 1. Expose visible frames from both in-place window controllers.
 2. Derive a unified sentence-translation presentation state.
@@ -35,7 +35,7 @@
 ### Task 3: Verify
 
 **Files:**
-- Test: `SnapTra TranslatorTests/ParagraphOverlayLayoutTests.swift`
+- Test: `KakuTra TranslatorTests/ParagraphOverlayLayoutTests.swift`
 
 1. Run focused policy tests.
 2. Run the project Debug build.
@@ -44,8 +44,8 @@
 ### Task 4: Preserve persistence across manual selection
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
-- Test: `SnapTra TranslatorTests/ParagraphOverlayLayoutTests.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
+- Test: `KakuTra TranslatorTests/ParagraphOverlayLayoutTests.swift`
 
 1. Add policy tests proving a persistent release is deferred while manual region interaction is active.
 2. Record a one-shot pending persistence request instead of discarding it before a sentence window exists.

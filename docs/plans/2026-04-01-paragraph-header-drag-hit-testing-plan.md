@@ -7,12 +7,12 @@
 ## 实施步骤
 
 1. 保留现有的 `ParagraphOverlayDragHandle` 原生拖拽实现，不改窗口移动算法。
-2. 重构 [OverlayView.swift](/Users/yelog/workspace/swift/SnapTra%20Translator/SnapTra%20Translator/OverlayView.swift) 的标题行布局：
+2. 重构 [OverlayView.swift](/Users/yelog/workspace/swift/KakuTra%20Translator/KakuTra%20Translator/OverlayView.swift) 的标题行布局：
    - 左侧改为显式可拖区域。
    - 右侧保留 `复制` / `关闭` 按钮。
 3. 让标题文字作为可拖区域的前景内容，并显式关闭标题文字的命中，确保鼠标事件落到拖拽视图。
 4. 保留原文正文拖拽覆盖层，避免修标题行时回归正文拖拽。
-5. 运行 `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build` 验证编译通过。
+5. 运行 `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build` 验证编译通过。
 
 ## 验证重点
 

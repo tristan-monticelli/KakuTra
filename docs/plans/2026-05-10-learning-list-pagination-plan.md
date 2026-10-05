@@ -6,15 +6,15 @@
 
 **Architecture:** `LearningService` will own paginated list state, full-dataset summary counts, and query construction. `LearningSettingsView` will render only the currently loaded page window, trigger reloads on search/filter changes, trigger next-page loading from the bottom row, and call a dedicated full-query export method when exporting.
 
-**Tech Stack:** SwiftUI, SwiftData, Combine, XCTest, macOS app target `SnapTra Translator`.
+**Tech Stack:** SwiftUI, SwiftData, Combine, XCTest, macOS app target `KakuTra Translator`.
 
 ---
 
 ### Task 1: Add Query State Types
 
 **Files:**
-- Modify: `SnapTra Translator/LearningService.swift`
-- Modify: `SnapTra Translator/LearningSettingsView.swift`
+- Modify: `KakuTra Translator/LearningService.swift`
+- Modify: `KakuTra Translator/LearningSettingsView.swift`
 
 **Step 1: Add service-level filter enum**
 
@@ -59,7 +59,7 @@ Change `filterPicker` to iterate `LearningWordFilter.allCases`.
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build
 ```
 
 Expected: build succeeds or only fails for pre-existing unrelated issues.
@@ -67,7 +67,7 @@ Expected: build succeeds or only fails for pre-existing unrelated issues.
 ### Task 2: Replace Full Cached Lists With Paginated State
 
 **Files:**
-- Modify: `SnapTra Translator/LearningService.swift`
+- Modify: `KakuTra Translator/LearningService.swift`
 
 **Step 1: Replace published arrays and counts**
 
@@ -118,7 +118,7 @@ Expected: build fails where old `allWords`, `pendingReviewWords`, or `masteredWo
 ### Task 3: Add Count Refreshing
 
 **Files:**
-- Modify: `SnapTra Translator/LearningService.swift`
+- Modify: `KakuTra Translator/LearningService.swift`
 
 **Step 1: Add count method**
 
@@ -163,7 +163,7 @@ Expected: build reaches the same old-reference failures from Task 2, with no new
 ### Task 4: Add Page Query Methods
 
 **Files:**
-- Modify: `SnapTra Translator/LearningService.swift`
+- Modify: `KakuTra Translator/LearningService.swift`
 
 **Step 1: Add public reload and pagination methods**
 
@@ -255,7 +255,7 @@ Expected: no predicate errors; remaining failures are view references to removed
 ### Task 5: Update Mutating Operations
 
 **Files:**
-- Modify: `SnapTra Translator/LearningService.swift`
+- Modify: `KakuTra Translator/LearningService.swift`
 
 **Step 1: Add refresh helper**
 
@@ -308,7 +308,7 @@ Expected: remaining failures should be in `LearningSettingsView` only.
 ### Task 6: Update Learning Settings View Loading
 
 **Files:**
-- Modify: `SnapTra Translator/LearningSettingsView.swift`
+- Modify: `KakuTra Translator/LearningSettingsView.swift`
 
 **Step 1: Update onAppear**
 
@@ -383,7 +383,7 @@ Expected: old full-list references are gone or limited to export.
 ### Task 7: Add Infinite Loading Trigger
 
 **Files:**
-- Modify: `SnapTra Translator/LearningSettingsView.swift`
+- Modify: `KakuTra Translator/LearningSettingsView.swift`
 
 **Step 1: Add bottom loading view**
 
@@ -415,8 +415,8 @@ Expected: build succeeds or surfaces export-specific failures.
 ### Task 8: Make Export Full-Query Based
 
 **Files:**
-- Modify: `SnapTra Translator/LearningService.swift`
-- Modify: `SnapTra Translator/LearningSettingsView.swift`
+- Modify: `KakuTra Translator/LearningService.swift`
+- Modify: `KakuTra Translator/LearningSettingsView.swift`
 
 **Step 1: Add export fetch method**
 
@@ -450,7 +450,7 @@ private func exportWords(format: LearningExportFormat) {
 
         let panel = NSSavePanel()
         panel.title = L("Export Learning Words")
-        panel.nameFieldStringValue = "snaptra-learning-words.\(format.fileExtension)"
+        panel.nameFieldStringValue = "KakuTra-learning-words.\(format.fileExtension)"
         panel.canCreateDirectories = true
         panel.allowedContentTypes = [.plainText]
 
@@ -479,7 +479,7 @@ Expected: build succeeds.
 ### Task 9: Add Service Tests Where Feasible
 
 **Files:**
-- Test: `SnapTra TranslatorTests/LearningServicePaginationTests.swift`
+- Test: `KakuTra TranslatorTests/LearningServicePaginationTests.swift`
 
 **Step 1: Create tests for pagination state**
 
@@ -505,7 +505,7 @@ If SwiftData model context setup in tests is too time-consuming or incompatible 
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" test
 ```
 
 Expected: tests pass, or failure is documented if the scheme cannot run tests in the current environment.
@@ -520,7 +520,7 @@ Expected: tests pass, or failure is documented if the scheme cannot run tests in
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build
 ```
 
 Expected: build succeeds.
@@ -530,7 +530,7 @@ Expected: build succeeds.
 Open:
 
 ```bash
-open "SnapTra Translator.xcodeproj"
+open "KakuTra Translator.xcodeproj"
 ```
 
 Check:
@@ -547,7 +547,7 @@ Check:
 Run:
 
 ```bash
-git diff -- "SnapTra Translator/LearningService.swift" "SnapTra Translator/LearningSettingsView.swift" "SnapTra TranslatorTests/LearningServicePaginationTests.swift" docs/plans/2026-05-10-learning-list-pagination-design.md docs/plans/2026-05-10-learning-list-pagination-plan.md
+git diff -- "KakuTra Translator/LearningService.swift" "KakuTra Translator/LearningSettingsView.swift" "KakuTra TranslatorTests/LearningServicePaginationTests.swift" docs/plans/2026-05-10-learning-list-pagination-design.md docs/plans/2026-05-10-learning-list-pagination-plan.md
 ```
 
 Expected: diff is focused on learning-list pagination.

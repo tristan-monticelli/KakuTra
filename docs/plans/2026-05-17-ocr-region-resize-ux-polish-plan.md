@@ -13,8 +13,8 @@
 ### Task 1: Add resize begin callback
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayWindowController.swift`
-- Modify: `SnapTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/OverlayWindowController.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
 
 **Steps:**
 - Add `onResizeBegan: (() -> Void)?` to `ParagraphHighlightWindowController`.
@@ -24,8 +24,8 @@
 ### Task 2: Hide translation panel during drag
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayWindowController.swift`
-- Modify: `SnapTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/OverlayWindowController.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
 
 **Steps:**
 - Add a lightweight method on `OverlayWindowController` to hide the window without mutating `AppModel.overlayState`.
@@ -36,7 +36,7 @@
 ### Task 3: Use diagonal resize cursors
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayWindowController.swift`
+- Modify: `KakuTra Translator/OverlayWindowController.swift`
 
 **Steps:**
 - Replace horizontal/vertical cursor mapping with diagonal resize cursors.
@@ -50,6 +50,6 @@
 - Modify: none
 
 **Steps:**
-- Run `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build`.
+- Run `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build`.
 - Expected: build succeeds.
 - If build fails, make the smallest fix and rerun.

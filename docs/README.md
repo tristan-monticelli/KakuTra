@@ -1,79 +1,33 @@
-# SnapTra Translator
+# KakuTra documentation
 
-[简体中文](README.zh-CN.md)
+KakuTra is a macOS menu bar app for cursor based translation. It uses local Vision OCR for Japanese, Chinese, and Korean text and Apple Translation to translate supported text into English.
 
-A lightweight macOS menu bar app that instantly translates words under your cursor via screen capture and OCR. Press a hotkey, hover over any text, and get a beautiful floating bubble with translation, phonetics, dictionary definitions, and optional pronunciation.
+## User flows
 
-## Features
+- One hotkey press starts or stops word tracking under the cursor.
+- Two presses start or stop visual translation of supported Japanese, Chinese, and Korean OCR text on the display under the cursor. Escape stops screen mode.
+- Only one mode runs at a time.
 
-### Core Translation
-- **Instant OCR translation** - Captures screen region around cursor and detects the word closest to your pointer
-- **Floating bubble overlay** - Modern translucent bubble appears near cursor with translation results
-- **Dictionary definitions** - Shows detailed word definitions grouped by part of speech (noun, verb, adjective, etc.)
-- **Phonetic notation** - Displays phonetic transcription for recognized words
-- **Text-to-speech** - Optional pronunciation playback after translation
+For a single press, the Direct distribution can read an existing Accessibility selection near the cursor and translate it as a sentence. If no usable selection is available, it uses the OCR word path. The App Store distribution uses OCR directly. Two-press screen mode uses OCR in both distributions.
 
-### Translation Modes
-- **Continuous translation** - Keep translating as you move the mouse while holding the hotkey
-- **Single lookup mode** - One translation per hotkey press with interactive bubble (copy, close buttons)
-- **Tap-to-keep bubble** - Optionally release the hotkey after a word or selected-text lookup and move the mouse to dismiss
-- **Sentence translation** - Select text in any app, press the hotkey with cursor inside selection to translate the sentence
-- **Paragraph translation** - Double-tap the hotkey to OCR and translate an entire paragraph under the cursor
+Screen Recording permission is needed for OCR in both modes. Accessibility permission is optional in Direct because OCR remains the fallback. It is not used by the App Store distribution.
 
-### Supported Languages
-Chinese (Simplified), Chinese (Traditional), English, Japanese, Korean, French, German, Spanish, Italian, Portuguese, Russian, Arabic, Thai, Vietnamese
+## Current services and data
 
-### Customization
-- **Single-key hotkey** - Configure trigger key from modifier keys (Shift, Control, Option, Command, Fn)
-- **Source/target language selection** - Choose your translation language pair
-- **Auto mutual translation** - Enable Chinese <-> English auto-detection to translate in both directions with one setting
-- **Launch at login** - Auto-start when you log in
-- **Debug OCR region** - Visualize capture area and detected word bounding boxes for troubleshooting
+- Translation: Apple Translation, with English as the fixed target.
+- Speech: Apple system voices.
+- Dictionaries: local Japanese, Chinese, and Korean SQLite databases in `~/Library/Application Support/KakuTra/Dictionaries`.
+- Anki: optional, explicit card creation from a displayed result through AnkiConnect.
+- No automatic lookup history is stored. The app removes the obsolete SwiftData store on launch after upgrading.
+- Interface language is configurable independently from translation languages.
 
-### Additional Features
-- **Copy to clipboard** - Quick copy word or translation
-- **Learning export** - Save looked-up words as TXT, Anki TSV, or CSV
-- **Language pack detection** - Automatically checks and prompts for missing language packs
-- **Menu bar app** - Runs quietly in the menu bar without cluttering your dock
+## Build and test
 
-## Requirements
+Use the shared `KakuTra` scheme:
 
-- macOS 14+ (translation features require macOS 15 for system Translation APIs)
-- Screen Recording permission (required for OCR capture)
-
-## Build & Run
-
-Open in Xcode:
 ```bash
-open "SnapTra Translator.xcodeproj"
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra" test
 ```
 
-Build from command line:
-```bash
-# Debug build
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
-
-# Release build
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Release build
-
-# Clean
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" clean
-```
-
-## Usage
-
-1. **Grant permissions** - Launch the app and grant Screen Recording permission when prompted
-2. **Configure settings** - Set your preferred hotkey and language pair in the settings window
-3. **Translate** - Hold the hotkey and hover over any text; a bubble appears with translation, phonetics, and definitions
-4. **Dismiss** - Release the hotkey to dismiss, or enable tap-to-keep and move the mouse to close the bubble
-
-## Troubleshooting
-
-- **No bubble appears** - Check Screen Recording permission in System Settings > Privacy & Security > Screen Recording
-- **Missing translations on macOS 15** - Install language packs in System Settings > General > Language & Region > Translation Languages
-- **Hotkey not working** - Ensure no other app is using the same key; try a different modifier key
-- **Bubble clipped at screen edge** - Enable "Debug OCR Region" to see the capture area and adjust cursor position
-
-## License
-
-MIT License
+The project has App Store and Direct distribution configurations. Preserve their entitlements and distribution-specific capabilities when editing project settings.

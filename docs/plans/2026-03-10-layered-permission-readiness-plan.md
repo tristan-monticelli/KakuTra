@@ -13,8 +13,8 @@
 ### Task 1: Add Derived Capability State In PermissionManager
 
 **Files:**
-- Modify: `SnapTra Translator/PermissionManager.swift`
-- Test: `SnapTra TranslatorTests/PermissionManagerTests.swift`
+- Modify: `KakuTra Translator/PermissionManager.swift`
+- Test: `KakuTra TranslatorTests/PermissionManagerTests.swift`
 
 **Step 1: Write the failing test**
 
@@ -55,7 +55,7 @@ func testCapabilityStateWhenBothPermissionsAreGranted() {
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/PermissionManagerTests"
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/PermissionManagerTests"
 ```
 
 Expected: FAIL because the computed properties do not exist yet.
@@ -94,14 +94,14 @@ Run the same `xcodebuild` command and confirm the new tests pass.
 **Step 5: Commit**
 
 ```bash
-git add "SnapTra Translator/PermissionManager.swift" "SnapTra TranslatorTests/PermissionManagerTests.swift"
+git add "KakuTra Translator/PermissionManager.swift" "KakuTra TranslatorTests/PermissionManagerTests.swift"
 git commit -m "feat(settings): add layered permission capability state"
 ```
 
 ### Task 2: Update Permissions Card In SettingsView
 
 **Files:**
-- Modify: `SnapTra Translator/SettingsView.swift`
+- Modify: `KakuTra Translator/SettingsView.swift`
 
 **Step 1: Write the failing test**
 
@@ -149,14 +149,14 @@ Build and open the settings window. Verify the permissions card now clearly dist
 **Step 5: Commit**
 
 ```bash
-git add "SnapTra Translator/SettingsView.swift"
+git add "KakuTra Translator/SettingsView.swift"
 git commit -m "feat(settings): show layered permission readiness summary"
 ```
 
 ### Task 3: Unify General Settings Readiness Logic
 
 **Files:**
-- Modify: `SnapTra Translator/SettingsWindowView.swift`
+- Modify: `KakuTra Translator/SettingsWindowView.swift`
 
 **Step 1: Write the failing test**
 
@@ -195,21 +195,21 @@ Open the General settings tab and verify its ready/not-ready state no longer con
 **Step 5: Commit**
 
 ```bash
-git add "SnapTra Translator/SettingsWindowView.swift"
+git add "KakuTra Translator/SettingsWindowView.swift"
 git commit -m "fix(settings): align readiness checks with layered permissions"
 ```
 
 ### Task 4: Run Full Tests And Manual Permission Matrix Check
 
 **Files:**
-- Test: `SnapTra TranslatorTests/PermissionManagerTests.swift`
-- Test: `SnapTra TranslatorTests/SettingsStoreTests.swift`
-- Test: `SnapTra TranslatorTests/LookupDirectionTests.swift`
+- Test: `KakuTra TranslatorTests/PermissionManagerTests.swift`
+- Test: `KakuTra TranslatorTests/SettingsStoreTests.swift`
+- Test: `KakuTra TranslatorTests/LookupDirectionTests.swift`
 
 **Step 1: Run the full test suite**
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test
 ```
 
 Expected: PASS with the new permission state tests and existing tests still green.

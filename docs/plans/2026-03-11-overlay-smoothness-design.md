@@ -50,11 +50,11 @@ When a new lookup starts, or when the popup is dismissed, the app should cancel 
 
 ## Files to Change
 
-- `SnapTra Translator/OverlayWindowController.swift`
-- `SnapTra Translator/AppModel.swift`
-- `SnapTra Translator/OverlayView.swift`
-- `SnapTra Translator/OCRService.swift`
-- `SnapTra Translator/TranslationService.swift`
+- `KakuTra Translator/OverlayWindowController.swift`
+- `KakuTra Translator/AppModel.swift`
+- `KakuTra Translator/OverlayView.swift`
+- `KakuTra Translator/OCRService.swift`
+- `KakuTra Translator/TranslationService.swift`
 
 ## Expected Outcome
 
@@ -74,4 +74,4 @@ When a new lookup starts, or when the popup is dismissed, the app should cancel 
 - Single lookup: popup appears once, then fills in progressively without visible repeated frame animation.
 - Continuous translation: moving across multiple words no longer causes obvious stutter or old-result bleed-through.
 - Dismiss/release: closing the popup prevents stale work from affecting the next lookup.
-- Build verification: `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build`
+- Build verification: `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build`

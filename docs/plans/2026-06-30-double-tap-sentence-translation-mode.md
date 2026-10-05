@@ -13,9 +13,9 @@
 ### Task 1: Add Setting Model And Policy
 
 **Files:**
-- Modify: `SnapTra Translator/AppSettings.swift`
-- Modify: `SnapTra Translator/SettingsStore.swift`
-- Test: `SnapTra TranslatorTests/SettingsStoreTests.swift`
+- Modify: `KakuTra Translator/AppSettings.swift`
+- Modify: `KakuTra Translator/SettingsStore.swift`
+- Test: `KakuTra TranslatorTests/SettingsStoreTests.swift`
 
 **Steps:**
 1. Add failing tests for default mode, persisted mode, and double-tap policy.
@@ -26,7 +26,7 @@
 ### Task 2: Wire Double-Tap Runtime Behavior
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
 
 **Steps:**
 1. Route `handleHotkeyDoubleTap()` through `DoubleTapSentenceTranslationPolicy`.
@@ -37,8 +37,8 @@
 ### Task 3: Update Settings UI And Localization
 
 **Files:**
-- Modify: `SnapTra Translator/SettingsWindowView.swift`
-- Modify: `SnapTra Translator/Localizable.xcstrings`
+- Modify: `KakuTra Translator/SettingsWindowView.swift`
+- Modify: `KakuTra Translator/Localizable.xcstrings`
 
 **Steps:**
 1. Rename the master toggle from “Double-tap OCR Sentence Translation” to “Double-tap Sentence Translation”.
@@ -48,5 +48,5 @@
 ### Task 4: Verify
 
 **Commands:**
-- `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" test`
+- `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" test`
 - If scheme test execution is unavailable, run the test target build and the app build, then report the limitation clearly.

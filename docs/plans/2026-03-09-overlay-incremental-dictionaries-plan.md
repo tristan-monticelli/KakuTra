@@ -13,7 +13,7 @@
 ### Task 1: Add Incremental Overlay State Model
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
 
 **Steps:**
 
@@ -26,7 +26,7 @@
 ### Task 2: Add Single-Source Dictionary Lookup
 
 **Files:**
-- Modify: `SnapTra Translator/DictionaryService.swift`
+- Modify: `KakuTra Translator/DictionaryService.swift`
 
 **Steps:**
 
@@ -37,7 +37,7 @@
 ### Task 3: Refactor Lookup Orchestration
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
 
 **Steps:**
 
@@ -51,7 +51,7 @@
 ### Task 4: Update Overlay Rendering
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/OverlayView.swift`
 
 **Steps:**
 
@@ -63,17 +63,17 @@
 ### Task 5: Verify Behavior
 
 **Files:**
-- Modify if needed: `SnapTra TranslatorTests/*`
+- Modify if needed: `KakuTra TranslatorTests/*`
 
 **Steps:**
 
 1. Run:
    ```bash
-   xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+   xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build
    ```
 2. Run:
    ```bash
-   xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug test
+   xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug test
    ```
 3. Manually verify:
    - popup appears immediately

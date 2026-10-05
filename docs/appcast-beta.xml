@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
     <channel>
-        <title>SnapTra Translator Beta Changelog</title>
+        <title>KakuTra Beta Changelog</title>
         <link>https://snaptra.yelog.org/appcast-beta.xml</link>
         <description>Beta releases for early access to new features.</description>
         <language>en</language>
@@ -12,7 +12,7 @@
             <sparkle:version>131103</sparkle:version>
             <sparkle:shortVersionString>1.3.11-beta.3</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.11-beta.3&lt;/h2&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;harden macOS 27 OCR and hotkey handling&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.11-beta.3&lt;/h2&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;harden macOS 27 OCR and hotkey handling&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.11-beta.3/SnapTra-Translator-1.3.11-beta.3.dmg" length="6073339" type="application/octet-stream" sparkle:edSignature="KaO63uZvtfobbU4lMlx+nFhzvayzaWnF8Bq1EvrKMUagh5pDPZbOsvI2cYPD/C8IvT2oj1kyJABeJpbwP0mzAA==" />
         </item>
         <item>
@@ -21,7 +21,7 @@
             <sparkle:version>131102</sparkle:version>
             <sparkle:shortVersionString>1.3.11-beta.2</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.11-beta.2&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add pronunciation playback controls&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.11-beta.2&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add pronunciation playback controls&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.11-beta.2/SnapTra-Translator-1.3.11-beta.2.dmg" length="6066329" type="application/octet-stream" sparkle:edSignature="cwjcnoavRmkIdeE7bcGfZhMpSvw6AGbyF9zbER/kU088nXQXoF/co3x3aL4l4D3NtLQ8+d7MsdIhe8aTRjWDDA==" />
         </item>
         <item>
@@ -30,7 +30,7 @@
             <sparkle:version>131101</sparkle:version>
             <sparkle:shortVersionString>1.3.11-beta.1</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.11-beta.1&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;show LLM model name and translation time in service results&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add 1.3.11-beta.0 release entry [skip ci]&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;stop Gemma turn tags leaking into oMLX translations&lt;/li&gt;&lt;li&gt;strip echoed request delimiters from LLM translations&lt;/li&gt;&lt;li&gt;allow App Store file writes&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.11-beta.1&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;show LLM model name and translation time in service results&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add 1.3.11-beta.0 release entry [skip ci]&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;stop Gemma turn tags leaking into oMLX translations&lt;/li&gt;&lt;li&gt;strip echoed request delimiters from LLM translations&lt;/li&gt;&lt;li&gt;allow App Store file writes&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.11-beta.1/SnapTra-Translator-1.3.11-beta.1.dmg" length="6016064" type="application/octet-stream" sparkle:edSignature="/oZ4DYO6TGBSaXA7KDFQZUQwY745/aWkfe3cZnce3iQMkw/ioksQo8UykAU24ENviF3FAALS4xYH6khtFAjiCA==" />
         </item>
         <item>
@@ -39,7 +39,7 @@
             <sparkle:version>131100</sparkle:version>
             <sparkle:shortVersionString>1.3.11-beta.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.11-beta.0&lt;/h2&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;dismiss persistent panels on app switch&lt;/li&gt;&lt;li&gt;dismiss persistent sentence panels outside&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.11-beta.0&lt;/h2&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;dismiss persistent panels on app switch&lt;/li&gt;&lt;li&gt;dismiss persistent sentence panels outside&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.11-beta.0/SnapTra-Translator-1.3.11-beta.0.dmg" length="6017138" type="application/octet-stream" sparkle:edSignature="33T+Q2xA+4vmAlQVD6cGSYO7Or345IXljOPHpnSD2bygZJUJmbzuDVHrUXiA1XlFtkwhoLZfnRdMHa4aH8J2Cg==" />
         </item>
         <item>
@@ -48,7 +48,7 @@
             <sparkle:version>131099</sparkle:version>
             <sparkle:shortVersionString>1.3.10</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.10&lt;/h2&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add 1.3.10-beta.2 release entry [skip ci]&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.10&lt;/h2&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add 1.3.10-beta.2 release entry [skip ci]&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.10/SnapTra-Translator-1.3.10.dmg" length="6009188" type="application/octet-stream" sparkle:edSignature="AH+gW/q0k1c9MNJMydPEbhFLIvayyVpAZCR/6o/da+igOHzlnuiifFm9vttxtgCB2tP1Neea8l/uRWNvvFQRCQ==" />
         </item>
         <item>
@@ -57,7 +57,7 @@
             <sparkle:version>131002</sparkle:version>
             <sparkle:shortVersionString>1.3.10-beta.2</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.10-beta.2&lt;/h2&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;record hotkey lookup P0 validation&lt;/li&gt;&lt;li&gt;optimize hotkey word lookup pipeline&lt;/li&gt;&lt;li&gt;instrument word lookup stages&lt;/li&gt;&lt;li&gt;add correlated lookup traces&lt;/li&gt;&lt;li&gt;plan hotkey lookup P0 optimization&lt;/li&gt;&lt;li&gt;Fix translation overlay across Spaces&lt;/li&gt;&lt;li&gt;optimize Learning page for large record sets&lt;/li&gt;&lt;li&gt;add 1.3.10-beta.1 release entry [skip ci]&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.10-beta.2&lt;/h2&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;record hotkey lookup P0 validation&lt;/li&gt;&lt;li&gt;optimize hotkey word lookup pipeline&lt;/li&gt;&lt;li&gt;instrument word lookup stages&lt;/li&gt;&lt;li&gt;add correlated lookup traces&lt;/li&gt;&lt;li&gt;plan hotkey lookup P0 optimization&lt;/li&gt;&lt;li&gt;Fix translation overlay across Spaces&lt;/li&gt;&lt;li&gt;optimize Learning page for large record sets&lt;/li&gt;&lt;li&gt;add 1.3.10-beta.1 release entry [skip ci]&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.10-beta.2/SnapTra-Translator-1.3.10-beta.2.dmg" length="6009199" type="application/octet-stream" sparkle:edSignature="TW/TdWIcxaE1mou860pjuSsDzItQ1Fx21op8kSCJpH2J1d4/Qllv/dmNB6o7FaYj78Omv80Dk/vU8SscC+cqCA==" />
         </item>
         <item>
@@ -66,7 +66,7 @@
             <sparkle:version>131001</sparkle:version>
             <sparkle:shortVersionString>1.3.10-beta.1</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.10-beta.1&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add in-place translation overlay&lt;/li&gt;&lt;li&gt;support text selection and copy in in-place overlay&lt;/li&gt;&lt;li&gt;align in-place overlay text to source&lt;/li&gt;&lt;li&gt;style in-place overlay from capture&lt;/li&gt;&lt;li&gt;estimate in-place overlay colors&lt;/li&gt;&lt;li&gt;add animated loading beam for image translation&lt;/li&gt;&lt;li&gt;add Baidu image translation&lt;/li&gt;&lt;li&gt;support Baidu image translation v2&lt;/li&gt;&lt;li&gt;add Cmd+C clipboard fallback for apps without accessibility support&lt;/li&gt;&lt;li&gt;add double-tap sentence range mode&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;show correct provider title for selected text in image translation mode&lt;/li&gt;&lt;li&gt;reduce in-place minimum rect thresholds from 120x24 to 40x14&lt;/li&gt;&lt;li&gt;refine clipboard fallback with bounds validation and source tracking&lt;/li&gt;&lt;li&gt;make clipboard fallback async to fix double-tap hotkey&lt;/li&gt;&lt;li&gt;make in-place overlay opaque&lt;/li&gt;&lt;li&gt;clarify sentence translation labels&lt;/li&gt;&lt;li&gt;accept initial manual region click&lt;/li&gt;&lt;li&gt;avoid activating app for manual region selection&lt;/li&gt;&lt;li&gt;honor system translation toggle&lt;/li&gt;&lt;li&gt;stabilize word header phonetic layout&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.10-beta.1&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add in-place translation overlay&lt;/li&gt;&lt;li&gt;support text selection and copy in in-place overlay&lt;/li&gt;&lt;li&gt;align in-place overlay text to source&lt;/li&gt;&lt;li&gt;style in-place overlay from capture&lt;/li&gt;&lt;li&gt;estimate in-place overlay colors&lt;/li&gt;&lt;li&gt;add animated loading beam for image translation&lt;/li&gt;&lt;li&gt;add Baidu image translation&lt;/li&gt;&lt;li&gt;support Baidu image translation v2&lt;/li&gt;&lt;li&gt;add Cmd+C clipboard fallback for apps without accessibility support&lt;/li&gt;&lt;li&gt;add double-tap sentence range mode&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;show correct provider title for selected text in image translation mode&lt;/li&gt;&lt;li&gt;reduce in-place minimum rect thresholds from 120x24 to 40x14&lt;/li&gt;&lt;li&gt;refine clipboard fallback with bounds validation and source tracking&lt;/li&gt;&lt;li&gt;make clipboard fallback async to fix double-tap hotkey&lt;/li&gt;&lt;li&gt;make in-place overlay opaque&lt;/li&gt;&lt;li&gt;clarify sentence translation labels&lt;/li&gt;&lt;li&gt;accept initial manual region click&lt;/li&gt;&lt;li&gt;avoid activating app for manual region selection&lt;/li&gt;&lt;li&gt;honor system translation toggle&lt;/li&gt;&lt;li&gt;stabilize word header phonetic layout&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.10-beta.1/SnapTra-Translator-1.3.10-beta.1.dmg" length="5880152" type="application/octet-stream" sparkle:edSignature="iWlhIILfT2szVJVYQn4/6edgBe8pmTXGnGvTHnsXYLmgjDNhn28TnbrI8j9Y7vPtLIqoSHOd+p47nram3mh7Bg==" />
         </item>
         <item>
@@ -75,7 +75,7 @@
             <sparkle:version>131000</sparkle:version>
             <sparkle:shortVersionString>1.3.10-beta.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.10-beta.0&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add manual region selection&lt;/li&gt;&lt;li&gt;keep selected text bubble after tap&lt;/li&gt;&lt;li&gt;keep word bubble after tap&lt;/li&gt;&lt;li&gt;default bidirectional translation and hide original text to enabled&lt;/li&gt;&lt;li&gt;generalize bidirectional detection and show provider language support&lt;/li&gt;&lt;li&gt;show language pack download status in language pickers&lt;/li&gt;&lt;li&gt;add plain text word export&lt;/li&gt;&lt;li&gt;add Zhipu LLM provider&lt;/li&gt;&lt;li&gt;add streaming LLM translation&lt;/li&gt;&lt;li&gt;add outside dismissal and hide original option&lt;/li&gt;&lt;li&gt;track word source languages&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;improve paragraph highlight resize interaction&lt;/li&gt;&lt;li&gt;default sentence pronunciation to off&lt;/li&gt;&lt;li&gt;reduce LLM reasoning latency&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;show highlight for manual OCR regions&lt;/li&gt;&lt;li&gt;keep original text visible after manual input submit&lt;/li&gt;&lt;li&gt;keep manual input visible after typing when OCR finds no text&lt;/li&gt;&lt;li&gt;remove private dictionary services symbols&lt;/li&gt;&lt;li&gt;improve Chinese word lookup segmentation&lt;/li&gt;&lt;li&gt;dismiss kept word overlay with escape&lt;/li&gt;&lt;li&gt;stabilize OCR region resize drag&lt;/li&gt;&lt;li&gt;allow selecting kept word text&lt;/li&gt;&lt;li&gt;keep tap-kept bubble reachable below cursor&lt;/li&gt;&lt;li&gt;enable tap-kept word bubble by default&lt;/li&gt;&lt;li&gt;keep primary word translation stable&lt;/li&gt;&lt;li&gt;strip inline pinyin annotations from system dictionary translations&lt;/li&gt;&lt;li&gt;prefer bilingual content and suppress redundant English for en→zh lookups&lt;/li&gt;&lt;li&gt;prevent window jitter on language direction toggle&lt;/li&gt;&lt;li&gt;preserve English content in ECDICT definitions and translations&lt;/li&gt;&lt;li&gt;relax selected text bounds routing&lt;/li&gt;&lt;li&gt;normalize LLM OCR line breaks&lt;/li&gt;&lt;li&gt;refine hidden original sentence overlay&lt;/li&gt;&lt;li&gt;translate non-English text lines&lt;/li&gt;&lt;li&gt;stabilize language pack status indicators&lt;/li&gt;&lt;li&gt;recover skipped mixed-text words&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.10-beta.0&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add manual region selection&lt;/li&gt;&lt;li&gt;keep selected text bubble after tap&lt;/li&gt;&lt;li&gt;keep word bubble after tap&lt;/li&gt;&lt;li&gt;default bidirectional translation and hide original text to enabled&lt;/li&gt;&lt;li&gt;generalize bidirectional detection and show provider language support&lt;/li&gt;&lt;li&gt;show language pack download status in language pickers&lt;/li&gt;&lt;li&gt;add plain text word export&lt;/li&gt;&lt;li&gt;add Zhipu LLM provider&lt;/li&gt;&lt;li&gt;add streaming LLM translation&lt;/li&gt;&lt;li&gt;add outside dismissal and hide original option&lt;/li&gt;&lt;li&gt;track word source languages&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;improve paragraph highlight resize interaction&lt;/li&gt;&lt;li&gt;default sentence pronunciation to off&lt;/li&gt;&lt;li&gt;reduce LLM reasoning latency&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;show highlight for manual OCR regions&lt;/li&gt;&lt;li&gt;keep original text visible after manual input submit&lt;/li&gt;&lt;li&gt;keep manual input visible after typing when OCR finds no text&lt;/li&gt;&lt;li&gt;remove private dictionary services symbols&lt;/li&gt;&lt;li&gt;improve Chinese word lookup segmentation&lt;/li&gt;&lt;li&gt;dismiss kept word overlay with escape&lt;/li&gt;&lt;li&gt;stabilize OCR region resize drag&lt;/li&gt;&lt;li&gt;allow selecting kept word text&lt;/li&gt;&lt;li&gt;keep tap-kept bubble reachable below cursor&lt;/li&gt;&lt;li&gt;enable tap-kept word bubble by default&lt;/li&gt;&lt;li&gt;keep primary word translation stable&lt;/li&gt;&lt;li&gt;strip inline pinyin annotations from system dictionary translations&lt;/li&gt;&lt;li&gt;prefer bilingual content and suppress redundant English for en→zh lookups&lt;/li&gt;&lt;li&gt;prevent window jitter on language direction toggle&lt;/li&gt;&lt;li&gt;preserve English content in ECDICT definitions and translations&lt;/li&gt;&lt;li&gt;relax selected text bounds routing&lt;/li&gt;&lt;li&gt;normalize LLM OCR line breaks&lt;/li&gt;&lt;li&gt;refine hidden original sentence overlay&lt;/li&gt;&lt;li&gt;translate non-English text lines&lt;/li&gt;&lt;li&gt;stabilize language pack status indicators&lt;/li&gt;&lt;li&gt;recover skipped mixed-text words&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.10-beta.0/SnapTra-Translator-1.3.10-beta.0.dmg" length="5735465" type="application/octet-stream" sparkle:edSignature="r6P1JPoushwB2Sd+tivV87Euh+pbV1ge5lcobDt2i3fWDF7XLljsJoeKS/aEtPogvg8nSSkDKlc7WE+6PfRWDQ==" />
         </item>
         <item>
@@ -84,7 +84,7 @@
             <sparkle:version>13999</sparkle:version>
             <sparkle:shortVersionString>1.3.9</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.9&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;keep selected text bubble after tap for quick re-reference&lt;/li&gt;&lt;li&gt;add outside tap dismissal and hide original text option for overlays&lt;/li&gt;&lt;li&gt;add resizable OCR sentence regions with drag handles&lt;/li&gt;&lt;li&gt;edit pinned sentence source text directly&lt;/li&gt;&lt;li&gt;add paragraph target language selector in sentence view&lt;/li&gt;&lt;li&gt;add streaming LLM translation for faster response&lt;/li&gt;&lt;li&gt;add Zhipu LLM provider for sentence translation&lt;/li&gt;&lt;li&gt;add plain text word export for learning lists&lt;/li&gt;&lt;li&gt;track word source languages in learning data&lt;/li&gt;&lt;li&gt;export words for Anki flashcards&lt;/li&gt;&lt;li&gt;add menu bar icon style setting&lt;/li&gt;&lt;li&gt;show language pack download status in language pickers&lt;/li&gt;&lt;li&gt;default bidirectional translation and hide original text to enabled&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;improve paragraph highlight resize interaction&lt;/li&gt;&lt;li&gt;refine sentence overlay visuals&lt;/li&gt;&lt;li&gt;default sentence pronunciation to off&lt;/li&gt;&lt;li&gt;generalize bidirectional detection and show provider language support&lt;/li&gt;&lt;li&gt;reduce LLM reasoning latency&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;stabilize OCR region resize drag&lt;/li&gt;&lt;li&gt;allow selecting kept word text&lt;/li&gt;&lt;li&gt;keep tap-kept bubble reachable below cursor&lt;/li&gt;&lt;li&gt;keep primary word translation stable during updates&lt;/li&gt;&lt;li&gt;strip inline pinyin annotations from system dictionary translations&lt;/li&gt;&lt;li&gt;prefer bilingual content and suppress redundant English for en→zh lookups&lt;/li&gt;&lt;li&gt;prevent window jitter on language direction toggle&lt;/li&gt;&lt;li&gt;preserve English content in ECDICT definitions and translations&lt;/li&gt;&lt;li&gt;relax selected text bounds routing for better word selection&lt;/li&gt;&lt;li&gt;normalize LLM OCR line breaks&lt;/li&gt;&lt;li&gt;refine hidden original sentence overlay behavior&lt;/li&gt;&lt;li&gt;translate non-English text lines correctly&lt;/li&gt;&lt;li&gt;stabilize language pack status indicators&lt;/li&gt;&lt;li&gt;recover skipped mixed-text words during OCR&lt;/li&gt;&lt;li&gt;focus editable paragraph input properly&lt;/li&gt;&lt;li&gt;switch paragraph direction on target language change&lt;/li&gt;&lt;li&gt;resolve word list pagination never loading remaining data&lt;/li&gt;&lt;li&gt;improve responsive settings layout&lt;/li&gt;&lt;li&gt;skip target-language words without bidirectional mode&lt;/li&gt;&lt;li&gt;emit hotkey release event when shortcut is lifted&lt;/li&gt;&lt;li&gt;exclude only overlay windows from screen capture&lt;/li&gt;&lt;li&gt;recover hotkey after system wake&lt;/li&gt;&lt;li&gt;improve export toolbar layout in learning view&lt;/li&gt;&lt;li&gt;align system picker layout in settings&lt;/li&gt;&lt;li&gt;optimize word list scrolling performance&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.9&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;keep selected text bubble after tap for quick re-reference&lt;/li&gt;&lt;li&gt;add outside tap dismissal and hide original text option for overlays&lt;/li&gt;&lt;li&gt;add resizable OCR sentence regions with drag handles&lt;/li&gt;&lt;li&gt;edit pinned sentence source text directly&lt;/li&gt;&lt;li&gt;add paragraph target language selector in sentence view&lt;/li&gt;&lt;li&gt;add streaming LLM translation for faster response&lt;/li&gt;&lt;li&gt;add Zhipu LLM provider for sentence translation&lt;/li&gt;&lt;li&gt;add plain text word export for learning lists&lt;/li&gt;&lt;li&gt;track word source languages in learning data&lt;/li&gt;&lt;li&gt;export words for Anki flashcards&lt;/li&gt;&lt;li&gt;add menu bar icon style setting&lt;/li&gt;&lt;li&gt;show language pack download status in language pickers&lt;/li&gt;&lt;li&gt;default bidirectional translation and hide original text to enabled&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;improve paragraph highlight resize interaction&lt;/li&gt;&lt;li&gt;refine sentence overlay visuals&lt;/li&gt;&lt;li&gt;default sentence pronunciation to off&lt;/li&gt;&lt;li&gt;generalize bidirectional detection and show provider language support&lt;/li&gt;&lt;li&gt;reduce LLM reasoning latency&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;stabilize OCR region resize drag&lt;/li&gt;&lt;li&gt;allow selecting kept word text&lt;/li&gt;&lt;li&gt;keep tap-kept bubble reachable below cursor&lt;/li&gt;&lt;li&gt;keep primary word translation stable during updates&lt;/li&gt;&lt;li&gt;strip inline pinyin annotations from system dictionary translations&lt;/li&gt;&lt;li&gt;prefer bilingual content and suppress redundant English for en→zh lookups&lt;/li&gt;&lt;li&gt;prevent window jitter on language direction toggle&lt;/li&gt;&lt;li&gt;preserve English content in ECDICT definitions and translations&lt;/li&gt;&lt;li&gt;relax selected text bounds routing for better word selection&lt;/li&gt;&lt;li&gt;normalize LLM OCR line breaks&lt;/li&gt;&lt;li&gt;refine hidden original sentence overlay behavior&lt;/li&gt;&lt;li&gt;translate non-English text lines correctly&lt;/li&gt;&lt;li&gt;stabilize language pack status indicators&lt;/li&gt;&lt;li&gt;recover skipped mixed-text words during OCR&lt;/li&gt;&lt;li&gt;focus editable paragraph input properly&lt;/li&gt;&lt;li&gt;switch paragraph direction on target language change&lt;/li&gt;&lt;li&gt;resolve word list pagination never loading remaining data&lt;/li&gt;&lt;li&gt;improve responsive settings layout&lt;/li&gt;&lt;li&gt;skip target-language words without bidirectional mode&lt;/li&gt;&lt;li&gt;emit hotkey release event when shortcut is lifted&lt;/li&gt;&lt;li&gt;exclude only overlay windows from screen capture&lt;/li&gt;&lt;li&gt;recover hotkey after system wake&lt;/li&gt;&lt;li&gt;improve export toolbar layout in learning view&lt;/li&gt;&lt;li&gt;align system picker layout in settings&lt;/li&gt;&lt;li&gt;optimize word list scrolling performance&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.9/SnapTra-Translator-1.3.9.dmg" length="5712214" type="application/octet-stream" sparkle:edSignature="RMPritjcB6fEGLn9JwCDTO1d/VhYhqgwCevUqgo5a5RDxhZSbsVyHH3jXN6sL35Iqk55KKyVESNQNCASAdCTCw==" />
         </item>
         <item>
@@ -93,7 +93,7 @@
             <sparkle:version>13905</sparkle:version>
             <sparkle:shortVersionString>1.3.9-beta.5</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.9-beta.5&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add resizable OCR sentence regions&lt;/li&gt;&lt;li&gt;edit pinned sentence source text&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;refine sentence overlay visuals&lt;/li&gt;&lt;li&gt;add 1.3.9-beta.4 release entry [skip ci]&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;focus editable paragraph input&lt;/li&gt;&lt;li&gt;switch paragraph direction on target change&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.9-beta.5&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add resizable OCR sentence regions&lt;/li&gt;&lt;li&gt;edit pinned sentence source text&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;refine sentence overlay visuals&lt;/li&gt;&lt;li&gt;add 1.3.9-beta.4 release entry [skip ci]&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;focus editable paragraph input&lt;/li&gt;&lt;li&gt;switch paragraph direction on target change&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.9-beta.5/SnapTra-Translator-1.3.9-beta.5.dmg" length="5434206" type="application/octet-stream" sparkle:edSignature="ccr353oV/EwUi1qFa8S0X5G5xc1o73A0v3qFj91tB1WzWHyO08jgrGFpCHixNH1TXPyvWzjb3e1bX/sQcqlxAg==" />
         </item>
         <item>
@@ -102,7 +102,7 @@
             <sparkle:version>13904</sparkle:version>
             <sparkle:shortVersionString>1.3.9-beta.4</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.9-beta.4&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add paragraph target language selector&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.9-beta.4&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add paragraph target language selector&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.9-beta.4/SnapTra-Translator-1.3.9-beta.4.dmg" length="5394140" type="application/octet-stream" sparkle:edSignature="EDgp37Wkfaih6XP3ROpfgOrHUflf7fwPQM/K/2Ssq7tJB0wIE1cHBhDZaG9batq0SFBXAXBOixtABKSmGj4VBA==" />
         </item>
         <item>
@@ -111,7 +111,7 @@
             <sparkle:version>13903</sparkle:version>
             <sparkle:shortVersionString>1.3.9-beta.3</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.9-beta.3&lt;/h2&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;paginate word list loading&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;resolve word list pagination never loading remaining data&lt;/li&gt;&lt;li&gt;improve responsive settings layout&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.9-beta.3&lt;/h2&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;paginate word list loading&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;resolve word list pagination never loading remaining data&lt;/li&gt;&lt;li&gt;improve responsive settings layout&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.9-beta.3/SnapTra-Translator-1.3.9-beta.3.dmg" length="5340829" type="application/octet-stream" sparkle:edSignature="ag5zEIbwvysJFCzr3PqUgjcYPpeM39C+rwyv+mgb0AOVBGpLtwPZ8ooYCpUK8ReiBjNPFOjagybuM0kbaiMRCA==" />
         </item>
         <item>
@@ -120,7 +120,7 @@
             <sparkle:version>13902</sparkle:version>
             <sparkle:shortVersionString>1.3.9-beta.2</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.9-beta.2&lt;/h2&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add 1.3.9-beta.1 release entry [skip ci]&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;skip target-language words without bidirectional mode&lt;/li&gt;&lt;li&gt;emit release when shortcut is lifted&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.9-beta.2&lt;/h2&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add 1.3.9-beta.1 release entry [skip ci]&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;skip target-language words without bidirectional mode&lt;/li&gt;&lt;li&gt;emit release when shortcut is lifted&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.9-beta.2/SnapTra-Translator-1.3.9-beta.2.dmg" length="5314244" type="application/octet-stream" sparkle:edSignature="UrkCj+8EFF4DrtwV0S/8kSqqsztUs9T6Kx93KO1o01ZBP9k3TNJahqnON9rF1ejAj6m/XCRnh+oFjvdqi7aACQ==" />
         </item>
         <item>
@@ -129,7 +129,7 @@
             <sparkle:version>13901</sparkle:version>
             <sparkle:shortVersionString>1.3.9-beta.1</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.9-beta.1&lt;/h2&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;optimize word list scrolling&lt;/li&gt;&lt;li&gt;add 1.3.9-beta.0 release entry [skip ci]&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;exclude only overlay windows from capture&lt;/li&gt;&lt;li&gt;recover after system wake&lt;/li&gt;&lt;li&gt;improve export toolbar layout&lt;/li&gt;&lt;li&gt;align system picker layout&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.9-beta.1&lt;/h2&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;optimize word list scrolling&lt;/li&gt;&lt;li&gt;add 1.3.9-beta.0 release entry [skip ci]&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;exclude only overlay windows from capture&lt;/li&gt;&lt;li&gt;recover after system wake&lt;/li&gt;&lt;li&gt;improve export toolbar layout&lt;/li&gt;&lt;li&gt;align system picker layout&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.9-beta.1/SnapTra-Translator-1.3.9-beta.1.dmg" length="5313667" type="application/octet-stream" sparkle:edSignature="lycksuT+lmnK5dZrAd+NCZZiw/dEYepAWqNi9GEFbn/6coizaXed+g+mFMl9u+3Z4hp4NX+K21Y9zpHRa+pRBg==" />
         </item>
         <item>
@@ -138,7 +138,7 @@
             <sparkle:version>13900</sparkle:version>
             <sparkle:shortVersionString>1.3.9-beta.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.9-beta.0&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;export words for Anki&lt;/li&gt;&lt;li&gt;add menu bar icon style setting&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;update project build version&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.9-beta.0&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;export words for Anki&lt;/li&gt;&lt;li&gt;add menu bar icon style setting&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;update project build version&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.9-beta.0/SnapTra-Translator-1.3.9-beta.0.dmg" length="5288691" type="application/octet-stream" sparkle:edSignature="aId33DEnBbjW6VIeIdMbqP1xmyDbf52igHoSNo7/7Ylmbq5KTDOfPUCsAZ3q9muQPBP+Ryd8g7daA6ZQYChsAg==" />
         </item>
         <item>
@@ -147,7 +147,7 @@
             <sparkle:version>13899</sparkle:version>
             <sparkle:shortVersionString>1.3.8</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.8&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;improve word bounding box accuracy and selection logic&lt;/li&gt;&lt;li&gt;add bidirectional Chinese word lookup support&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;align mixed-script word hit boxes&lt;/li&gt;&lt;li&gt;prevent background termination of menu bar app&lt;/li&gt;&lt;li&gt;handle Chinese text with English terms&lt;/li&gt;&lt;li&gt;refine code token hit boxes&lt;/li&gt;&lt;li&gt;strip pinyin from Chinese system definitions&lt;/li&gt;&lt;li&gt;detect dominant script in mixed text&lt;/li&gt;&lt;li&gt;reduce idle overlay overhead&lt;/li&gt;&lt;li&gt;gate selected text translation&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.8&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;improve word bounding box accuracy and selection logic&lt;/li&gt;&lt;li&gt;add bidirectional Chinese word lookup support&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;align mixed-script word hit boxes&lt;/li&gt;&lt;li&gt;prevent background termination of menu bar app&lt;/li&gt;&lt;li&gt;handle Chinese text with English terms&lt;/li&gt;&lt;li&gt;refine code token hit boxes&lt;/li&gt;&lt;li&gt;strip pinyin from Chinese system definitions&lt;/li&gt;&lt;li&gt;detect dominant script in mixed text&lt;/li&gt;&lt;li&gt;reduce idle overlay overhead&lt;/li&gt;&lt;li&gt;gate selected text translation&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.8/SnapTra-Translator-1.3.8.dmg" length="5255331" type="application/octet-stream" sparkle:edSignature="qxQwxc+bjmUQ36zp9BHIytzbMm7ackEwO7cs2bhDemBsRHwSan3e5zUm8kVp98lce9gcOBUX7VZhUhv1txdXDQ==" />
         </item>
         <item>
@@ -156,7 +156,7 @@
             <sparkle:version>13803</sparkle:version>
             <sparkle:shortVersionString>1.3.8-beta.3</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.8-beta.3&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;improve word bounding box accuracy and selection logic&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;refine code token hit boxes&lt;/li&gt;&lt;li&gt;handle Chinese text with English terms&lt;/li&gt;&lt;li&gt;strip pinyin from Chinese system definitions&lt;/li&gt;&lt;li&gt;detect dominant script in mixed text&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.8-beta.3&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;improve word bounding box accuracy and selection logic&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;refine code token hit boxes&lt;/li&gt;&lt;li&gt;handle Chinese text with English terms&lt;/li&gt;&lt;li&gt;strip pinyin from Chinese system definitions&lt;/li&gt;&lt;li&gt;detect dominant script in mixed text&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.8-beta.3/SnapTra-Translator-1.3.8-beta.3.dmg" length="5253181" type="application/octet-stream" sparkle:edSignature="Uk4RshgvojmRoxVlO0sxO/rM1/P5qUreD3FAxWOdNBhl3x22jHVC8oV1p1+Ejeti95kaknPH9k87T464gNfiAg==" />
         </item>
         <item>
@@ -165,7 +165,7 @@
             <sparkle:version>13802</sparkle:version>
             <sparkle:shortVersionString>1.3.8-beta.2</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.8-beta.2&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add bidirectional Chinese word lookup support&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.8-beta.2&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add bidirectional Chinese word lookup support&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.8-beta.2/SnapTra-Translator-1.3.8-beta.2.dmg" length="5244330" type="application/octet-stream" sparkle:edSignature="7FlKv6dX6qMoTLS6GMDMYETZSoBoxWTs8uMjkYI6lWIB99tVctcILxp93LJgN1/QcNZzmP0AqGCSuUoMFLhXDQ==" />
         </item>
         <item>
@@ -174,7 +174,7 @@
             <sparkle:version>13801</sparkle:version>
             <sparkle:shortVersionString>1.3.8-beta.1</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.8-beta.1&lt;/h2&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add 1.3.8-beta.0 release entry [skip ci]&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;reduce idle overlay overhead&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.8-beta.1&lt;/h2&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add 1.3.8-beta.0 release entry [skip ci]&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;reduce idle overlay overhead&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.8-beta.1/SnapTra-Translator-1.3.8-beta.1.dmg" length="5225369" type="application/octet-stream" sparkle:edSignature="DMxMPJ5j80hNsviykB7z+qmnilncM7/1/c6mPDnUj6gvILh/IagS6BBVng2PleUN8qXYXlJa2NSX0RMagYTtBQ==" />
         </item>
         <item>
@@ -183,7 +183,7 @@
             <sparkle:version>13800</sparkle:version>
             <sparkle:shortVersionString>1.3.8-beta.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.8-beta.0&lt;/h2&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;gate selected text translation&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.8-beta.0&lt;/h2&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;gate selected text translation&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.8-beta.0/SnapTra-Translator-1.3.8-beta.0.dmg" length="5221533" type="application/octet-stream" sparkle:edSignature="lK/tU//Q7umXTBXUH3cGlymjX3GvqnyP+wqySEry9RkfULAoTV8ncCuK0OdNqldR7R43lpabpg2cdHK9PocmCg==" />
         </item>
         <item>
@@ -192,7 +192,7 @@
             <sparkle:version>13799</sparkle:version>
             <sparkle:shortVersionString>1.3.7</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.7&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add word learning module with spaced repetition&lt;/li&gt;&lt;li&gt;add localization support for Learning module&lt;/li&gt;&lt;li&gt;add Show Dock Icon toggle in System tab&lt;/li&gt;&lt;li&gt;add Copy to Clipboard option for word and sentence translation&lt;/li&gt;&lt;li&gt;add configurable third-party dictionary sources&lt;/li&gt;&lt;li&gt;add selected text translation flow&lt;/li&gt;&lt;li&gt;add pin and copy buttons for paragraph overlay&lt;/li&gt;&lt;li&gt;set system dictionary as default first source&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add System tab and move launch/menu bar/language settings&lt;/li&gt;&lt;li&gt;optimize storage and add auto cleanup for learning module&lt;/li&gt;&lt;li&gt;add localizations for auto cleanup feature&lt;/li&gt;&lt;li&gt;add System tab label translations&lt;/li&gt;&lt;li&gt;remove Spanish language support&lt;/li&gt;&lt;li&gt;stop TimelineView animation when highlight window is hidden&lt;/li&gt;&lt;li&gt;remove fixed width from filter picker for compact layout&lt;/li&gt;&lt;li&gt;increase general tab content height&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;persist showDockIcon setting across app restarts&lt;/li&gt;&lt;li&gt;hide Dock icon immediately when toggle is turned off&lt;/li&gt;&lt;li&gt;move Learning tab below pronunciation options&lt;/li&gt;&lt;li&gt;improve selected text translation accuracy and readability&lt;/li&gt;&lt;li&gt;improve selected text accessibility lookup&lt;/li&gt;&lt;li&gt;avoid unsupported predicate forced unwrap&lt;/li&gt;&lt;li&gt;prevent settings window from showing on restart&lt;/li&gt;&lt;li&gt;restore paragraph original selection&lt;/li&gt;&lt;li&gt;align original copy button&lt;/li&gt;&lt;li&gt;improve paragraph panel dragging&lt;/li&gt;&lt;li&gt;correct sentence panel pin and escape states&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.7&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add word learning module with spaced repetition&lt;/li&gt;&lt;li&gt;add localization support for Learning module&lt;/li&gt;&lt;li&gt;add Show Dock Icon toggle in System tab&lt;/li&gt;&lt;li&gt;add Copy to Clipboard option for word and sentence translation&lt;/li&gt;&lt;li&gt;add configurable third-party dictionary sources&lt;/li&gt;&lt;li&gt;add selected text translation flow&lt;/li&gt;&lt;li&gt;add pin and copy buttons for paragraph overlay&lt;/li&gt;&lt;li&gt;set system dictionary as default first source&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add System tab and move launch/menu bar/language settings&lt;/li&gt;&lt;li&gt;optimize storage and add auto cleanup for learning module&lt;/li&gt;&lt;li&gt;add localizations for auto cleanup feature&lt;/li&gt;&lt;li&gt;add System tab label translations&lt;/li&gt;&lt;li&gt;remove Spanish language support&lt;/li&gt;&lt;li&gt;stop TimelineView animation when highlight window is hidden&lt;/li&gt;&lt;li&gt;remove fixed width from filter picker for compact layout&lt;/li&gt;&lt;li&gt;increase general tab content height&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;persist showDockIcon setting across app restarts&lt;/li&gt;&lt;li&gt;hide Dock icon immediately when toggle is turned off&lt;/li&gt;&lt;li&gt;move Learning tab below pronunciation options&lt;/li&gt;&lt;li&gt;improve selected text translation accuracy and readability&lt;/li&gt;&lt;li&gt;improve selected text accessibility lookup&lt;/li&gt;&lt;li&gt;avoid unsupported predicate forced unwrap&lt;/li&gt;&lt;li&gt;prevent settings window from showing on restart&lt;/li&gt;&lt;li&gt;restore paragraph original selection&lt;/li&gt;&lt;li&gt;align original copy button&lt;/li&gt;&lt;li&gt;improve paragraph panel dragging&lt;/li&gt;&lt;li&gt;correct sentence panel pin and escape states&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.7/SnapTra-Translator-1.3.7.dmg" length="5219282" type="application/octet-stream" sparkle:edSignature="wxrrqzDqOXjZfv97Ayr+/ZpxGVuBLlvrpcTvOXs8o2Lp2V8kc4/oW3kkg720FFFMrKa42+dYbPIhj9nzuVUuCQ==" />
         </item>
         <item>
@@ -201,7 +201,7 @@
             <sparkle:version>13706</sparkle:version>
             <sparkle:shortVersionString>1.3.7-beta.6</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.7-beta.6&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Version 1.3.7-beta.6 release&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.7-beta.6&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Version 1.3.7-beta.6 release&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.7-beta.6/SnapTra-Translator-1.3.7-beta.6.dmg" length="5219297" type="application/octet-stream" sparkle:edSignature="goVxLBRX5qTZK/pcWEC15OpWQ8ifLvKMeyR74Voy4jX4BMK5qACraupCoaiuHMK9GSP218wz3oupXrMahgBoDQ==" />
         </item>
         <item>
@@ -210,7 +210,7 @@
             <sparkle:version>13705</sparkle:version>
             <sparkle:shortVersionString>1.3.7-beta.5</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.7-beta.5&lt;/h2&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;set system dictionary as default first source&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.7-beta.5&lt;/h2&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;set system dictionary as default first source&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.7-beta.5/SnapTra-Translator-1.3.7-beta.5.dmg" length="5219382" type="application/octet-stream" sparkle:edSignature="bTSwdMATWmFWySuSg9ETPe/febeNhSwlftIZhzitnOqwjcAROWftKegpgto/6XUM/wK2SQSw2HlqUg0FtrrQAg==" />
         </item>
         <item>
@@ -219,7 +219,7 @@
             <sparkle:version>13704</sparkle:version>
             <sparkle:shortVersionString>1.3.7-beta.4</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.7-beta.4&lt;/h2&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;set system dictionary as default first source&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.7-beta.4&lt;/h2&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;set system dictionary as default first source&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.7-beta.4/SnapTra-Translator-1.3.7-beta.4.dmg" length="5221889" type="application/octet-stream" sparkle:edSignature="tsQDE4JlEuUzccSUTvmI0XOqf82jv5lieH0S4LdUxzS4Wh4YqYnppwvRcIVlCdHWi2tNvSxbZ7l7L+8vO/OpAQ==" />
         </item>
         <item>
@@ -228,7 +228,7 @@
             <sparkle:version>13703</sparkle:version>
             <sparkle:shortVersionString>1.3.7-beta.3</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.7-beta.3&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add pin and copy buttons for paragraph overlay&lt;/li&gt;&lt;li&gt;add selected text translation flow&lt;/li&gt;&lt;li&gt;add configurable third-party sources&lt;/li&gt;&lt;li&gt;add Copy to Clipboard option for word and sentence translation&lt;/li&gt;&lt;li&gt;add Show Dock Icon toggle in System tab&lt;/li&gt;&lt;li&gt;add localization support for Learning module&lt;/li&gt;&lt;li&gt;add word learning module with spaced repetition&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;increase general tab content height from 580 to 650&lt;/li&gt;&lt;li&gt;stop TimelineView animation when highlight window hidden&lt;/li&gt;&lt;li&gt;add localizations for auto cleanup feature&lt;/li&gt;&lt;li&gt;optimize storage and add auto cleanup&lt;/li&gt;&lt;li&gt;add third-party dictionaries design&lt;/li&gt;&lt;li&gt;add System tab label translations&lt;/li&gt;&lt;li&gt;remove Spanish language support&lt;/li&gt;&lt;li&gt;add System tab and move launch/menu bar/language settings&lt;/li&gt;&lt;li&gt;remove fixed width from filter picker for compact layout&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;prevent settings window from showing on restart&lt;/li&gt;&lt;li&gt;restore beta appcast publishing&lt;/li&gt;&lt;li&gt;restore paragraph original selection&lt;/li&gt;&lt;li&gt;align original copy button&lt;/li&gt;&lt;li&gt;improve paragraph panel dragging&lt;/li&gt;&lt;li&gt;correct sentence panel pin and escape states&lt;/li&gt;&lt;li&gt;inline paragraph original header&lt;/li&gt;&lt;li&gt;add title for original text in paragraph overlay&lt;/li&gt;&lt;li&gt;improve selected text translation accuracy and readability&lt;/li&gt;&lt;li&gt;avoid unsupported predicate forced unwrap&lt;/li&gt;&lt;li&gt;improve selected text accessibility lookup&lt;/li&gt;&lt;li&gt;persist showDockIcon setting across app restarts&lt;/li&gt;&lt;li&gt;hide Dock icon immediately when toggle is turned off&lt;/li&gt;&lt;li&gt;move Learning tab below pronunciation options&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.7-beta.3&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add pin and copy buttons for paragraph overlay&lt;/li&gt;&lt;li&gt;add selected text translation flow&lt;/li&gt;&lt;li&gt;add configurable third-party sources&lt;/li&gt;&lt;li&gt;add Copy to Clipboard option for word and sentence translation&lt;/li&gt;&lt;li&gt;add Show Dock Icon toggle in System tab&lt;/li&gt;&lt;li&gt;add localization support for Learning module&lt;/li&gt;&lt;li&gt;add word learning module with spaced repetition&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;increase general tab content height from 580 to 650&lt;/li&gt;&lt;li&gt;stop TimelineView animation when highlight window hidden&lt;/li&gt;&lt;li&gt;add localizations for auto cleanup feature&lt;/li&gt;&lt;li&gt;optimize storage and add auto cleanup&lt;/li&gt;&lt;li&gt;add third-party dictionaries design&lt;/li&gt;&lt;li&gt;add System tab label translations&lt;/li&gt;&lt;li&gt;remove Spanish language support&lt;/li&gt;&lt;li&gt;add System tab and move launch/menu bar/language settings&lt;/li&gt;&lt;li&gt;remove fixed width from filter picker for compact layout&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;prevent settings window from showing on restart&lt;/li&gt;&lt;li&gt;restore beta appcast publishing&lt;/li&gt;&lt;li&gt;restore paragraph original selection&lt;/li&gt;&lt;li&gt;align original copy button&lt;/li&gt;&lt;li&gt;improve paragraph panel dragging&lt;/li&gt;&lt;li&gt;correct sentence panel pin and escape states&lt;/li&gt;&lt;li&gt;inline paragraph original header&lt;/li&gt;&lt;li&gt;add title for original text in paragraph overlay&lt;/li&gt;&lt;li&gt;improve selected text translation accuracy and readability&lt;/li&gt;&lt;li&gt;avoid unsupported predicate forced unwrap&lt;/li&gt;&lt;li&gt;improve selected text accessibility lookup&lt;/li&gt;&lt;li&gt;persist showDockIcon setting across app restarts&lt;/li&gt;&lt;li&gt;hide Dock icon immediately when toggle is turned off&lt;/li&gt;&lt;li&gt;move Learning tab below pronunciation options&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.7-beta.3/SnapTra-Translator-1.3.7-beta.3.dmg" length="5219645" type="application/octet-stream" sparkle:edSignature="q+BTpF4+xwwrM67gzLtwDJX5GqXdKe0wx23wIbvbxg4V5ehyIsAKySrb0YnpA6YJbkfJErDNSLipGqCEAvb7Cw==" />
         </item>
         <item>
@@ -237,7 +237,7 @@
             <sparkle:version>13702</sparkle:version>
             <sparkle:shortVersionString>1.3.7-beta.2</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.7-beta.2&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add pin and copy buttons for paragraph overlay&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;align original copy button&lt;/li&gt;&lt;li&gt;improve paragraph panel dragging&lt;/li&gt;&lt;li&gt;correct sentence panel pin and escape states&lt;/li&gt;&lt;li&gt;inline paragraph original header&lt;/li&gt;&lt;li&gt;add title for original text in paragraph overlay&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.7-beta.2&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add pin and copy buttons for paragraph overlay&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;align original copy button&lt;/li&gt;&lt;li&gt;improve paragraph panel dragging&lt;/li&gt;&lt;li&gt;correct sentence panel pin and escape states&lt;/li&gt;&lt;li&gt;inline paragraph original header&lt;/li&gt;&lt;li&gt;add title for original text in paragraph overlay&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.7-beta.2/SnapTra-Translator-1.3.7-beta.2.dmg" length="5221261" type="application/octet-stream" sparkle:edSignature="G1R+BLXwn+DxbMV8v3pE4Ba1QB4pDkVqSxWMroS2WYM5nkQLNxMeP/1/oTzusibvPe89MJqyZBtSP9prPS96BA==" />
         </item>
         <item>
@@ -246,7 +246,7 @@
             <sparkle:version>13701</sparkle:version>
             <sparkle:shortVersionString>1.3.7-beta.1</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.7-beta.1&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add selected text translation flow&lt;/li&gt;&lt;li&gt;add configurable third-party sources&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;increase general tab content height from 580 to 650&lt;/li&gt;&lt;li&gt;stop TimelineView animation when highlight window hidden&lt;/li&gt;&lt;li&gt;add localizations for auto cleanup feature&lt;/li&gt;&lt;li&gt;optimize storage and add auto cleanup&lt;/li&gt;&lt;li&gt;add third-party dictionaries design&lt;/li&gt;&lt;li&gt;add System tab label translations&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;improve selected text translation accuracy and readability&lt;/li&gt;&lt;li&gt;avoid unsupported predicate forced unwrap&lt;/li&gt;&lt;li&gt;improve selected text accessibility lookup&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.7-beta.1&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add selected text translation flow&lt;/li&gt;&lt;li&gt;add configurable third-party sources&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;increase general tab content height from 580 to 650&lt;/li&gt;&lt;li&gt;stop TimelineView animation when highlight window hidden&lt;/li&gt;&lt;li&gt;add localizations for auto cleanup feature&lt;/li&gt;&lt;li&gt;optimize storage and add auto cleanup&lt;/li&gt;&lt;li&gt;add third-party dictionaries design&lt;/li&gt;&lt;li&gt;add System tab label translations&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;improve selected text translation accuracy and readability&lt;/li&gt;&lt;li&gt;avoid unsupported predicate forced unwrap&lt;/li&gt;&lt;li&gt;improve selected text accessibility lookup&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.7-beta.1/SnapTra-Translator-1.3.7-beta.1.dmg" length="5200762" type="application/octet-stream" sparkle:edSignature="Cfi81ePKYnYAjpxrV+G+FNDyK6ZIVtQWEJLhR6qYOlBzHJXDBMc2LjGMk0EKqhOBhnXkR386NVhIRWm0m/YEAA==" />
         </item>
         <item>
@@ -255,7 +255,7 @@
             <sparkle:version>13700</sparkle:version>
             <sparkle:shortVersionString>1.3.7-beta.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.7-beta.0&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add Copy to Clipboard option for word and sentence translation&lt;/li&gt;&lt;li&gt;add Show Dock Icon toggle in System tab&lt;/li&gt;&lt;li&gt;add localization support for Learning module&lt;/li&gt;&lt;li&gt;add word learning module with spaced repetition&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;remove Spanish language support&lt;/li&gt;&lt;li&gt;add System tab and move launch/menu bar/language settings&lt;/li&gt;&lt;li&gt;remove fixed width from filter picker for compact layout&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;persist showDockIcon setting across app restarts&lt;/li&gt;&lt;li&gt;hide Dock icon immediately when toggle is turned off&lt;/li&gt;&lt;li&gt;move Learning tab below pronunciation options&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.7-beta.0&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add Copy to Clipboard option for word and sentence translation&lt;/li&gt;&lt;li&gt;add Show Dock Icon toggle in System tab&lt;/li&gt;&lt;li&gt;add localization support for Learning module&lt;/li&gt;&lt;li&gt;add word learning module with spaced repetition&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;remove Spanish language support&lt;/li&gt;&lt;li&gt;add System tab and move launch/menu bar/language settings&lt;/li&gt;&lt;li&gt;remove fixed width from filter picker for compact layout&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;persist showDockIcon setting across app restarts&lt;/li&gt;&lt;li&gt;hide Dock icon immediately when toggle is turned off&lt;/li&gt;&lt;li&gt;move Learning tab below pronunciation options&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.7-beta.0/SnapTra-Translator-1.3.7-beta.0.dmg" length="5061735" type="application/octet-stream" sparkle:edSignature="uHUPjyir9UsZyoAO1O4uqJAIDAjpDSK+W+b2Oq2zidsSzVHLPpWFr9vAXj7eH/drcR+hZk1ncXIeGL46pab0Bw==" />
         </item>
         <item>
@@ -264,7 +264,7 @@
             <sparkle:version>13699</sparkle:version>
             <sparkle:shortVersionString>1.3.6</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.6&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add smart positioning for word translation panel&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add sentence and paragraph translation features to documentation&lt;/li&gt;&lt;li&gt;fix GitHub repository URL in documentation&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;avoid false alerts after login launch&lt;/li&gt;&lt;li&gt;sync language pack status on startup&lt;/li&gt;&lt;li&gt;add stable releases to both appcast files&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.6&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add smart positioning for word translation panel&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add sentence and paragraph translation features to documentation&lt;/li&gt;&lt;li&gt;fix GitHub repository URL in documentation&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;avoid false alerts after login launch&lt;/li&gt;&lt;li&gt;sync language pack status on startup&lt;/li&gt;&lt;li&gt;add stable releases to both appcast files&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.6/SnapTra-Translator-1.3.6.dmg" type="application/octet-stream" length="4958650" sparkle:edSignature="ShW8yGqReTSVOzZjgTXw0K6WpO1NIE7Ukgl3X7Q1/I9s2fhxVGlYOz4NejBac1lOFtw7Z48ODlxmksbs/RuhCw==" />
         </item>
         <item>
@@ -273,7 +273,7 @@
             <sparkle:version>13602</sparkle:version>
             <sparkle:shortVersionString>1.3.6-beta.2</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.6-beta.2&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add smart positioning for word translation panel&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.6-beta.2&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add smart positioning for word translation panel&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.6-beta.2/SnapTra-Translator-1.3.6-beta.2.dmg" length="4958795" type="application/octet-stream" sparkle:edSignature="IXrw8Dke5M430hc/c8pfUesQtvU94a9irbC04WVxyNNpgo3gJ3yMkKygUCisebaYWP+jVXdFAXlfj27h74ABDg==" />
         </item>
         <item>
@@ -282,7 +282,7 @@
             <sparkle:version>13600</sparkle:version>
             <sparkle:shortVersionString>1.3.6-beta.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.6-beta.0&lt;/h2&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add sentence and paragraph translation features to documentation&lt;/li&gt;&lt;li&gt;fix GitHub repository URL in documentation&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;sync language pack status on startup&lt;/li&gt;&lt;li&gt;add stable releases to both appcast files&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.6-beta.0&lt;/h2&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add sentence and paragraph translation features to documentation&lt;/li&gt;&lt;li&gt;fix GitHub repository URL in documentation&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;sync language pack status on startup&lt;/li&gt;&lt;li&gt;add stable releases to both appcast files&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.6-beta.0/SnapTra-Translator-1.3.6-beta.0.dmg" length="4957216" type="application/octet-stream" sparkle:edSignature="6c/PNAPr7WQP1OyHYe2H80s4o8+6oK4b/rViD0VcO1U4+0yoJI1F1xShuv2OMBSpvWbC2pv85bmsHRwgDhJWDA==" />
         </item>
         <item>
@@ -291,7 +291,7 @@
             <sparkle:version>13599</sparkle:version>
             <sparkle:shortVersionString>1.3.5</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.5&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;split App Store and direct builds&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;remove unused online dictionary services&lt;/li&gt;&lt;li&gt;point release scripts at direct scheme&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;improve phonetic extraction and validation&lt;/li&gt;&lt;li&gt;cleanup state when double-tap with sentence translation disabled&lt;/li&gt;&lt;li&gt;stabilize short translation overlay sizing&lt;/li&gt;&lt;li&gt;share bundle id across channels&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.5&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;split App Store and direct builds&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;remove unused online dictionary services&lt;/li&gt;&lt;li&gt;point release scripts at direct scheme&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;improve phonetic extraction and validation&lt;/li&gt;&lt;li&gt;cleanup state when double-tap with sentence translation disabled&lt;/li&gt;&lt;li&gt;stabilize short translation overlay sizing&lt;/li&gt;&lt;li&gt;share bundle id across channels&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.5/SnapTra-Translator-1.3.5.dmg" length="4951444" type="application/octet-stream" sparkle:edSignature="ySwI7Tw27SzZ5GOFYoVGbzFmoienfONRl0WSD2Tcixr6M6L+nsDjvFCWHCYpKmEEbDZWZRStXB0aOUyJuS6FDQ==" />
         </item>
         <item>
@@ -300,7 +300,7 @@
             <sparkle:version>13502</sparkle:version>
             <sparkle:shortVersionString>1.3.5-beta.2</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.5-beta.2&lt;/h2&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;remove unused online dictionary services&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;improve phonetic extraction and validation&lt;/li&gt;&lt;li&gt;cleanup state when double-tap with sentence translation disabled&lt;/li&gt;&lt;li&gt;stabilize short translation overlay sizing&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.5-beta.2&lt;/h2&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;remove unused online dictionary services&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;improve phonetic extraction and validation&lt;/li&gt;&lt;li&gt;cleanup state when double-tap with sentence translation disabled&lt;/li&gt;&lt;li&gt;stabilize short translation overlay sizing&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.5-beta.2/SnapTra-Translator-1.3.5-beta.2.dmg" length="4951576" type="application/octet-stream" sparkle:edSignature="FVC+Tepp6I8ecorUDZEeqWuouGGZaCdpnoD3pZyucjrIUcqP/GzhnH2GZOxk+/+ey9m+83a4N+NFk4ux/fvBBg==" />
         </item>
         <item>
@@ -309,7 +309,7 @@
             <sparkle:version>13501</sparkle:version>
             <sparkle:shortVersionString>1.3.5-beta.1</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.5-beta.1&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;split App Store and direct builds&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;point release scripts at direct scheme&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;share bundle id across channels&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.5-beta.1&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;split App Store and direct builds&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;point release scripts at direct scheme&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;share bundle id across channels&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.5-beta.1/SnapTra-Translator-1.3.5-beta.1.dmg" length="5033909" type="application/octet-stream" sparkle:edSignature="2b9V9csSc2otqTg0Y01uzUhRaCcQcu6SCSee5VQgY147moqQMTTz2R/JBCrMi3CIKshs/VRQF8egGcqouEMFBw==" />
         </item>
         <item>
@@ -318,7 +318,7 @@
             <sparkle:version>13500</sparkle:version>
             <sparkle:shortVersionString>1.3.5-beta.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.5-beta.0&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;split App Store and direct builds&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;point release scripts at direct scheme&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.5-beta.0&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;split App Store and direct builds&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Changed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;point release scripts at direct scheme&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.5-beta.0/SnapTra-Translator-1.3.5-beta.0.dmg" length="5033904" type="application/octet-stream" sparkle:edSignature="0UauAuMIDv0bP/3NOjS4xoDe6USIYHukK6z9cpFRltLwfTEkdnUDvNL4bNxoO3k7CMFqr+AQTR2f5EsQBo2GDQ==" />
         </item>
         <item>
@@ -327,7 +327,7 @@
             <sparkle:version>13411</sparkle:version>
             <sparkle:shortVersionString>1.3.4-beta.11</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.4-beta.11&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;support macOS 14.0+ with graceful translation fallback&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.4-beta.11&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;support macOS 14.0+ with graceful translation fallback&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.4-beta.11/SnapTra-Translator-1.3.4-beta.11.dmg" length="5026003" type="application/octet-stream" sparkle:edSignature="ceoqNRSlT4V+dMM0ypCOVsrhWE1fi1AfNSPP2wRU34BlE+Wb6vBtKAx01lirNH7M5cxWMH44W7W3fEsLCxikBw==" />
         </item>
         <item>
@@ -336,7 +336,7 @@
             <sparkle:version>13410</sparkle:version>
             <sparkle:shortVersionString>1.3.4-beta.10</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.4-beta.10&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Version 1.3.4-beta.10 release&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.4-beta.10&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Version 1.3.4-beta.10 release&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.4-beta.10/SnapTra-Translator-1.3.4-beta.10.dmg" length="5025747" type="application/octet-stream" sparkle:edSignature="CtHP5juZCfJQSQ48Ru60HCMYV2h8tVGHfwCvt87siwc3b/FD5agkBQrVJ+aCXTPWkeK1vpFvb+Vvr7HHboOLAg==" />
         </item>
         <item>
@@ -345,7 +345,7 @@
             <sparkle:version>13406</sparkle:version>
             <sparkle:shortVersionString>1.3.4-beta.6</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.4-beta.6&lt;/h2&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add SUPublicEDKey to fix Sparkle auto-update signature verification&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.4-beta.6&lt;/h2&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add SUPublicEDKey to fix Sparkle auto-update signature verification&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.4-beta.6/SnapTra-Translator-1.3.4-beta.6.dmg" length="5031225" type="application/octet-stream" sparkle:edSignature="ieLfJc3mNzx+3evFx7GdWw3Sw+MG1WhXalHGDIMkmPj+bi4xwDmzMOGqFWBHFL1dQPBggTj9iItHJlrJEFhCBQ==" />
         </item>
         <item>
@@ -354,7 +354,7 @@
             <sparkle:version>13405</sparkle:version>
             <sparkle:shortVersionString>1.3.4-beta.5</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.4-beta.5&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;改进更新检查按钮交互体验&lt;/li&gt;&lt;li&gt;根据更新通道跳转到对应的 GitHub Release 页面&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.4-beta.5&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;改进更新检查按钮交互体验&lt;/li&gt;&lt;li&gt;根据更新通道跳转到对应的 GitHub Release 页面&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.4-beta.5/SnapTra-Translator-1.3.4-beta.5.dmg" length="5031183" type="application/octet-stream" sparkle:edSignature="td7T2vEUgedy4YbsGM6b67ZK8nIs1g/tiYYs3C6MJ1FFoZNj77tSVvNpcAgDqgXWK2Rq89HjRwRtkOhApxYLBA==" />
         </item>
         <item>
@@ -363,7 +363,7 @@
             <sparkle:version>13404</sparkle:version>
             <sparkle:shortVersionString>1.3.4-beta.4</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.4-beta.4&lt;/h2&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;下拉菜单中连续翻译选项不显示勾选状态的问题&lt;/li&gt;&lt;li&gt;切换更新频道后无法立即生效的问题&lt;/li&gt;&lt;li&gt;debug模式下检查更新通道选择器不生效的问题&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.4-beta.4&lt;/h2&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;下拉菜单中连续翻译选项不显示勾选状态的问题&lt;/li&gt;&lt;li&gt;切换更新频道后无法立即生效的问题&lt;/li&gt;&lt;li&gt;debug模式下检查更新通道选择器不生效的问题&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.4-beta.4/SnapTra-Translator-1.3.4-beta.4.dmg" length="5021486" type="application/octet-stream" sparkle:edSignature="MCjfNz4JcINtW9EAp1rADJy2B8xYCWIsIpGGaDtjWBGJjDgIdcImVPOSypt3POCB8jKpnsaqbO2lS+pIDCOQAQ==" />
         </item>
         <item>
@@ -372,7 +372,7 @@
             <sparkle:version>13403</sparkle:version>
             <sparkle:shortVersionString>1.3.4-beta.3</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.4-beta.3&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;Add debug toggle for GitHub release channel selector in menu bar for testing&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;Make update channel selector toggle work in real-time without restart&lt;/li&gt;&lt;li&gt;Relax OCR selection and merge split lines in paragraph mode&lt;/li&gt;&lt;li&gt;Size paragraph text from actual panel width&lt;/li&gt;&lt;li&gt;Only show update channel options for GitHub releases&lt;/li&gt;&lt;li&gt;Move debug OCR option and auto-disable on sentence translation&lt;/li&gt;&lt;li&gt;Prevent panel from showing without screen recording permission&lt;/li&gt;&lt;li&gt;Increase about page height for GitHub releases&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.4-beta.3&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;Add debug toggle for GitHub release channel selector in menu bar for testing&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;Make update channel selector toggle work in real-time without restart&lt;/li&gt;&lt;li&gt;Relax OCR selection and merge split lines in paragraph mode&lt;/li&gt;&lt;li&gt;Size paragraph text from actual panel width&lt;/li&gt;&lt;li&gt;Only show update channel options for GitHub releases&lt;/li&gt;&lt;li&gt;Move debug OCR option and auto-disable on sentence translation&lt;/li&gt;&lt;li&gt;Prevent panel from showing without screen recording permission&lt;/li&gt;&lt;li&gt;Increase about page height for GitHub releases&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.4-beta.3/SnapTra-Translator-1.3.4-beta.3.dmg" length="5021006" type="application/octet-stream" sparkle:edSignature="Ag4Vsng7wA9lSUAtv4aV1I24JXWuRzWe4dozkkmjreUfzYE8Be17v89UGumfkSmg4iCdgX08ji/5d5HDkhbnDA==" />
         </item>
         <item>
@@ -381,7 +381,7 @@
             <sparkle:version>13402</sparkle:version>
             <sparkle:shortVersionString>1.3.4-beta.2</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.4-beta.2&lt;/h2&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;align Sparkle feeds and GitHub build versioning&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.4-beta.2&lt;/h2&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;align Sparkle feeds and GitHub build versioning&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.4-beta.2/SnapTra-Translator-1.3.4-beta.2.dmg" length="5011951" type="application/octet-stream" sparkle:edSignature="UhO1gNmu6IiydqohRtn5o+EmQzGrAXYIzRC/SKJuY/2gwvqcWEISIPSYq0IMVmPWt9hB390pfD9rquLrTcweDg==" />
         </item>
         <item>
@@ -390,7 +390,7 @@
             <sparkle:version>13400</sparkle:version>
             <sparkle:shortVersionString>1.3.4-beta.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description>&lt;h2&gt;SnapTra Translator 1.3.4-beta.0&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add update channel selector for GitHub releases&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;correct distribution channel detection logic&lt;/li&gt;&lt;/ul&gt;</description>
+            <description>&lt;h2&gt;KakuTra 1.3.4-beta.0&lt;/h2&gt;&lt;h4&gt;Added&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;add update channel selector for GitHub releases&lt;/li&gt;&lt;/ul&gt;&lt;h4&gt;Fixed&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;correct distribution channel detection logic&lt;/li&gt;&lt;/ul&gt;</description>
             <enclosure url="https://github.com/yelog/SnapTraTranslator/releases/download/v1.3.4-beta.0/SnapTra-Translator-1.3.4-beta.0.dmg" length="5011035" type="application/octet-stream" sparkle:edSignature="7jIsClqaghuu53iTk4Y24AeKYRtJeJ0aitcjOUicMDaxT80KXEDOwg0O5ttcTU8oz6P8P2FtaDix0TghJZnyAg==" />
         </item>
     </channel>

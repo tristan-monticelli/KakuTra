@@ -13,7 +13,7 @@
 ### Task 1: 修正 paragraph release 状态机
 
 **Files:**
-- Modify: `SnapTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
 
 **Step 1: 调整热键 release 顺序**
 
@@ -28,8 +28,8 @@
 ### Task 2: 让手动位置优先于自动对齐
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayWindowController.swift`
-- Modify: `SnapTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/OverlayWindowController.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
 
 **Step 1: 暴露手动拖拽状态**
 
@@ -49,7 +49,7 @@
 ### Task 3: 增加原文正文拖拽热区
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/OverlayView.swift`
 
 **Step 1: 新增 pinned-only 原文拖拽覆盖层**
 
@@ -69,7 +69,7 @@
 
 Run:
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build
 ```
 
 Expected:

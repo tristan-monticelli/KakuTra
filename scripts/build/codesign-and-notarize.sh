@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-ENTITLEMENTS="$REPO_ROOT/SnapTra Translator/SnapTra Direct.entitlements"
+ENTITLEMENTS="$REPO_ROOT/KakuTra/KakuTra Direct.entitlements"
 
 # ─── Resolve signing identity ───
 resolve_identity() {
@@ -74,7 +74,7 @@ cmd_sign() {
     echo "==> Signing main app bundle"
     if [ -f "$ENTITLEMENTS" ]; then
         bundle_id=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP_DIR/Contents/Info.plist")
-        expanded_entitlements="$(mktemp /tmp/snaptra-entitlements.XXXXXX)"
+        expanded_entitlements="$(mktemp /tmp/KakuTra-entitlements.XXXXXX)"
         sed "s|\$(PRODUCT_BUNDLE_IDENTIFIER)|$bundle_id|g" "$ENTITLEMENTS" > "$expanded_entitlements"
 
         codesign --force --options runtime \

@@ -13,8 +13,8 @@
 ### Task 1: Direction Support Matrix
 
 **Files:**
-- Modify: `SnapTra Translator/DictionarySettingsView.swift`
-- Modify: `SnapTra Translator/AppModel.swift`
+- Modify: `KakuTra Translator/DictionarySettingsView.swift`
+- Modify: `KakuTra Translator/AppModel.swift`
 
 **Steps:**
 1. Add a per-source `supportsLookup(sourceIdentifier:targetIdentifier:)` helper.
@@ -24,7 +24,7 @@
 ### Task 2: System Dictionary Parser Fix
 
 **Files:**
-- Modify: `SnapTra Translator/DictionaryService.swift`
+- Modify: `KakuTra Translator/DictionaryService.swift`
 
 **Steps:**
 1. Add a helper that selects the system dictionary parser from the headword language.
@@ -34,7 +34,7 @@
 ### Task 3: Google Reverse Lookup
 
 **Files:**
-- Modify: `SnapTra Translator/OnlineDictionaryService.swift`
+- Modify: `KakuTra Translator/OnlineDictionaryService.swift`
 
 **Steps:**
 1. Replace the English-only Google guard with a language-code availability check.
@@ -43,7 +43,7 @@
 ### Task 4: Tests
 
 **Files:**
-- Modify: `SnapTra TranslatorTests/SettingsStoreTests.swift`
+- Modify: `KakuTra TranslatorTests/SettingsStoreTests.swift`
 
 **Steps:**
 1. Add tests for dictionary source support in `zh -> en` and `en -> zh` directions.
@@ -53,9 +53,9 @@
 ### Task 5: Verification
 
 **Commands:**
-- `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/OnlineDictionaryServiceTests"`
-- `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/DictionaryLookupSupportTests"`
-- `xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build`
+- `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/OnlineDictionaryServiceTests"`
+- `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/DictionaryLookupSupportTests"`
+- `xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build`
 
 **Manual checks:**
 - Configure `English -> 简体中文` with bidirectional lookup enabled.

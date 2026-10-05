@@ -4,7 +4,7 @@ set -euo pipefail
 
 usage() {
     echo "Usage: $0 <output.trace> [duration]" >&2
-    echo "Example: $0 /tmp/snaptra-lookup.trace 60s" >&2
+    echo "Example: $0 /tmp/KakuTra-lookup.trace 60s" >&2
 }
 
 if [[ $# -lt 1 || $# -gt 2 ]]; then
@@ -30,8 +30,8 @@ if [[ -e $output ]]; then
     exit 73
 fi
 
-if ! pgrep -x "SnapTra Translator" >/dev/null; then
-    echo "SnapTra Translator is not running." >&2
+if ! pgrep -x "KakuTra" >/dev/null; then
+    echo "KakuTra is not running." >&2
     exit 69
 fi
 
@@ -41,6 +41,6 @@ exec xcrun xctrace record \
     --template Logging \
     --instrument "Points of Interest" \
     --instrument os_signpost \
-    --attach "SnapTra Translator" \
+    --attach "KakuTra" \
     --time-limit "$duration" \
     --output "$output"

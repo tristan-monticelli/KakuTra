@@ -13,7 +13,7 @@
 ### Task 1: Add Failing Policy Test
 
 **Files:**
-- Modify: `SnapTra TranslatorTests/ParagraphOverlayLayoutTests.swift`
+- Modify: `KakuTra TranslatorTests/ParagraphOverlayLayoutTests.swift`
 
 **Step 1: Write the failing test**
 
@@ -28,7 +28,7 @@ Add tests for `WordOverlayTextSelectionPolicy.usesSelectableText(...)`:
 Run:
 
 ```bash
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -destination 'platform=macOS' test -only-testing:"SnapTra TranslatorTests/ParagraphOverlayLayoutTests"
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -destination 'platform=macOS' test -only-testing:"KakuTra TranslatorTests/ParagraphOverlayLayoutTests"
 ```
 
 Expected: compile failure because the policy does not exist yet.
@@ -36,7 +36,7 @@ Expected: compile failure because the policy does not exist yet.
 ### Task 2: Implement the Policy
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/OverlayView.swift`
 
 **Step 1: Add minimal implementation**
 
@@ -53,7 +53,7 @@ Run the same focused test command and expect success.
 ### Task 3: Make Word Overlay Body Text Selectable
 
 **Files:**
-- Modify: `SnapTra Translator/OverlayView.swift`
+- Modify: `KakuTra Translator/OverlayView.swift`
 
 **Step 1: Add a reusable word selectable text helper**
 
@@ -85,9 +85,9 @@ Run focused overlay tests and a Debug build.
 Run:
 
 ```bash
-jq empty "SnapTra Translator/Localizable.xcstrings"
+jq empty "KakuTra Translator/Localizable.xcstrings"
 git diff --check
-xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" -configuration Debug build
+xcodebuild -project "KakuTra Translator.xcodeproj" -scheme "KakuTra Translator" -configuration Debug build
 ```
 
 **Step 2: Commit**
@@ -95,6 +95,6 @@ xcodebuild -project "SnapTra Translator.xcodeproj" -scheme "SnapTra Translator" 
 Use:
 
 ```bash
-git add "SnapTra Translator/OverlayView.swift" "SnapTra TranslatorTests/ParagraphOverlayLayoutTests.swift" docs/plans/2026-06-11-word-overlay-text-selection-design.md docs/plans/2026-06-11-word-overlay-text-selection-plan.md
+git add "KakuTra Translator/OverlayView.swift" "KakuTra TranslatorTests/ParagraphOverlayLayoutTests.swift" docs/plans/2026-06-11-word-overlay-text-selection-design.md docs/plans/2026-06-11-word-overlay-text-selection-plan.md
 git commit -m "fix(overlay): allow selecting kept word text"
 ```

@@ -6,8 +6,8 @@
 
 The project already splits distribution into two app targets:
 
-- `SnapTra Translator` for the Mac App Store without Sparkle
-- `SnapTra Translator Direct` for direct GitHub distribution with Sparkle
+- `KakuTra Translator` for the Mac App Store without Sparkle
+- `KakuTra Translator Direct` for direct GitHub distribution with Sparkle
 
 That target split fixes App Store validation, but the current direct target uses a different bundle identifier from the App Store target. macOS privacy permissions are tied to app identity, so switching channels can force users to re-authorize screen recording and related TCC permissions.
 
@@ -15,7 +15,7 @@ That target split fixes App Store validation, but the current direct target uses
 
 Keep the dual-target architecture, but make both targets use the same production bundle identifier:
 
-- `org.yelog.SnapTraTranslate`
+- `org.yelog.KakuTraTranslate`
 
 The App Store target still excludes Sparkle entirely. The direct target still includes Sparkle and uses direct-distribution plist and entitlements. Only the bundle identity is unified.
 
